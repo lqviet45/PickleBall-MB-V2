@@ -5,6 +5,7 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import CustomButton from "@/components/CustomButton";
 import FormField from "@/components/FormField";
 import images from "@/constants/images";
+import {useGlobalContext} from "@/context/GlobalProvider";
 
 const SignUp = () => {
     const [form, setForm] = useState({
