@@ -19,7 +19,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.lqviet45.PickleBall"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -27,6 +28,14 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "88320424-e993-41ff-8aa8-e0f2b695d359"
+      }
+    }
   }
 }
