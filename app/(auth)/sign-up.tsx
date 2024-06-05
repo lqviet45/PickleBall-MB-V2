@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import {Link} from "expo-router";
-import {View, Text, ScrollView, Image} from "react-native";
+import {Link, router} from "expo-router";
+import {View, Text, ScrollView, Image, Alert} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import CustomButton from "@/components/CustomButton";
 import FormField from "@/components/FormField";
 import images from "@/constants/images";
 import {useGlobalContext} from "@/context/GlobalProvider";
+import auth from "@react-native-firebase/auth";
 
 const SignUp = () => {
     const [form, setForm] = useState({
@@ -17,7 +18,27 @@ const SignUp = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const submit = async () => {
+        if (form.username === "" || form.email === "" || form.password === "") {
+            Alert.alert('Error', 'Please fill all fields');
+            return;
+        }
 
+        setIsSubmitting(true);
+        try {
+            const userCredential = await auth().createUserWithEmailAndPassword(form.email, form.password);
+
+            await userCredential.user.updateProfile({
+               displayName: form.username
+            });
+
+            //Alert.alert('Success', 'Signed up successfully');
+
+            router.replace('/home');
+        } catch (error: any) {
+            Alert.alert('Error', error.message);
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (

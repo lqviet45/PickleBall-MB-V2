@@ -5,7 +5,7 @@ import images from "@/constants/images";
 import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
 import {Link, router} from "expo-router";
-import {useGlobalContext} from "@/context/GlobalProvider";
+//import {useGlobalContext} from "@/context/GlobalProvider";
 import auth from "@react-native-firebase/auth";
 
 const SignIn = () => {
@@ -13,13 +13,14 @@ const SignIn = () => {
         email: '',
         password: ''
     });
-    const { setUser, setIsLoggedIn } = useGlobalContext();
+    //const { setUser, setIsLoggedIn } = useGlobalContext();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const submit = async () => {
         if (form.email === "" || form.password === "") {
             Alert.alert('Error', 'Please fill all fields');
+            return;
         }
 
         setIsSubmitting(true);
@@ -28,8 +29,8 @@ const SignIn = () => {
             //await signIn(form.email, form.password);
             //const result = await getCurrentUser();
 
-            setUser(userCredential.user);
-            setIsLoggedIn(true);
+            //setUser(userCredential.user);
+            //setIsLoggedIn(true);
             Alert.alert('Success', 'Logged in successfully');
 
             router.replace('/home');
