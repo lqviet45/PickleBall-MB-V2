@@ -1,21 +1,44 @@
 import React, {useState} from 'react';
 import {SafeAreaView} from "react-native-safe-area-context";
-import {ScrollView, Image, View, Text} from "react-native";
+import {ScrollView, Image, View, Text, Alert} from "react-native";
 import images from "@/constants/images";
 import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
-import {Link} from "expo-router";
+import {Link, router} from "expo-router";
+//import {useGlobalContext} from "@/context/GlobalProvider";
+import auth from "@react-native-firebase/auth";
 
 const SignIn = () => {
     const [form, setForm] = useState({
         email: '',
         password: ''
     });
+    //const { setUser, setIsLoggedIn } = useGlobalContext();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const submit = async () => {
+        if (form.email === "" || form.password === "") {
+            Alert.alert('Error', 'Please fill all fields');
+            return;
+        }
 
+        setIsSubmitting(true);
+        try {
+            const userCredential = await auth().signInWithEmailAndPassword(form.email, form.password);
+            //await signIn(form.email, form.password);
+            //const result = await getCurrentUser();
+
+            //setUser(userCredential.user);
+            //setIsLoggedIn(true);
+            Alert.alert('Success', 'Logged in successfully');
+
+            router.replace('/home');
+        } catch (error: any) {
+            Alert.alert('Error', error.message);
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     return (
