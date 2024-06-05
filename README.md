@@ -18,7 +18,7 @@ Install pickleball with npx expo
 
 - But since we use react-native-firebase so we need to use "eas build"
 
-- If you don't have any build yet (or you add new dependencies) you need to run this command (it may take about 30m - 4h to build it on "eas cloud free tier")
+- If you don't have any build yet (or you add new dependencies) you need to run this command (it may take about 30m - 4h to build it on "eas cloud free tier") (i have build it already so you don't have to build if you don't add new dependencies)
 ```bash
 eas build --profile development --platform <YOUR_BUILD_DEVICE> (android or ios)
 ```
