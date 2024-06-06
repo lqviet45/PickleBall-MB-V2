@@ -4,7 +4,7 @@ import auth, {FirebaseAuthTypes} from "@react-native-firebase/auth";
 
 type GlobalContextType = {
     isLoggedIn: boolean;
-    user: FirebaseAuthTypes.User | null | undefined;
+    userLogin: FirebaseAuthTypes.User | null | undefined;
     isLoading: boolean;
     setIsLoggedIn: (value: boolean) => void;
     setUser: (value: FirebaseAuthTypes.User | null) => void;
@@ -17,7 +17,7 @@ type ContextProps = {
 
 const defaultValues: GlobalContextType = {
     isLoggedIn: false,
-    user: null,
+    userLogin: null,
     isLoading: true,
     setIsLoggedIn: () => {},
     setUser: () => {},
@@ -29,7 +29,7 @@ export const useGlobalContext = () => useContext(GlobalContext);
 
 const GlobalProvider = ({ children } : ContextProps) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+    const [userLogin, setUser] = useState<FirebaseAuthTypes.User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -39,7 +39,8 @@ const GlobalProvider = ({ children } : ContextProps) => {
                 if (user) {
                     setUser(user);
                     setIsLoggedIn(true);
-                    console.log(user)
+                    setIsLoading(false);
+                    console.log(user);
                     // user.getIdToken().then(token => {
                     //     console.log("token")
                     //     console.log(token)
@@ -47,10 +48,11 @@ const GlobalProvider = ({ children } : ContextProps) => {
                 } else {
                     setIsLoggedIn(false);
                     setUser(null);
+                    setIsLoading(false);
                 }
             });
-        } finally {
-            setIsLoading(false);
+        } catch (error) {
+            console.log(error);
         }
     }, []);
 
@@ -58,7 +60,7 @@ const GlobalProvider = ({ children } : ContextProps) => {
         <GlobalContext.Provider
             value={{
                 isLoggedIn,
-                user,
+                userLogin,
                 isLoading,
                 setIsLoggedIn,
                 setUser,

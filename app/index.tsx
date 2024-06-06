@@ -2,10 +2,23 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import {ScrollView, View, Image, Text} from "react-native";
 import images from "../constants/images";
 import CustomButton from "@/components/CustomButton";
-import {router} from "expo-router";
+import {Redirect, router} from "expo-router";
 import {StatusBar} from "expo-status-bar";
+import {useGlobalContext} from "@/context/GlobalProvider";
+import {useEffect} from "react";
 
 const App = () => {
+
+    const {isLoggedIn, isLoading} = useGlobalContext();
+
+    if (!isLoading && isLoggedIn) return <Redirect href={'/home'}/>;
+    useEffect(() => {
+        if (!isLoading && isLoggedIn) {
+            router.replace('/home');
+        } else if (!isLoading && !isLoggedIn) {
+            router.replace('/sign-in');
+        }
+    }, [isLoading]);
 
     return (
         <SafeAreaView className={`bg-primary h-full`}>
