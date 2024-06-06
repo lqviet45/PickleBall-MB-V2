@@ -17,10 +17,12 @@ module.exports = {
         },
         gray: {
           100: "#CDCDE0",
+          200: "#242760",
         },
         blue: {
           DEFAULT: "#007AFF",
         },
+
       },
       fontFamily: {
         pthin: ["Poppins-Thin", "sans-serif"],

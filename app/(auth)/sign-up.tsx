@@ -25,6 +25,7 @@ const SignUp = () => {
 
         setIsSubmitting(true);
         try {
+            // should call backend api to create user
             const userCredential = await auth().createUserWithEmailAndPassword(form.email, form.password);
 
             await userCredential.user.updateProfile({

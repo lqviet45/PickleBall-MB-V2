@@ -91,6 +91,20 @@ const TagsLayout = () => {
                         title: 'Profile',
                         headerShown: false,
                         tabBarIcon: ({ color, focused }) => (
+                            <TabIcon icon={icons.bookmark}
+                                     color={color}
+                                     name="Profile"
+                                     focused={focused} />
+                        )
+                    }}
+                />
+
+                <Tabs.Screen
+                    name='settings'
+                    options={{
+                        title: 'settings',
+                        headerShown: false,
+                        tabBarIcon: ({ color, focused }) => (
                             <TabIcon icon={icons.profile}
                                      color={color}
                                      name="Profile"
