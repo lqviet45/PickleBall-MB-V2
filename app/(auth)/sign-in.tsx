@@ -42,17 +42,22 @@ const SignIn = () => {
     }
 
     return (
-        <SafeAreaView className="bg-primary h-full">
+        <SafeAreaView className="bg-Base h-full">
             <ScrollView>
                 <View className="w-full justify-center min-h-[85vh] px-4 my-6">
-                    <Image
-                        source={images.logo}
-                        resizeMode='contain'
-                        className="w-[115px] h-[35px] self-center"
-                    />
+                    <View className="h-fit w-full items-center justify-center flex-row">
+                        <Image
+                            source={images.logoPickle}
+                            resizeMode='contain'
+                            className="w-[60px] h-[35px] self-center"
+                        />
+                            <Text className="text-yellow-100 text-3xl font-bold text-center">
+                                PICKLECOURT
+                            </Text>
+                    </View>
                     <Text className="text-2xl text-white
           text-semibold mt-10 font-psemibold self-center">
-                        Login to Aura
+                        Login to Our App
                     </Text>
 
                     <FormField

@@ -5,6 +5,7 @@ import logoSmall from '@/assets/images/logo-small.png';
 import profile from '@/assets/images/profile.png';
 import path from '@/assets/images/path.png';
 import thumbnail from '@/assets/images/thumbnail.png';
+import logoPickle from '@/assets/images/logo-pickle.png';
 
 export default {
     card,
@@ -14,4 +15,5 @@ export default {
     profile,
     path,
     thumbnail,
+    logoPickle
 }

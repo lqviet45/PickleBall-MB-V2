@@ -5,6 +5,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import SettingButton from "@/components/SettingButton";
 import {router} from "expo-router";
 import auth from "@react-native-firebase/auth";
+import {StatusBar} from "expo-status-bar";
 
 const Settings = () => {
     const accountArea = [
@@ -90,7 +91,7 @@ const Settings = () => {
             size: 24,
             color: 'black',
             HandlePress: async () => {
-                //await auth().signOut();
+                await auth().signOut();
                 router.push('sign-in')
             }
         }
@@ -140,6 +141,7 @@ const Settings = () => {
                     </View>
                 </View>
             </ScrollView>
+        <StatusBar style="auto" />
         </SafeAreaView>
     );
 };

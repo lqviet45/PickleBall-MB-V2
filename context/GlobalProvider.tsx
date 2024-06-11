@@ -37,14 +37,14 @@ const GlobalProvider = ({ children } : ContextProps) => {
             auth().onAuthStateChanged((user) => {
                 console.log("user run onAuthStateChanged")
                 if (user) {
+                    // user.getIdTokenResult()
+                    //     .then((token) => {
+                    //         console.log("token")
+                    //         console.log(token.claims)
+                    //     })
                     setUser(user);
                     setIsLoggedIn(true);
                     setIsLoading(false);
-                    console.log(user);
-                    // user.getIdToken().then(token => {
-                    //     console.log("token")
-                    //     console.log(token)
-                    // })
                 } else {
                     setIsLoggedIn(false);
                     setUser(null);
