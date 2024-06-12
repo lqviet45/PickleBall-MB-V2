@@ -15,6 +15,11 @@ const AuthLayout = () => {
                     name="sign-up"
                     options={{headerShown: false}}
                 />
+
+                <Stack.Screen
+                    name="forgot-password"
+                    options={{headerShown: false}}
+                />
             </Stack>
 
             <StatusBar backgroundColor={'#08222F'} style="light" />

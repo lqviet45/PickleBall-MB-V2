@@ -85,19 +85,19 @@ const TagsLayout = () => {
                 {/*    }}*/}
                 {/*/>*/}
 
-                <Tabs.Screen
-                    name='profile'
-                    options={{
-                        title: 'Profile',
-                        headerShown: false,
-                        tabBarIcon: ({ color, focused }) => (
-                            <TabIcon icon={icons.bookmark}
-                                     color={color}
-                                     name="Profile"
-                                     focused={focused} />
-                        )
-                    }}
-                />
+                {/*<Tabs.Screen*/}
+                {/*    name='profile'*/}
+                {/*    options={{*/}
+                {/*        title: 'Profile',*/}
+                {/*        headerShown: false,*/}
+                {/*        tabBarIcon: ({ color, focused }) => (*/}
+                {/*            <TabIcon icon={icons.bookmark}*/}
+                {/*                     color={color}*/}
+                {/*                     name="Profile"*/}
+                {/*                     focused={focused} />*/}
+                {/*        )*/}
+                {/*    }}*/}
+                {/*/>*/}
 
                 <Tabs.Screen
                     name='settings'
@@ -107,7 +107,7 @@ const TagsLayout = () => {
                         tabBarIcon: ({ color, focused }) => (
                             <TabIcon icon={icons.profile}
                                      color={color}
-                                     name="Profile"
+                                     name="Settings"
                                      focused={focused} />
                         )
                     }}

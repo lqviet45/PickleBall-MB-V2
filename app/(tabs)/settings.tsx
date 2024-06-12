@@ -14,7 +14,7 @@ const Settings = () => {
             icon: 'person-outline' as keyof typeof Ionicons.glyphMap,
             size: 24,
             color: 'black',
-            HandlePress: () => router.push('edit-profile')
+            HandlePress: () => router.push('(users)/profile')
         },
         {
             title: 'Order',

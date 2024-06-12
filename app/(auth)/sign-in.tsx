@@ -83,14 +83,26 @@ const SignIn = () => {
                         isLoading={isSubmitting}
                     />
 
-                    <View className="justify-center pt-5 flex-row gap-2">
-                        <Text className="text-lg text-gray-100 font-pregular">
-                            Don't have an account?
-                        </Text>
+                    <View className="justify-center gap-4">
+                        <View className="justify-center pt-5 flex-row gap-2">
+                            <Text className="text-lg text-gray-100 font-pregular">
+                                Don't have an account?
+                            </Text>
 
-                        <Link href='/sign-up' className='text-lg font-psemibold text-secondary'>
-                            Sign up
-                        </Link>
+                            <Link href='/sign-up' className='text-lg font-psemibold text-secondary'>
+                                Sign up
+                            </Link>
+                        </View>
+
+                        <View className="justify-center pt-5 flex-row gap-2">
+                            <Text className="text-lg text-gray-100 font-pregular">
+                                Forgot your password?
+                            </Text>
+
+                            <Link href='/forgot-password' className='text-lg font-psemibold text-secondary'>
+                                Reset
+                            </Link>
+                        </View>
                     </View>
                 </View>
             </ScrollView>

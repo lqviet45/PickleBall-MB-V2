@@ -1,13 +1,20 @@
 import React from 'react';
-import {Text, View} from "react-native";
+import {Stack} from "expo-router";
+import {StatusBar} from "expo-status-bar";
 
 const UserLayout = () => {
     return (
-        <View>
-            <Text>
-                User Layout
-            </Text>
-        </View>
+        <>
+            <Stack>
+                <Stack.Screen
+                    name="profile"
+                    options={{ headerShown: false }}
+                />
+                {/*<Stack.Screen name="edit-profile" options={{ headerShown: false }} />*/}
+            </Stack>
+
+            <StatusBar backgroundColor={'#08222F'} style="light" />
+        </>
     );
 };
 
