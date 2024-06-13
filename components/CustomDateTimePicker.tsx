@@ -12,17 +12,20 @@ interface CustomDateTimePickerProps {
     placeholder?: string;
     currentMode?: any;
     display?: any;
+    isEdit?: boolean;
 }
 
 const CustomDateTimePicker = (
     {
         userInform,
         onChangeDate,
-        title, otherStyles,
+        title,
+        otherStyles,
         editable,
         placeholder,
         currentMode,
-        display
+        display,
+        isEdit
     } : CustomDateTimePickerProps) => {
     const showDatepicker = () => {
         //setShow(true);
@@ -36,14 +39,15 @@ const CustomDateTimePicker = (
     }
 
     const showDatePicker = () => {
-        showDatepicker();
+        if (isEdit)
+            showDatepicker();
     }
 
     return (
         <Pressable
             onPress={showDatePicker}
         >
-            <View className={`space-y-2` + otherStyles}>
+            <View className={`space-y-2 ${otherStyles}`}>
                 <Text className="text-base text-gray-100 font-pmedium">
                     {title}
                 </Text>

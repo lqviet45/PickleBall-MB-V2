@@ -9,9 +9,11 @@ interface FormFieldProps {
     handleChangeText: (e: string) => void;
     otherStyles?: string;
     keyBoardType?: string;
+    isEditable?: boolean;
+    isPassword?: boolean;
 }
 
-const FormField = ({title, value, placeholder, handleChangeText, otherStyles, keyBoardType} : FormFieldProps) => {
+const FormField = ({title, value, placeholder, handleChangeText, otherStyles, keyBoardType, isEditable, isPassword} : FormFieldProps) => {
     const [showPassword, setShowPassword] = useState(false)
 
     return (
@@ -26,14 +28,15 @@ const FormField = ({title, value, placeholder, handleChangeText, otherStyles, ke
                     className="flex-1 text-white font-semibold
                     text-base"
                     value={value}
+                    editable={isEditable ?? true}
                     placeholder={placeholder}
                     placeholderTextColor={'#7b7b8b'}
                     onChangeText={handleChangeText}
-                    secureTextEntry={title === 'Password' && !showPassword }
+                    secureTextEntry={isPassword && !showPassword }
                 />
 
                 {
-                    title === 'Password' && (
+                    isPassword && (
                         <TouchableOpacity
                             onPress={() => setShowPassword(!showPassword)}
                         >

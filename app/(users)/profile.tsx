@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, ScrollView} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import FormField from "@/components/FormField";
-import {DateTimePickerAndroid} from "@react-native-community/datetimepicker";
 import CustomDateTimePicker from "@/components/CustomDateTimePicker";
+import CustomButton from "@/components/CustomButton";
 
 
 const Profile = () => {
@@ -12,10 +12,11 @@ const Profile = () => {
         name: '',
         email: '',
         dateOfBirth: new Date(),
-        city: '',
-        huyen: '',
-        xa: ''
+        location: '',
+        phoneNumber: '',
     });
+
+    const [isEdit, setIsEdit] = useState(false);
 
     useEffect(() => {
         //getUserInform();
@@ -26,22 +27,6 @@ const Profile = () => {
         const currentDate = selectedDate || userInform.dateOfBirth;
         setUserInform({...userInform, dateOfBirth: currentDate});
     };
-
-    const showDatepicker = (currentMode: any) => {
-        //setShow(true);
-        DateTimePickerAndroid.open({
-           value: userInform.dateOfBirth,
-           onChange: onChangeDate,
-           mode: currentMode,
-            display: 'spinner',
-            is24Hour: true,
-        });
-    }
-
-    const showDatePicker = () => {
-        showDatepicker('date');
-    }
-
     const userInformation = [
         {
             title: 'Name',
@@ -56,6 +41,13 @@ const Profile = () => {
             handleChangeText: (e: string) => setUserInform({...userInform, email: e}),
             otherStyles: 'mt-10',
             KeyboardType: 'email-address'
+        },
+        {
+            title: 'Phone Number',
+            value: userInform.phoneNumber,
+            handleChangeText: (e: string) => setUserInform({...userInform, phoneNumber: e}),
+            otherStyles: 'mt-10',
+            KeyboardType: 'phone-pad'
         }
     ];
 
@@ -77,6 +69,7 @@ const Profile = () => {
                             handleChangeText={item.handleChangeText}
                             otherStyles={item.otherStyles}
                             keyBoardType={item.KeyboardType}
+                            isEditable={isEdit}
                         />
                     ))}
 
@@ -88,8 +81,28 @@ const Profile = () => {
                         editable={false}
                         placeholder={"dd/mm/yyyy"}
                         currentMode={'date'}
+                        display={'spinner'}
                     />
 
+                    <FormField
+                        title={"Location"}
+                        value={userInform.location}
+                        otherStyles={"mt-10"}
+                        isEditable={isEdit}
+                        handleChangeText={e => setUserInform({...userInform, location: e})}
+                    />
+
+                    <CustomButton
+                        title={isEdit ? "Save" : "Edit"}
+                        containerStyles={"w-full mt-10"}
+                        handlePress={() => {
+                            setIsEdit(!isEdit)
+                            if (isEdit) {
+                                //saveUserInform();
+                            }
+                        }}
+
+                    />
                 </View>
             </ScrollView>
         </SafeAreaView>

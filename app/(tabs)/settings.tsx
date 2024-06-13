@@ -17,6 +17,13 @@ const Settings = () => {
             HandlePress: () => router.push('(users)/profile')
         },
         {
+            title: 'Change Password',
+            icon: 'key-outline' as keyof typeof Ionicons.glyphMap,
+            size: 24,
+            color: 'black',
+            HandlePress: () => router.push('(auth)/change-password')
+        },
+        {
             title: 'Order',
             icon: 'bag-outline' as keyof typeof Ionicons.glyphMap,
             size: 24,

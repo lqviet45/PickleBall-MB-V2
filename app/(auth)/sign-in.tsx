@@ -74,6 +74,7 @@ const SignIn = () => {
                         handleChangeText={(e) => setForm({...form, password: e})}
                         otherStyles='mt-7'
                         keyBoardType='password'
+                        isPassword={true}
                     />
 
                     <CustomButton
