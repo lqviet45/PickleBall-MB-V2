@@ -4,7 +4,16 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import FormField from "@/components/FormField";
 import CustomDateTimePicker from "@/components/CustomDateTimePicker";
 import CustomButton from "@/components/CustomButton";
+import {date, object, string} from "yup";
+import {Formik} from "formik";
 
+let userSchema = object({
+    name: string().required(),
+    email: string().required().email(),
+    dateOfBirth: date().required(),
+    location: string().required(),
+    phoneNumber: string().nullable()
+});
 
 const Profile = () => {
 
@@ -23,86 +32,89 @@ const Profile = () => {
 
     }, []);
 
-    const onChangeDate = (event: any, selectedDate: any) => {
-        const currentDate = selectedDate || userInform.dateOfBirth;
-        setUserInform({...userInform, dateOfBirth: currentDate});
-    };
-    const userInformation = [
-        {
-            title: 'Name',
-            value: userInform.name,
-            handleChangeText: (e: string) => setUserInform({...userInform, name: e}),
-            otherStyles: 'mt-10',
-            KeyboardType: 'default'
-        },
-        {
-            title: 'Email',
-            value: userInform.email,
-            handleChangeText: (e: string) => setUserInform({...userInform, email: e}),
-            otherStyles: 'mt-10',
-            KeyboardType: 'email-address'
-        },
-        {
-            title: 'Phone Number',
-            value: userInform.phoneNumber,
-            handleChangeText: (e: string) => setUserInform({...userInform, phoneNumber: e}),
-            otherStyles: 'mt-10',
-            KeyboardType: 'phone-pad'
-        }
-    ];
+    // const onChangeDate = (event: any, selectedDate: any) => {
+    //     const currentDate = selectedDate || userInform.dateOfBirth;
+    //     setUserInform({...userInform, dateOfBirth: currentDate});
+    // };
+
+
+    const submit = () => {
+        //saveUserInform();
+    }
 
     return (
         <SafeAreaView className="bg-Base h-full">
             <ScrollView>
-                <View className="w-full min-h-[85vh] px-4 my-6">
+                <View className="w-full min-h-[85vh] px-4 my-4">
                     <View className="items-center">
                         <Text className="text-2xl text-yellow-100 text-semibold mt-10 font-psemibold">
                             Profile
                         </Text>
                     </View>
 
-                    {userInformation.map((item, index) => (
-                        <FormField
-                            key={index}
-                            title={item.title}
-                            value={item.value}
-                            handleChangeText={item.handleChangeText}
-                            otherStyles={item.otherStyles}
-                            keyBoardType={item.KeyboardType}
-                            isEditable={isEdit}
-                        />
-                    ))}
+                    <Formik
+                        initialValues={userInform}
+                        onSubmit={submit}
+                        validationSchema={userSchema}
+                    >
+                        {({ handleChange, handleBlur, handleSubmit, values,
+                          setFieldValue }) => (
+                            <View>
+                                <FormField
+                                    title="Name"
+                                    value={values.name}
+                                    handleChangeText={handleChange('name')}
+                                    otherStyles="mt-10"
+                                    keyBoardType="default"
+                                    isEditable={isEdit}
+                                />
 
-                    <CustomDateTimePicker
-                        userInform={userInform}
-                        onChangeDate={onChangeDate}
-                        title={"Date of Birth"}
-                        otherStyles={"mt-10"}
-                        editable={false}
-                        placeholder={"dd/mm/yyyy"}
-                        currentMode={'date'}
-                        display={'spinner'}
-                    />
+                                <FormField
+                                    title="Email"
+                                    value={values.email}
+                                    handleChangeText={handleChange('email')}
+                                    otherStyles="mt-10"
+                                    keyBoardType="default"
+                                    isEditable={isEdit}
+                                />
 
-                    <FormField
-                        title={"Location"}
-                        value={userInform.location}
-                        otherStyles={"mt-10"}
-                        isEditable={isEdit}
-                        handleChangeText={e => setUserInform({...userInform, location: e})}
-                    />
+                                <FormField
+                                    title="Phone Number"
+                                    value={values.phoneNumber}
+                                    handleChangeText={handleChange('phoneNumber')}
+                                    otherStyles="mt-10"
+                                    keyBoardType="default"
+                                    isEditable={isEdit}
+                                />
 
-                    <CustomButton
-                        title={isEdit ? "Save" : "Edit"}
-                        containerStyles={"w-full mt-10"}
-                        handlePress={() => {
-                            setIsEdit(!isEdit)
-                            if (isEdit) {
-                                //saveUserInform();
-                            }
-                        }}
+                                <CustomDateTimePicker
+                                    userInform={values}
+                                    setFieldValue={setFieldValue}
+                                    //onChangeDate={onChangeDate}
+                                    title={"Date of Birth"}
+                                    otherStyles={"mt-10"}
+                                    isEdit={isEdit}
+                                    placeholder={"dd/mm/yyyy"}
+                                    currentMode={'date'}
+                                    display={'spinner'}
+                                />
 
-                    />
+                                <FormField
+                                    title={"Location"}
+                                    value={values.location}
+                                    otherStyles={"mt-10"}
+                                    isEditable={isEdit}
+                                    handleChangeText={handleChange('location')}
+                                />
+
+                                <CustomButton
+                                    title={isEdit ? "Save" : "Edit"}
+                                    containerStyles={"w-full mt-10"}
+                                    handlePress={isEdit ? handleSubmit : () => setIsEdit(true)}
+                                />
+                            </View>
+                        )}
+                    </Formik>
                 </View>
             </ScrollView>
         </SafeAreaView>

@@ -5,7 +5,7 @@ import {DateTimePickerAndroid} from "@react-native-community/datetimepicker";
 
 interface CustomDateTimePickerProps {
     userInform: any;
-    onChangeDate: (event: any, selectedDate: any) => void;
+    //onChangeDate: (event: any, selectedDate: any) => void;
     title: string;
     otherStyles?: string;
     editable?: boolean;
@@ -13,21 +13,22 @@ interface CustomDateTimePickerProps {
     currentMode?: any;
     display?: any;
     isEdit?: boolean;
+    setFieldValue?: any;
 }
 
 const CustomDateTimePicker = (
     {
         userInform,
-        onChangeDate,
         title,
         otherStyles,
         editable,
         placeholder,
         currentMode,
         display,
-        isEdit
+        isEdit,
+        setFieldValue
     } : CustomDateTimePickerProps) => {
-    const showDatepicker = () => {
+    const showDatepickerAndroid = () => {
         //setShow(true);
         DateTimePickerAndroid.open({
             value: userInform.dateOfBirth,
@@ -40,8 +41,13 @@ const CustomDateTimePicker = (
 
     const showDatePicker = () => {
         if (isEdit)
-            showDatepicker();
+            showDatepickerAndroid();
     }
+
+    const onChangeDate = (event: any, selectedDate: any) => {
+        const currentDate = selectedDate || userInform.dateOfBirth;
+        setFieldValue("dateOfBirth", currentDate);
+    };
 
     return (
         <Pressable
@@ -57,6 +63,7 @@ const CustomDateTimePicker = (
                     <TextInput
                         className="flex-1 text-white font-semibold
                     text-base"
+                        //onChangeText=
                         value={userInform.dateOfBirth.toLocaleDateString('vi-VN', {
                             day: '2-digit',
                             month: '2-digit',
@@ -64,7 +71,7 @@ const CustomDateTimePicker = (
                         })}
                         placeholder={placeholder}
                         placeholderTextColor={'#7b7b8b'}
-                        editable={editable}
+                        editable={false}
                     />
                 </View>
             </View>
