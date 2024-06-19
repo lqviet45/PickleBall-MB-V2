@@ -1,4 +1,5 @@
 import {Stack} from "expo-router";
+import {StatusBar} from "expo-status-bar";
 
 
 const CourtLayout = () => {
@@ -10,6 +11,7 @@ const CourtLayout = () => {
                     options={{headerShown: false}}
                 />
             </Stack>
+            <StatusBar style="auto"/>
         </>
     );
 };

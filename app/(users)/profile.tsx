@@ -8,6 +8,7 @@ import {date, object, string} from "yup";
 import {Formik} from "formik";
 import {axiosInstance} from "@/lib/axios";
 import {useGlobalContext} from "@/context/GlobalProvider";
+import {UserProfileInform} from "@/model/user";
 
 let userSchema = object({
     name: string().required(),
@@ -17,17 +18,9 @@ let userSchema = object({
     phoneNumber: string().nullable()
 });
 
-interface UserInform {
-    fullName: string;
-    email: string;
-    dateOfBirth: Date;
-    location: string;
-    phoneNumber: string;
-}
-
 const Profile = () => {
 
-    const [userInform, setUserInform] = useState<UserInform>({
+    const [userInform, setUserInform] = useState<UserProfileInform>({
         fullName: '',
         email: '',
         dateOfBirth: new Date(),

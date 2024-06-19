@@ -7,15 +7,7 @@ import FormField from "@/components/FormField";
 import images from "@/constants/images";
 import {axiosInstance} from "@/lib/axios";
 import auth from "@react-native-firebase/auth";
-
-type User = {
-    email: string;
-    password: string;
-    fullName: string;
-    firstName?: string;
-    lastName?: string;
-    location?: string;
-}
+import {User} from "@/model/user";
 
 const SignUp = () => {
     const [form, setForm] = useState({
