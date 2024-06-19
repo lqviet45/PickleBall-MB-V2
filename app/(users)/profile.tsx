@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {View, Text, ScrollView} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import FormField from "@/components/FormField";
@@ -6,6 +6,8 @@ import CustomDateTimePicker from "@/components/CustomDateTimePicker";
 import CustomButton from "@/components/CustomButton";
 import {date, object, string} from "yup";
 import {Formik} from "formik";
+import {axiosInstance} from "@/lib/axios";
+import {useGlobalContext} from "@/context/GlobalProvider";
 
 let userSchema = object({
     name: string().required(),
@@ -15,27 +17,45 @@ let userSchema = object({
     phoneNumber: string().nullable()
 });
 
+interface UserInform {
+    fullName: string;
+    email: string;
+    dateOfBirth: Date;
+    location: string;
+    phoneNumber: string;
+}
+
 const Profile = () => {
 
-    const [userInform, setUserInform] = useState({
-        name: '',
+    const [userInform, setUserInform] = useState<UserInform>({
+        fullName: '',
         email: '',
         dateOfBirth: new Date(),
         location: '',
         phoneNumber: '',
     });
+    const {userLogin} = useGlobalContext();
 
     const [isEdit, setIsEdit] = useState(false);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
+        console.log(userLogin?.uid);
         //getUserInform();
-
+        getUserInform().catch(e => console.log(e));
     }, []);
 
-    // const onChangeDate = (event: any, selectedDate: any) => {
-    //     const currentDate = selectedDate || userInform.dateOfBirth;
-    //     setUserInform({...userInform, dateOfBirth: currentDate});
-    // };
+    const getUserInform = async () => {
+        const data = await axiosInstance.post(
+            'users/firebase-id',
+            {
+                firebaseId: userLogin?.uid
+            }
+        );
+        if (!data.data.value.dateOfBirth) {
+            data.data.value.dateOfBirth = new Date();
+        }
+        setUserInform(data.data.value);
+    }
 
 
     const submit = () => {
@@ -56,14 +76,15 @@ const Profile = () => {
                         initialValues={userInform}
                         onSubmit={submit}
                         validationSchema={userSchema}
+                        enableReinitialize={true}
                     >
                         {({ handleChange, handleBlur, handleSubmit, values,
                           setFieldValue }) => (
                             <View>
                                 <FormField
-                                    title="Name"
-                                    value={values.name}
-                                    handleChangeText={handleChange('name')}
+                                    title="Full Name"
+                                    value={values.fullName}
+                                    handleChangeText={handleChange('fullName')}
                                     otherStyles="mt-10"
                                     keyBoardType="default"
                                     isEditable={isEdit}

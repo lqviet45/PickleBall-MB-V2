@@ -6,6 +6,7 @@ import CustomButton from "@/components/CustomButton";
 import FormField from "@/components/FormField";
 import images from "@/constants/images";
 import {axiosInstance} from "@/lib/axios";
+import auth from "@react-native-firebase/auth";
 
 type User = {
     email: string;
@@ -41,18 +42,21 @@ const SignUp = () => {
             // });
             //Alert.alert('Success', 'Signed up successfully');
 
-            const user = await axiosInstance.post<User>('/users', {
+            const data = {
                 email: form.email,
                 password: form.password,
-                fullName: form.username,
-                fistName: form.username,
+                firstName: form.username,
                 lastName: form.username,
-                location: 'Vietnam'
-            });
+                location: 'Vietnam',
+                role: 4
+            }
+            console.log(data);
+            const user = await axiosInstance.post<User>('/register',
+                data);
 
             console.log(user);
             console.log(user.data);
-
+            await auth().signInWithEmailAndPassword(form.email, form.password);
             router.replace('/home');
         } catch (error: any) {
             console.log(error);
