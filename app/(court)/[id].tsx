@@ -8,6 +8,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 const CourtDetail = () => {
     let {id} = useLocalSearchParams<{ id: string }>();
     const [court, setCourt] = useState({
+        id: '',
         name: '',
         address: '',
         description: '',
@@ -21,6 +22,7 @@ const CourtDetail = () => {
     useEffect(() => {
         // fetch court
         setCourt({
+            id: id!,
             name: 'Court Name',
             address: '21 Đường Số 34, Phường 10, Quận 6, Thành phố Hồ Chí Minh',
             description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut in nunc euismod, ultricies sapien vitae, tincidunt turpis. Nullam nec nisl nec dui vehicula ultrices. Nullam nec nisl nec dui vehicula ultrices.',
@@ -34,9 +36,9 @@ const CourtDetail = () => {
     const bookCourt = () => {
         // book court
         router.push({
-            pathname: `(court)/[id]/order`,
+            pathname: `(court)/${id}/order`,
             params: {
-                id,
+                id: court.id,
                 name: court.name,
                 price: court.price
             }
