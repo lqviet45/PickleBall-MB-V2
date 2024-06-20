@@ -35,7 +35,7 @@ const Settings = () => {
             icon: 'notifications-outline' as keyof typeof Ionicons.glyphMap,
             size: 24,
             color: 'black',
-            HandlePress: () => router.push('notification')
+            HandlePress: () => router.push('(notification)/notification')
         },
         {
             title: 'Privacy',

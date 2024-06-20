@@ -4,7 +4,7 @@ import {router} from "expo-router";
 
 const Home = () => {
     return (
-        <View>
+        <View className='w-full h-full justify-center justify-items-center items-center'>
             <Text>Home</Text>
             <TouchableOpacity
                 onPress={() => {

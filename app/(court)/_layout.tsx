@@ -11,7 +11,7 @@ const CourtLayout = () => {
                     options={{headerShown: false}}
                 />
             </Stack>
-            <StatusBar style="auto"/>
+            <StatusBar backgroundColor={'#08222F'} style="light"/>
         </>
     );
 };
