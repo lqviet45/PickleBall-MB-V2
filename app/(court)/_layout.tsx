@@ -10,6 +10,10 @@ const CourtLayout = () => {
                     name="[id]"
                     options={{headerShown: false}}
                 />
+                <Stack.Screen
+                    name="[...order]"
+                    options={{headerShown: false}}
+                />
             </Stack>
             <StatusBar backgroundColor={'#08222F'} style="light"/>
         </>

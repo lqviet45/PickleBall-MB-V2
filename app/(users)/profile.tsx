@@ -102,15 +102,17 @@ const Profile = () => {
                                 />
 
                                 <CustomDateTimePicker
-                                    userInform={values}
+                                    date={values.dateOfBirth}
                                     setFieldValue={setFieldValue}
-                                    //onChangeDate={onChangeDate}
+                                    fieldValueName={"dateOfBirth"}
                                     title={"Date of Birth"}
                                     otherStyles={"mt-10"}
                                     isEdit={isEdit}
                                     placeholder={"dd/mm/yyyy"}
                                     currentMode={'date'}
                                     display={'spinner'}
+                                    inputStyles={'bg-black-100 border-2 border-black-100'}
+                                    textStyles={'text-white'}
                                 />
 
                                 <FormField

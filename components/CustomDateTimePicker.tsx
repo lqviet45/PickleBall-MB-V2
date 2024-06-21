@@ -4,7 +4,7 @@ import {DateTimePickerAndroid} from "@react-native-community/datetimepicker";
 
 
 interface CustomDateTimePickerProps {
-    userInform: any;
+    date: any;
     //onChangeDate: (event: any, selectedDate: any) => void;
     title: string;
     otherStyles?: string;
@@ -13,12 +13,15 @@ interface CustomDateTimePickerProps {
     currentMode?: any;
     display?: any;
     isEdit?: boolean;
-    setFieldValue?: any;
+    setFieldValue: any;
+    fieldValueName: string;
+    inputStyles?: string;
+    textStyles?: string;
 }
 
 const CustomDateTimePicker = (
     {
-        userInform,
+        date,
         title,
         otherStyles,
         editable,
@@ -26,12 +29,15 @@ const CustomDateTimePicker = (
         currentMode,
         display,
         isEdit,
-        setFieldValue
+        setFieldValue,
+        fieldValueName,
+        inputStyles,
+        textStyles
     } : CustomDateTimePickerProps) => {
     const showDatepickerAndroid = () => {
         //setShow(true);
         DateTimePickerAndroid.open({
-            value: userInform.dateOfBirth,
+            value: date,
             onChange: onChangeDate,
             mode: currentMode ?? 'date',
             display: display ?? 'default',
@@ -45,8 +51,8 @@ const CustomDateTimePicker = (
     }
 
     const onChangeDate = (event: any, selectedDate: any) => {
-        const currentDate = selectedDate || userInform.dateOfBirth;
-        setFieldValue("dateOfBirth", currentDate);
+        const currentDate = selectedDate || date;
+        setFieldValue(fieldValueName, currentDate);
     };
 
     return (
@@ -57,14 +63,12 @@ const CustomDateTimePicker = (
                 <Text className="text-base text-gray-100 font-pmedium">
                     {title}
                 </Text>
-                <View className="border-2 border-black-200
-            w-full h-16 px-4 bg-black-100
-            rounded-2xl focus:border-secondary items-center flex-row">
+                <View className={`w-full h-16 px-4
+            rounded-2xl focus:border-secondary items-center flex-row ${inputStyles}`}>
                     <TextInput
-                        className="flex-1 text-white font-semibold
-                    text-base"
-                        //onChangeText=
-                        value={userInform.dateOfBirth.toLocaleDateString('vi-VN', {
+                        className={`flex-1 ${textStyles ? 'text-white' : textStyles} font-semibold
+                    text-base`}
+                        value={date.toLocaleDateString('vi-VN', {
                             day: '2-digit',
                             month: '2-digit',
                             year: 'numeric'

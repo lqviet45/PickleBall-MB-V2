@@ -13,7 +13,7 @@ const CourtDetail = () => {
         address: '',
         description: '',
         openTime: '',
-        price: '',
+        price: 0,
         rating: 0,
         reviews: 0
     });
@@ -27,7 +27,7 @@ const CourtDetail = () => {
             address: '21 Đường Số 34, Phường 10, Quận 6, Thành phố Hồ Chí Minh',
             description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut in nunc euismod, ultricies sapien vitae, tincidunt turpis. Nullam nec nisl nec dui vehicula ultrices. Nullam nec nisl nec dui vehicula ultrices.',
             openTime: '6:00 AM - 10:00 PM',
-            price: '100.000 VND/hour',
+            price: 100000,
             rating: 4.5,
             reviews: 100
         });
