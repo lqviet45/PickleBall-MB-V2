@@ -3,34 +3,34 @@ import {router, useLocalSearchParams} from "expo-router";
 import {Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {useEffect, useState} from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {CourtGroup} from "@/model/courtGroup";
+import {axiosInstance} from "@/lib/axios";
 
 
 const CourtDetail = () => {
     let {id} = useLocalSearchParams<{ id: string }>();
-    const [court, setCourt] = useState({
+    const [court, setCourt] = useState<CourtGroup>({
         id: '',
+        userId: '',
+        wardId: '',
+        wallerId: '',
         name: '',
-        address: '',
-        description: '',
-        openTime: '',
         price: 0,
-        rating: 0,
-        reviews: 0
+        minSlot: 0,
+        maxSlot: 0,
+        createdOnUtc: new Date(),
+        modifiedOnUtc: new Date()
     });
+
     const [isBookedMarked, setIsBookedMarked] = useState(false);
 
     useEffect(() => {
+        console.log(id);
         // fetch court
-        setCourt({
-            id: id!,
-            name: 'Court Name',
-            address: '21 Đường Số 34, Phường 10, Quận 6, Thành phố Hồ Chí Minh',
-            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut in nunc euismod, ultricies sapien vitae, tincidunt turpis. Nullam nec nisl nec dui vehicula ultrices. Nullam nec nisl nec dui vehicula ultrices.',
-            openTime: '6:00 AM - 10:00 PM',
-            price: 100000,
-            rating: 4.5,
-            reviews: 100
-        });
+        axiosInstance.get(`/court-groups/${id}`).then(res => {
+            setCourt(res.data.value);
+        }).catch(e => console.log(e));
+
     }, []);
 
     const bookCourt = () => {
@@ -90,12 +90,12 @@ const CourtDetail = () => {
                                 color={'white'}
                             />
                             <Text className="text-xs ml-1 font-bold text-white">
-                                {court.address}
+                                {court.wardId}
                             </Text>
                         </View>
 
                         <Text className="text-lg font-bold text-white">
-                            Open Time: {court.openTime}
+                            Open Time: 6:00 AM - 10:00 PM
                         </Text>
 
                         <View className="w-[95%]">
@@ -103,7 +103,7 @@ const CourtDetail = () => {
                                 Description
                             </Text>
                             <Text className="text-white break-all text-justify tracking-wide">
-                                {court.description}
+                                {/*{court.description}*/}
                             </Text>
                         </View>
 
@@ -114,7 +114,7 @@ const CourtDetail = () => {
                                 color={'yellow'}
                             />
                             <Text className="text-xl text-yellow-100 pl-3">
-                                {court.rating} ({court.reviews} Reviews)
+                                {/*{court.rating} ({court.reviews} Reviews)*/}
                             </Text>
                         </View>
                     </View>

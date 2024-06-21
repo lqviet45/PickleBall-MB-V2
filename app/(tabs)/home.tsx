@@ -10,7 +10,7 @@ const Home = () => {
                 onPress={() => {
                     router.push({
                        pathname: `(court)/[id]`,
-                        params: {id: '123'}
+                        params: {id: '10d7c12e-95fe-485a-8756-39a559bb3a4a'}
                     });
                 }
             }>
