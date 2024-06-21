@@ -1,4 +1,4 @@
-import {View, Text, ScrollView, TouchableOpacity, Pressable, TextInput} from "react-native";
+import {View, Text, ScrollView, TouchableOpacity, Pressable, TextInput, Alert} from "react-native";
 import {router, useLocalSearchParams} from "expo-router";
 import {SafeAreaView} from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -228,7 +228,14 @@ const OrderPage = () => {
 
                                                 const startTime = new Date(`2022-01-01T${values.startTime}`);
 
-                                                const playTime = Math.ceil((currentTime.getTime() - startTime.getTime()) / 3600000);
+                                                const playTime= Math.ceil((currentTime.getTime() - startTime.getTime()) / 3600000);
+
+                                                if (playTime < 1) {
+                                                    currentTime.setHours(startTime.getHours() + 1);
+                                                    Alert.alert('Invalid Time', 'The minimum time is 1 hour');
+                                                    return;
+                                                }
+
                                                 console.log(playTime);
                                                 await setFieldValue('price', (playTime * order.price));
 
