@@ -1,13 +1,10 @@
 import {View, Text, Image} from 'react-native';
-import {router, Tabs} from 'expo-router';
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import React from 'react';
 import icons from '@/constants/icons';
 import Settings from "@/app/(tabs)/settings";
 import Home from "@/app/(tabs)/home";
 import Order from "@/app/(order)/order";
-import Wallet from "@/app/(users)/wallet";
-import Ionicons from "@expo/vector-icons/Ionicons";
 
 interface TabIconProps {
     icon: any;
