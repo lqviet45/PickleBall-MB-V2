@@ -28,7 +28,7 @@ const Settings = () => {
             icon: 'bag-outline' as keyof typeof Ionicons.glyphMap,
             size: 24,
             color: 'black',
-            HandlePress: () => router.push('order')
+            HandlePress: () => router.push('(order)/order')
         },
         {
             title: 'Notification',

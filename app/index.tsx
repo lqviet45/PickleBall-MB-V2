@@ -1,10 +1,19 @@
 import {SafeAreaView} from "react-native-safe-area-context";
-import {ScrollView, View, Image, Text} from "react-native";
+import {ScrollView, View, Image, Text, Platform} from "react-native";
 import images from "../constants/images";
 import {router} from "expo-router";
 import {StatusBar} from "expo-status-bar";
 import {useGlobalContext} from "@/context/GlobalProvider";
-import {useEffect} from "react";
+import {useEffect, useRef, useState} from "react";
+import * as Notifications from "expo-notifications";
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false
+    })
+});
 
 const App = () => {
 
@@ -12,18 +21,14 @@ const App = () => {
 
     //if (!isLoading && isLoggedIn) return <Redirect href={'/home'}/>;
     useEffect(() => {
-         setTimeout(() => {
+        setTimeout(() => {
             if (!isLoading && isLoggedIn) {
                 router.replace('/home');
             } else if (!isLoading && !isLoggedIn) {
                 router.replace('/sign-in');
             }
         }, 3000);
-        // if (!isLoading && isLoggedIn) {
-        //     router.replace('/home');
-        // } else if (!isLoading && !isLoggedIn) {
-        //     router.replace('/sign-in');
-        // }
+
     }, [isLoading]);
 
     return (
@@ -35,12 +40,6 @@ const App = () => {
                         className="w-[130px] h-[84px]"
                         resizeMode="contain"
                     />
-
-                    {/*<Image*/}
-                    {/*    source={images.card}*/}
-                    {/*    className="max-w-[380px] w-full h-[300px]"*/}
-                    {/*    resizeMode="contain"*/}
-                    {/*/>*/}
 
                     <View className="relative mt-5">
                         <Text className="text-3xl text-white font-bold text-center">
@@ -57,16 +56,6 @@ const App = () => {
                         />
                     </View>
 
-                    {/*<Text className="text-sm font-pregular text-gray-100 mt-7 text-center">*/}
-                    {/*    Where creativity meets innovation:*/}
-                    {/*    embark on a journey of limitless exploration with Aora.*/}
-                    {/*</Text>*/}
-
-                    {/*<CustomButton*/}
-                    {/*    title='Continue with Email'*/}
-                    {/*    handlePress={() => router.push('/sign-in')}*/}
-                    {/*    containerStyles={'w-full mt-7'}*/}
-                    {/*/>*/}
                 </View>
             </ScrollView>
             <StatusBar backgroundColor={'#08222F'} style="light"/>
