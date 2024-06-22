@@ -1,6 +1,6 @@
 import {useFonts} from "expo-font";
 import {useEffect, useRef, useState} from "react";
-import {SplashScreen, Stack} from "expo-router";
+import {router, SplashScreen, Stack} from "expo-router";
 import GlobalProvider, {useGlobalContext} from "@/context/GlobalProvider";
 import * as Notifications from "expo-notifications";
 import {registerForPushNotificationsAsync} from "@/lib/notification";
@@ -26,6 +26,12 @@ const RootLayout = () => {
         undefined
     );
 
+    function redirect(notification: Notifications.Notification) {
+        const url = notification.request.content.data?.url;
+        if (url) {
+            router.push(url);
+        }
+    }
 
     useEffect(() => {
 
@@ -34,7 +40,8 @@ const RootLayout = () => {
         });
 
         responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-            console.log(response);
+            console.log(response.notification);
+            redirect(response.notification);
         });
 
         if (error) throw error;

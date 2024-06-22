@@ -296,6 +296,7 @@ async function schedulePushNotification() {
         content: {
             title: "You've booking success 📬",
             body: 'Your booking is successful, please wait for confirmation from the owner!',
+            data: { data: 'goes here', url: '/(order)/order'},
         },
         trigger: {seconds: 2},
     });
