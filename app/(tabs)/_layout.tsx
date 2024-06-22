@@ -1,7 +1,13 @@
-import { View, Text, Image } from 'react-native';
-import { Tabs } from 'expo-router';
+import {View, Text, Image} from 'react-native';
+import {router, Tabs} from 'expo-router';
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 import React from 'react';
 import icons from '@/constants/icons';
+import Settings from "@/app/(tabs)/settings";
+import Home from "@/app/(tabs)/home";
+import Order from "@/app/(order)/order";
+import Wallet from "@/app/(users)/wallet";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 interface TabIconProps {
     icon: any;
@@ -10,7 +16,7 @@ interface TabIconProps {
     focused: boolean;
 }
 
-const TabIcon = ({ icon, color, name, focused } : TabIconProps) => {
+const TabIcon = ({icon, color, name, focused}: TabIconProps) => {
     return (
         <View className="items-center justify-center gap-1">
             <Image
@@ -28,92 +34,66 @@ const TabIcon = ({ icon, color, name, focused } : TabIconProps) => {
 }
 
 const TagsLayout = () => {
+    const Tabs = createBottomTabNavigator();
     return (
-        <>
-            <Tabs
-                screenOptions={{
-                    tabBarShowLabel: false,
-                    tabBarActiveTintColor: '#FFA001',
-                    tabBarInactiveTintColor: '#CDCDE0',
-                    tabBarStyle: {
-                        backgroundColor: '#161622',
-                        borderTopWidth: 1,
-                        borderTopColor: '#232533',
-                        height: 60,
-                    }
+        <Tabs.Navigator
+            screenOptions={{
+                tabBarShowLabel: false,
+                tabBarActiveTintColor: '#FFA001',
+                tabBarInactiveTintColor: '#CDCDE0',
+                tabBarStyle: {
+                    backgroundColor: '#232533',
+                    borderTopWidth: 1,
+                    borderTopColor: '#232533',
+                    height: 60,
+                }
+            }}
+        >
+            <Tabs.Screen
+                name='home'
+                component={Home}
+                options={{
+                    title: 'Home',
+                    headerShown: false,
+                    tabBarIcon: ({color, focused}) => (
+                        <TabIcon icon={icons.home}
+                                 color={color}
+                                 name="Home"
+                                 focused={focused}/>
+                    )
                 }}
-            >
-                <Tabs.Screen
-                    name='home'
-                    options={{
-                        title: 'Home',
-                        headerShown: false,
-                        tabBarIcon: ({ color, focused }) => (
-                            <TabIcon icon={icons.home}
-                                     color={color}
-                                     name="Home"
-                                     focused={focused} />
-                        )
-                    }}
-                />
+            />
 
-                {/*<Tabs.Screen*/}
-                {/*    name='bookmark'*/}
-                {/*    options={{*/}
-                {/*        title: 'Bookmark',*/}
-                {/*        headerShown: false,*/}
-                {/*        tabBarIcon: ({ color, focused }) => (*/}
-                {/*            <TabIcon icon={icons.bookmark}*/}
-                {/*                     color={color}*/}
-                {/*                     name="Bookmark"*/}
-                {/*                     focused={focused} />*/}
-                {/*        )*/}
-                {/*    }}*/}
-                {/*/>*/}
+            <Tabs.Screen
+                name='(order)/order'
+                component={Order}
+                options={{
+                    title: 'Booking',
+                    headerShown: false,
+                    tabBarIcon: ({color, focused}) => (
+                        <TabIcon icon={icons.order}
+                                 color={color}
+                                 name="Booking"
+                                 focused={focused}/>
+                    )
+                }}
+            />
 
-                {/*<Tabs.Screen*/}
-                {/*    name='create'*/}
-                {/*    options={{*/}
-                {/*        title: 'Create',*/}
-                {/*        headerShown: false,*/}
-                {/*        tabBarIcon: ({ color, focused }) => (*/}
-                {/*            <TabIcon icon={icons.plus}*/}
-                {/*                     color={color}*/}
-                {/*                     name="Create"*/}
-                {/*                     focused={focused} />*/}
-                {/*        )*/}
-                {/*    }}*/}
-                {/*/>*/}
-
-                {/*<Tabs.Screen*/}
-                {/*    name='profile'*/}
-                {/*    options={{*/}
-                {/*        title: 'Profile',*/}
-                {/*        headerShown: false,*/}
-                {/*        tabBarIcon: ({ color, focused }) => (*/}
-                {/*            <TabIcon icon={icons.bookmark}*/}
-                {/*                     color={color}*/}
-                {/*                     name="Profile"*/}
-                {/*                     focused={focused} />*/}
-                {/*        )*/}
-                {/*    }}*/}
-                {/*/>*/}
-
-                <Tabs.Screen
-                    name='settings'
-                    options={{
-                        title: 'settings',
-                        headerShown: false,
-                        tabBarIcon: ({ color, focused }) => (
-                            <TabIcon icon={icons.profile}
-                                     color={color}
-                                     name="Settings"
-                                     focused={focused} />
-                        )
-                    }}
-                />
-            </Tabs>
-        </>
+            <Tabs.Screen
+                name='settings'
+                component={Settings}
+                options={{
+                    title: 'settings',
+                    headerShown: false,
+                    tabBarIcon: ({color, focused}) => (
+                        <TabIcon icon={icons.profile}
+                                 color={color}
+                                 name="Settings"
+                                 focused={focused}/>
+                    )
+                }}
+            />
+        </Tabs.Navigator>
     )
 }
 

@@ -1,7 +1,7 @@
 import {SafeAreaView} from "react-native-safe-area-context";
 
 import {useEffect, useState} from "react";
-import {FlatList, View, Text, RefreshControl} from "react-native";
+import {FlatList, View, Text, RefreshControl, TouchableOpacity} from "react-native";
 import {BookingOrder} from "@/model/bookingOrder";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -21,7 +21,7 @@ const Order = () => {
 
     useEffect(() => {
         //getBookingOrder();
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 10; i++) {
             setBookingOrder((prev) => [
                 ...prev,
                 {
@@ -31,7 +31,7 @@ const Order = () => {
                     userId: i.toString(),
                     dateId: i.toString(),
                     numberOfPlayers: i,
-                    bookingStatus: i.toString(),
+                    bookingStatus: (i - 50) > 0 ? 'Approved' : 'Pending',
                     createOnUtc: i.toString(),
                     date: new Date(),
                     courtGroup: {
@@ -60,40 +60,54 @@ const Order = () => {
         <SafeAreaView>
             <FlatList
                 data={bookingOrder}
-                keyExtractor={(item) => item.id}
+                //keyExtractor={(item) => item.id}
                 initialNumToRender={10}
                 renderItem={(
                     ({item}) => (
-                        <View className="my-2">
-                            {/*<OrderItem item={item}/>*/}
-                            <View className="flex flex-row
-                            bg-blue-400 rounded-lg w-[95%] mx-auto
-                            items-center justify-between
-                            px-4 py-2">
-                                <View>
-                                    <Text className="font-pmedium text-lg text-black">
-                                        {item.courtGroup.name}
-                                    </Text>
-                                    <Text className="text-amber-300">
-                                        {item.date.toLocaleDateString('vi-VN', {
-                                            day: '2-digit',
-                                            month: '2-digit',
-                                            year: 'numeric'
-                                        })}
-                                    </Text>
-                                </View>
-                                <View className="flex flex-row items-center">
-                                    <Ionicons
-                                        name="checkmark-done-circle"
-                                        size={24}
-                                        color="green"
-                                    />
-                                    <Text className="text-green-500 font-pmedium text-lg">
-                                        {item.bookingStatus}
-                                    </Text>
+                        <TouchableOpacity
+                            onPress={() => {
+                                console.log(item.id)
+                            }}
+                        >
+                            <View className="my-2">
+                                {/*<OrderItem item={item}/>*/}
+                                <View className="flex flex-row
+                                bg-blue-400 rounded-lg w-[95%] mx-auto
+                                items-center justify-between
+                                px-4 py-2">
+                                    <View>
+                                        <Text className="font-pmedium text-lg text-black">
+                                            {item.courtGroup.name}
+                                        </Text>
+                                        <Text className="text-amber-300">
+                                            {item.date.toLocaleDateString('vi-VN', {
+                                                day: '2-digit',
+                                                month: '2-digit',
+                                                year: 'numeric'
+                                            })}
+                                        </Text>
+                                    </View>
+                                    <View className="flex flex-row items-center">
+                                        <Text className="text-black font-pmedium text-lg">
+                                            {item.bookingStatus}
+                                        </Text>
+                                        {
+                                            item.bookingStatus === 'Pending' ?
+                                                <Ionicons
+                                                    name="time-outline"
+                                                    size={24}
+                                                    color="red"
+                                                /> :
+                                                <Ionicons
+                                                    name="checkmark-done-circle"
+                                                    size={24}
+                                                    color="green"
+                                                />
+                                        }
+                                    </View>
                                 </View>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     )
                 )}
 

@@ -30,13 +30,13 @@ const Settings = () => {
             color: 'black',
             HandlePress: () => router.push('(order)/order')
         },
-        {
-            title: 'Notification',
-            icon: 'notifications-outline' as keyof typeof Ionicons.glyphMap,
-            size: 24,
-            color: 'black',
-            HandlePress: () => router.push('(notification)/notification')
-        },
+        // {
+        //     title: 'Notification',
+        //     icon: 'notifications-outline' as keyof typeof Ionicons.glyphMap,
+        //     size: 24,
+        //     color: 'black',
+        //     HandlePress: () => router.push('(notification)/notification')
+        // },
         {
             title: 'Privacy',
             icon: 'lock-closed-outline' as keyof typeof Ionicons.glyphMap,
@@ -54,13 +54,13 @@ const Settings = () => {
             color: 'black',
             HandlePress: () => router.push('(users)/wallet/')
         },
-        {
-            title: 'Help & Support',
-            icon: 'help-circle-outline' as keyof typeof Ionicons.glyphMap,
-            size: 24,
-            color: 'black',
-            HandlePress: () => router.push('help-support')
-        },
+        // {
+        //     title: 'Help & Support',
+        //     icon: 'help-circle-outline' as keyof typeof Ionicons.glyphMap,
+        //     size: 24,
+        //     color: 'black',
+        //     HandlePress: () => router.push('help-support')
+        // },
         {
             title: 'Terms & Policy',
             icon: 'information-circle-outline' as keyof typeof Ionicons.glyphMap,
