@@ -5,6 +5,7 @@ import icons from '@/constants/icons';
 import Settings from "@/app/(tabs)/settings";
 import Home from "@/app/(tabs)/home";
 import Order from "@/app/(order)/order";
+import Search from "@/app/(tabs)/search";
 
 interface TabIconProps {
     icon: any;
@@ -56,6 +57,20 @@ const TagsLayout = () => {
                         <TabIcon icon={icons.home}
                                  color={color}
                                  name="Home"
+                                 focused={focused}/>
+                    )
+                }}
+            />
+            <Tabs.Screen
+                name='search'
+                component={Search}
+                options={{
+                    title: 'Search',
+                    headerShown: false,
+                    tabBarIcon: ({color, focused}) => (
+                        <TabIcon icon={icons.search}
+                                 color={color}
+                                 name="Search"
                                  focused={focused}/>
                     )
                 }}
