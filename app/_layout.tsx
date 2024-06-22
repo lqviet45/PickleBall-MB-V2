@@ -3,7 +3,6 @@ import {useEffect, useRef, useState} from "react";
 import {router, SplashScreen, Stack} from "expo-router";
 import GlobalProvider, {useGlobalContext} from "@/context/GlobalProvider";
 import * as Notifications from "expo-notifications";
-import {registerForPushNotificationsAsync} from "@/lib/notification";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -64,6 +63,7 @@ const RootLayout = () => {
                 <Stack.Screen name="(tabs)"  options={{headerShown: false}}/>
                 <Stack.Screen name="(users)" options={{headerShown: false}}/>
                 <Stack.Screen name="(court)" options={{headerShown: false}}/>
+                <Stack.Screen name="(order)" options={{headerShown: false}}/>
             </Stack>
         </GlobalProvider>
     );

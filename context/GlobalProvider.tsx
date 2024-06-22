@@ -13,6 +13,7 @@ type GlobalContextType = {
     userId?: string | null;
     expoPushToken: string;
     setExpoPushToken: (value: string) => void;
+    userFullName: string;
 }
 
 type ContextProps = {
@@ -25,6 +26,7 @@ const defaultValues: GlobalContextType = {
     isLoading: true,
     userId: null,
     expoPushToken: '',
+    userFullName: '',
     setIsLoggedIn: () => {},
     setUser: () => {},
     setIsLoading: () => {},
@@ -39,6 +41,7 @@ const GlobalProvider = ({ children } : ContextProps) => {
     const [userLogin, setUser] = useState<FirebaseAuthTypes.User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [userId, setUserId] = useState<string | null>(null);
+    const [userFullName, setUserFullName] = useState<string>('');
     const [expoPushToken, setExpoPushToken] = useState('');
 
     useEffect(() => {
@@ -72,6 +75,7 @@ const GlobalProvider = ({ children } : ContextProps) => {
         if (!data.data.value.dateOfBirth) {
             data.data.value.dateOfBirth = new Date();
         }
+        setUserFullName(data.data.value.fullName);
         setUserId(data.data.value.id);
     }
 
@@ -83,6 +87,7 @@ const GlobalProvider = ({ children } : ContextProps) => {
                 isLoading,
                 userId,
                 expoPushToken,
+                userFullName,
                 setIsLoggedIn,
                 setUser,
                 setIsLoading,
