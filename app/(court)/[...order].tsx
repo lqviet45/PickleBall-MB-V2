@@ -294,7 +294,7 @@ const OrderPage = () => {
 async function schedulePushNotification() {
     await Notifications.scheduleNotificationAsync({
         content: {
-            title: "You've booking success 📬",
+            title: "You've booked success 📬",
             body: 'Your booking is successful, please wait for confirmation from the owner!',
             data: { data: 'goes here', url: '/(order)/order'},
         },

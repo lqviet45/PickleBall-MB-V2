@@ -28,54 +28,45 @@ const Home = () => {
                             <Text className={"text-white"}>420H</Text>
                         </View>
                     </View>
-                        <View className="p-2 rounded-2xl bg-[#e6f8b3] w-[48%]">
-                        <TouchableOpacity>
+                    <View className="p-2 rounded-2xl bg-[#e6f8b3] w-[48%]">
+                        <TouchableOpacity onPress={() => router.push('(users)/wallet/')}>
                             <Ionicons name="wallet-outline" size={28} color="black"/>
                             <View className="flex-row justify-between">
                                 <Text>Wallet</Text>
                                 <Text>200.000NVD</Text>
                             </View>
                         </TouchableOpacity>
-                        </View>
+                    </View>
                 </View>
                 {/*  Booked Court  */}
                 <View>
                     <Text className="text-xl font-pbold px-2 pt-3">Sân từng đặt</Text>
                     <View className="flex-row px-2">
-                        <View className="bg-[#F5F5F5] m-3 w-[45%] p-2 rounded-2xl">
-                            <TouchableOpacity>
+                        <View className="bg-[#F5F5F5] m-3 w-[45%] rounded-2xl">
+                            <TouchableOpacity
+                                onPress = {() => {
+                                    router.push({
+                                        pathname: `(court)/[id]`,
+                                        params: {id: '10d7c12e-95fe-485a-8756-39a559bb3a4a'}
+                                    });
+                                    }
+                                }
+                            >
                                 <Image
                                     source={{uri: 'https://via.placeholder.com/150'}}
                                     className="w-full h-48 rounded-2xl"
-                                    resizeMode={'cover'}
-                                />
-                                <View className={"absolute bottom-1"}>
-                                    <View>
-                                        <Ionicons name="close-circle-outline" size={24} color="red"/>
+                                    resizeMode={'cover'}>
+                                </Image>
+                                    <View className={"m-2 absolute bottom-1"}>
+                                        <View className={"rounded-3xl bg-white px-1.5 flex-row self-start"}>
+                                             <Text className={""}><Ionicons name="star" size={12} color="yellow"/> 4.5 </Text>
+                                        </View>
+                                        <Text>Sân A</Text>
+                                        <Text>Thời gian: 15:00 - 16:00</Text>
                                     </View>
-                                    <Text>Sân A</Text>
-                                    <Text>Thời gian: 15:00 - 16:00</Text>
-                                </View>
                             </TouchableOpacity>
                         </View>
-                        <View className="bg-[#F5F5F5] m-3 w-[45%] p-2 rounded-2xl">
-                            <Text>Sân B</Text>
-                            <Text>Thời gian: 16:00 - 17:00</Text>
-                        </View>
                     </View>
-                </View>
-                <View className='justify-center justify-items-center items-center'>
-                    <Text>Home</Text>
-                    <TouchableOpacity
-                        onPress={() => {
-                            router.push({
-                                pathname: `(court)/[id]`,
-                                params: {id: '10d7c12e-95fe-485a-8756-39a559bb3a4a'}
-                            });
-                        }
-                        }>
-                        <Text>Press me</Text>
-                    </TouchableOpacity>
                 </View>
             </ScrollView>
         </SafeAreaView>

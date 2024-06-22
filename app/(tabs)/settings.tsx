@@ -52,7 +52,7 @@ const Settings = () => {
             icon: 'wallet-outline' as keyof typeof Ionicons.glyphMap,
             size: 24,
             color: 'black',
-            HandlePress: () => router.push('wallet')
+            HandlePress: () => router.push('(users)/wallet/')
         },
         {
             title: 'Help & Support',
