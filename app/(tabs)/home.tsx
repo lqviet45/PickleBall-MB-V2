@@ -4,10 +4,11 @@ import {router} from "expo-router";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import CourtCardVertical from "@/components/CourtCardVertical";
 
 const Home = () => {
     let name = 'John Doe';
-    const {userLogin, isLoading, setIsLoading} = useGlobalContext();
+    //const {userLogin, isLoading, setIsLoading} = useGlobalContext();
 
 
     return (
@@ -66,6 +67,13 @@ const Home = () => {
                                     </View>
                             </TouchableOpacity>
                         </View>
+                        <CourtCardVertical
+                            courtId={'10d7c12e-95fe-485a-8756-39a559bb3a4a'}
+                            courtImage={'https://via.placeholder.com/150'}
+                            rating={4.5}
+                            courtName={'Sân B'}
+                            time={'08:00 - 16:00'}
+                        />
                     </View>
                 </View>
             </ScrollView>
