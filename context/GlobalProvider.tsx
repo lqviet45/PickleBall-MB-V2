@@ -52,24 +52,24 @@ const GlobalProvider = ({ children } : ContextProps) => {
                     setUser(user);
                     setIsLoggedIn(true);
                     setIsLoading(false);
+                    getUserInform(user?.uid)
+                    .catch(e => console.log(e));
                 } else {
                     setIsLoggedIn(false);
                     setUser(null);
                     setIsLoading(false);
                 }
             });
-
-            getUserInform().catch(e => console.log(e));
         } catch (error) {
             console.log(error);
         }
     }, []);
 
-    const getUserInform = async () => {
+    const getUserInform = async (userId: string) => {
         const data = await axiosInstance.post(
             'users/firebase-id',
             {
-                firebaseId: userLogin?.uid
+                firebaseId: userId
             }
         );
         if (!data.data.value.dateOfBirth) {

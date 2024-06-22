@@ -64,7 +64,7 @@ const Home = () => {
                         </View>
                     </View>
                 </View>
-                <View className='w-full h-full justify-center justify-items-center items-center'>
+                <View className='justify-center justify-items-center items-center'>
                     <Text>Home</Text>
                     <TouchableOpacity
                         onPress={() => {

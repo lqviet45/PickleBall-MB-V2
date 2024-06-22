@@ -1,7 +1,7 @@
 import {SafeAreaView} from "react-native-safe-area-context";
 
 import {useEffect, useState} from "react";
-import {FlatList, View, Text} from "react-native";
+import {FlatList, View, Text, RefreshControl} from "react-native";
 import {BookingOrder} from "@/model/bookingOrder";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -10,6 +10,14 @@ const Order = () => {
 
     const [bookingOrder, setBookingOrder] = useState<BookingOrder[]>([]);
     const {userFullName} = useGlobalContext();
+
+    const [refreshing, setRefreshing] = useState(false);
+    const onRefresh = () => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 2000);
+    }
 
     useEffect(() => {
         //getBookingOrder();
@@ -53,6 +61,7 @@ const Order = () => {
             <FlatList
                 data={bookingOrder}
                 keyExtractor={(item) => item.id}
+                initialNumToRender={10}
                 renderItem={(
                     ({item}) => (
                         <View className="my-2">
@@ -115,6 +124,13 @@ const Order = () => {
                         </Text>
                     </View>
                 )}
+
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }
             />
         </SafeAreaView>
     );
