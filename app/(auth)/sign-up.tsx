@@ -5,8 +5,9 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import CustomButton from "@/components/CustomButton";
 import FormField from "@/components/FormField";
 import images from "@/constants/images";
-import {useGlobalContext} from "@/context/GlobalProvider";
+import {axiosInstance} from "@/lib/axios";
 import auth from "@react-native-firebase/auth";
+import {User} from "@/model/user";
 
 const SignUp = () => {
     const [form, setForm] = useState({
@@ -25,16 +26,32 @@ const SignUp = () => {
 
         setIsSubmitting(true);
         try {
-            const userCredential = await auth().createUserWithEmailAndPassword(form.email, form.password);
-
-            await userCredential.user.updateProfile({
-               displayName: form.username
-            });
-
+            // should call backend api to create user
+            // const userCredential = await auth().createUserWithEmailAndPassword(form.email, form.password);
+            //
+            // await userCredential.user.updateProfile({
+            //    displayName: form.username
+            // });
             //Alert.alert('Success', 'Signed up successfully');
 
+            const data = {
+                email: form.email,
+                password: form.password,
+                firstName: form.username,
+                lastName: form.username,
+                location: 'Vietnam',
+                role: 4
+            }
+            console.log(data);
+            const user = await axiosInstance.post<User>('/register',
+                data);
+
+            console.log(user);
+            console.log(user.data);
+            await auth().signInWithEmailAndPassword(form.email, form.password);
             router.replace('/home');
         } catch (error: any) {
+            console.log(error);
             Alert.alert('Error', error.message);
         } finally {
             setIsSubmitting(false);
@@ -42,17 +59,22 @@ const SignUp = () => {
     }
 
     return (
-        <SafeAreaView className="bg-primary h-full">
+        <SafeAreaView className="bg-Base h-full">
             <ScrollView>
                 <View className="w-full justify-center min-h-[85vh] px-4 my-6">
-                    <Image
-                        source={images.logo}
-                        resizeMode='contain'
-                        className="w-[115px] h-[35px]"
-                    />
+                    <View className="h-fit w-full items-start justify-start flex-row">
+                        <Image
+                            source={images.logoPickle}
+                            resizeMode='contain'
+                            className="w-[60px] h-[35px] self-center"
+                        />
+                        <Text className="text-yellow-100 text-3xl font-bold text-center">
+                            PICKLECOURT
+                        </Text>
+                    </View>
                     <Text className="text-2xl text-white
           text-semibold mt-10 font-psemibold">
-                        Sign up to Aura
+                        Sign up
                     </Text>
 
                     <FormField
@@ -76,6 +98,7 @@ const SignUp = () => {
                         handleChangeText={(e) => setForm({ ...form, password: e })}
                         otherStyles='mt-7'
                         keyBoardType='password'
+                        isPassword={true}
                     />
 
                     <CustomButton

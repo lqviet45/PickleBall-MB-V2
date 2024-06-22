@@ -1,14 +1,19 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 import auth, {FirebaseAuthTypes} from "@react-native-firebase/auth";
+import {axiosInstance} from "@/lib/axios";
 
 
 type GlobalContextType = {
     isLoggedIn: boolean;
-    user: FirebaseAuthTypes.User | null | undefined;
+    userLogin: FirebaseAuthTypes.User | null | undefined;
     isLoading: boolean;
     setIsLoggedIn: (value: boolean) => void;
     setUser: (value: FirebaseAuthTypes.User | null) => void;
     setIsLoading: (value: boolean) => void;
+    userId?: string | null;
+    expoPushToken: string;
+    setExpoPushToken: (value: string) => void;
+    userFullName: string;
 }
 
 type ContextProps = {
@@ -17,11 +22,15 @@ type ContextProps = {
 
 const defaultValues: GlobalContextType = {
     isLoggedIn: false,
-    user: null,
+    userLogin: null,
     isLoading: true,
+    userId: null,
+    expoPushToken: '',
+    userFullName: '',
     setIsLoggedIn: () => {},
     setUser: () => {},
-    setIsLoading: () => {}
+    setIsLoading: () => {},
+    setExpoPushToken: () => {}
 };
 
 const GlobalContext = createContext<GlobalContextType>(defaultValues);
@@ -29,8 +38,11 @@ export const useGlobalContext = () => useContext(GlobalContext);
 
 const GlobalProvider = ({ children } : ContextProps) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+    const [userLogin, setUser] = useState<FirebaseAuthTypes.User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [userId, setUserId] = useState<string | null>(null);
+    const [userFullName, setUserFullName] = useState<string>('');
+    const [expoPushToken, setExpoPushToken] = useState('');
 
     useEffect(() => {
         try {
@@ -39,30 +51,47 @@ const GlobalProvider = ({ children } : ContextProps) => {
                 if (user) {
                     setUser(user);
                     setIsLoggedIn(true);
-                    console.log(user)
-                    // user.getIdToken().then(token => {
-                    //     console.log("token")
-                    //     console.log(token)
-                    // })
+                    setIsLoading(false);
+                    getUserInform(user?.uid)
+                    .catch(e => console.log(e));
                 } else {
                     setIsLoggedIn(false);
                     setUser(null);
+                    setIsLoading(false);
                 }
             });
-        } finally {
-            setIsLoading(false);
+        } catch (error) {
+            console.log(error);
         }
     }, []);
+
+    const getUserInform = async (userId: string) => {
+        const data = await axiosInstance.post(
+            'users/firebase-id',
+            {
+                firebaseId: userId
+            }
+        );
+        if (!data.data.value.dateOfBirth) {
+            data.data.value.dateOfBirth = new Date();
+        }
+        setUserFullName(data.data.value.fullName);
+        setUserId(data.data.value.id);
+    }
 
     return (
         <GlobalContext.Provider
             value={{
                 isLoggedIn,
-                user,
+                userLogin,
                 isLoading,
+                userId,
+                expoPushToken,
+                userFullName,
                 setIsLoggedIn,
                 setUser,
-                setIsLoading
+                setIsLoading,
+                setExpoPushToken
             }}
         >
             {children}
