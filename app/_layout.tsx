@@ -1,7 +1,9 @@
 import {useFonts} from "expo-font";
-import {useEffect} from "react";
+import {useEffect, useRef, useState} from "react";
 import {SplashScreen, Stack} from "expo-router";
-import GlobalProvider from "@/context/GlobalProvider";
+import GlobalProvider, {useGlobalContext} from "@/context/GlobalProvider";
+import * as Notifications from "expo-notifications";
+import {registerForPushNotificationsAsync} from "@/lib/notification";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -18,14 +20,35 @@ const RootLayout = () => {
         "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
     });
 
+    const notificationListener = useRef<Notifications.Subscription>();
+    const responseListener = useRef<Notifications.Subscription>();
+    const [notification, setNotification] = useState<Notifications.Notification | undefined>(
+        undefined
+    );
+
+
     useEffect(() => {
+
+        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+            setNotification(notification);
+        });
+
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+            console.log(response);
+        });
+
         if (error) throw error;
         if (fontsLoaded) SplashScreen.hideAsync();
 
+        return () => {
+            notificationListener.current &&
+            Notifications.removeNotificationSubscription(notificationListener.current);
+            responseListener.current &&
+            Notifications.removeNotificationSubscription(responseListener.current);
+        };
     }, [fontsLoaded, error]);
 
     if (!fontsLoaded && !error) return null;
-
     return (
         <GlobalProvider>
             <Stack>

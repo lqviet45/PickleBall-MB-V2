@@ -6,6 +6,7 @@ import {StatusBar} from "expo-status-bar";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import {useEffect, useRef, useState} from "react";
 import * as Notifications from "expo-notifications";
+import {registerForPushNotificationsAsync} from "@/lib/notification";
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -17,10 +18,13 @@ Notifications.setNotificationHandler({
 
 const App = () => {
 
-    const {isLoggedIn, isLoading} = useGlobalContext();
-
+    const {isLoggedIn, isLoading, setExpoPushToken} = useGlobalContext();
     //if (!isLoading && isLoggedIn) return <Redirect href={'/home'}/>;
     useEffect(() => {
+        registerForPushNotificationsAsync()
+            .then(token => setExpoPushToken(token ?? ''))
+            .catch((error: any) => setExpoPushToken(`${error}`));
+
         setTimeout(() => {
             if (!isLoading && isLoggedIn) {
                 router.replace('/home');

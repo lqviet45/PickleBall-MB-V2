@@ -65,7 +65,10 @@ export async function registerForPushNotificationsAsync() {
                     projectId,
                 })
             ).data;
+
+            const devicePushToken = (await Notifications.getDevicePushTokenAsync()).data;
             console.log(pushTokenString);
+            console.log(devicePushToken);
             return pushTokenString;
         } catch (e: unknown) {
             handleRegistrationError(`${e}`);

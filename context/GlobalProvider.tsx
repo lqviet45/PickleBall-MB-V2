@@ -11,6 +11,8 @@ type GlobalContextType = {
     setUser: (value: FirebaseAuthTypes.User | null) => void;
     setIsLoading: (value: boolean) => void;
     userId?: string | null;
+    expoPushToken: string;
+    setExpoPushToken: (value: string) => void;
 }
 
 type ContextProps = {
@@ -22,9 +24,11 @@ const defaultValues: GlobalContextType = {
     userLogin: null,
     isLoading: true,
     userId: null,
+    expoPushToken: '',
     setIsLoggedIn: () => {},
     setUser: () => {},
-    setIsLoading: () => {}
+    setIsLoading: () => {},
+    setExpoPushToken: () => {}
 };
 
 const GlobalContext = createContext<GlobalContextType>(defaultValues);
@@ -35,6 +39,7 @@ const GlobalProvider = ({ children } : ContextProps) => {
     const [userLogin, setUser] = useState<FirebaseAuthTypes.User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [userId, setUserId] = useState<string | null>(null);
+    const [expoPushToken, setExpoPushToken] = useState('');
 
     useEffect(() => {
         try {
@@ -77,9 +82,11 @@ const GlobalProvider = ({ children } : ContextProps) => {
                 userLogin,
                 isLoading,
                 userId,
+                expoPushToken,
                 setIsLoggedIn,
                 setUser,
-                setIsLoading
+                setIsLoading,
+                setExpoPushToken
             }}
         >
             {children}

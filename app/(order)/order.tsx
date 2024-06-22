@@ -43,7 +43,7 @@ const Order = () => {
             <Button
                 title="Press to Send Notification"
                 onPress={async () => {
-                    await sendPushNotification(expoPushToken);
+                    //await sendPushNotification(expoPushToken);
                 }}
             />
         </View>
