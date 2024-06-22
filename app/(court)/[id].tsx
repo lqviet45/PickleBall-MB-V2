@@ -19,17 +19,35 @@ const CourtDetail = () => {
         minSlot: 0,
         maxSlot: 0,
         createdOnUtc: new Date(),
-        modifiedOnUtc: new Date()
+        modifiedOnUtc: new Date(),
+        wardName: '',
     });
 
     const [isBookedMarked, setIsBookedMarked] = useState(false);
 
     useEffect(() => {
-        console.log(id);
+
         // fetch court
-        axiosInstance.get(`/court-groups/${id}`).then(res => {
-            setCourt(res.data.value);
-        }).catch(e => console.log(e));
+        axiosInstance.get(`/court-groups/${id}`)
+            .then(res => {
+                axiosInstance.get(`/wards/${res.data.value.wardId}`)
+                    .then(data2 => {
+                        console.log(data2.data);
+                        setCourt({
+                            id: res.data.value.id,
+                            userId: res.data.value.userId,
+                            wardId: res.data.value.wardId,
+                            wallerId: res.data.value.wallerId,
+                            name: res.data.value.name,
+                            price: res.data.value.price,
+                            minSlot: res.data.value.minSlot,
+                            maxSlot: res.data.value.maxSlot,
+                            createdOnUtc: res.data.value.createdOnUtc,
+                            modifiedOnUtc: res.data.value.modifiedOnUtc,
+                            wardName: data2.data.value.name,
+                        });
+                    }).catch(e => console.log(e));
+            }).catch(e => console.log(e));
 
     }, []);
 
@@ -89,8 +107,8 @@ const CourtDetail = () => {
                                 size={20}
                                 color={'white'}
                             />
-                            <Text className="text-xs ml-1 font-bold text-white">
-                                {court.wardId}
+                            <Text className="text-sm ml-1 font-bold text-white">
+                                {court.wardName}
                             </Text>
                         </View>
 
@@ -98,14 +116,14 @@ const CourtDetail = () => {
                             Open Time: 6:00 AM - 10:00 PM
                         </Text>
 
-                        <View className="w-[95%]">
-                            <Text className="text-lg font-bold text-white mt-2">
-                                Description
-                            </Text>
-                            <Text className="text-white break-all text-justify tracking-wide">
-                                {/*{court.description}*/}
-                            </Text>
-                        </View>
+                        {/*<View className="w-[95%]">*/}
+                        {/*    <Text className="text-lg font-bold text-white mt-2">*/}
+                        {/*        Description*/}
+                        {/*    </Text>*/}
+                        {/*    <Text className="text-white break-all text-justify tracking-wide">*/}
+                        {/*        /!*{court.description}*!/*/}
+                        {/*    </Text>*/}
+                        {/*</View>*/}
 
                         <View className="flex-row mt-10 items-center">
                             <Ionicons
@@ -114,7 +132,7 @@ const CourtDetail = () => {
                                 color={'yellow'}
                             />
                             <Text className="text-xl text-yellow-100 pl-3">
-                                {/*{court.rating} ({court.reviews} Reviews)*/}
+                                4.5 (200 Reviews)
                             </Text>
                         </View>
                     </View>

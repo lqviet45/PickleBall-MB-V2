@@ -9,4 +9,5 @@ export interface CourtGroup {
     maxSlot: number;
     createdOnUtc: Date;
     modifiedOnUtc: Date;
+    wardName: string;
 }
