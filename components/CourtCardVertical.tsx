@@ -15,7 +15,7 @@ interface CourtCardVerticalProps {
 const CourtCardVertical = ({ courtId, courtImage, imageCustomStyle, rating, courtName, time }: CourtCardVerticalProps) => {
 
     return (
-        <View className="bg-[#F5F5F5] m-3 w-[45%] rounded-2xl">
+        <View className="bg-[#F5F5F5] m-3 w-[44%] rounded-2xl">
             <TouchableOpacity
                 onPress = {() => {
                     router.push({

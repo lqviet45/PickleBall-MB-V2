@@ -42,31 +42,7 @@ const Home = () => {
                 {/*  Booked Court  */}
                 <View>
                     <Text className="text-xl font-pbold px-2 pt-3">Sân từng đặt</Text>
-                    <View className="flex-row px-2">
-                        <View className="bg-[#F5F5F5] m-3 w-[45%] rounded-2xl">
-                            <TouchableOpacity
-                                onPress = {() => {
-                                    router.push({
-                                        pathname: `(court)/[id]`,
-                                        params: {id: '10d7c12e-95fe-485a-8756-39a559bb3a4a'}
-                                    });
-                                    }
-                                }
-                            >
-                                <Image
-                                    source={{uri: 'https://via.placeholder.com/150'}}
-                                    className="w-full h-48 rounded-2xl"
-                                    resizeMode={'cover'}>
-                                </Image>
-                                    <View className={"m-2 absolute bottom-1"}>
-                                        <View className={"rounded-3xl bg-white px-1.5 flex-row self-start"}>
-                                             <Text className={""}><Ionicons name="star" size={12} color="yellow"/> 4.5 </Text>
-                                        </View>
-                                        <Text>Sân A</Text>
-                                        <Text>Thời gian: 15:00 - 16:00</Text>
-                                    </View>
-                            </TouchableOpacity>
-                        </View>
+                    <View className="flex-row flex-wrap">
                         <CourtCardVertical
                             courtId={'10d7c12e-95fe-485a-8756-39a559bb3a4a'}
                             courtImage={'https://via.placeholder.com/150'}
@@ -74,6 +50,21 @@ const Home = () => {
                             courtName={'Sân B'}
                             time={'08:00 - 16:00'}
                         />
+                        <CourtCardVertical
+                            courtId={'10d7c12e-95fe-485a-8756-39a559bb3a4a'}
+                            courtImage={'https://via.placeholder.com/150'}
+                            rating={4.5}
+                            courtName={'Sân B'}
+                            time={'08:00 - 16:00'}
+                        />
+                        <CourtCardVertical
+                            courtId={'10d7c12e-95fe-485a-8756-39a559bb3a4a'}
+                            courtImage={'https://via.placeholder.com/150'}
+                            rating={4.5}
+                            courtName={'Sân B'}
+                            time={'08:00 - 16:00'}
+                        />
+
                     </View>
                 </View>
             </ScrollView>
