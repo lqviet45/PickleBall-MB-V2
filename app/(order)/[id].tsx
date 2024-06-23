@@ -26,6 +26,7 @@ const BookingDetail = () => {
             price: 0,
             minSlot: 0,
             maxSlot: 0,
+            wardName: '',
             createdOnUtc: new Date(),
             modifiedOnUtc: new Date()
         }
