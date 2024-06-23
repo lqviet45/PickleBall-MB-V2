@@ -5,6 +5,7 @@ import {FlatList, View, Text, RefreshControl, TouchableOpacity} from "react-nati
 import {BookingOrder} from "@/model/bookingOrder";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {axiosInstance} from "@/lib/axios";
 
 const Order = () => {
 
@@ -21,39 +22,10 @@ const Order = () => {
 
     useEffect(() => {
         //getBookingOrder();
-        for (let i = 0; i < 10; i++) {
-            setBookingOrder((prev) => [
-                ...prev,
-                {
-                    id: i.toString(),
-                    courtYardId: i.toString(),
-                    courtGroupId: i.toString(),
-                    userId: i.toString(),
-                    dateId: i.toString(),
-                    numberOfPlayers: i,
-                    bookingStatus: (i - 50) > 0 ? 'Approved' : 'Pending',
-                    createOnUtc: i.toString(),
-                    date: new Date(),
-                    courtGroup: {
-                        id: i.toString(),
-                        name: `Court ${i}`,
-                        description: `Court ${i}`,
-                        courtYardId: i.toString(),
-                        courtYard: {
-                            id: i.toString(),
-                            name: `Yard ${i}`,
-                            description: `Yard ${i}`,
-                            address: `Address ${i}`,
-                            phoneNumber: '123456789',
-                            createOnUtc: i.toString(),
-                            updateOnUtc: i.toString(),
-                        },
-                        createOnUtc: i.toString(),
-                        updateOnUtc: i.toString(),
-                    }
-                }
-            ])
-        }
+        axiosInstance.get(`/bookings/2024-06-23`)
+            .then(res => {
+                setBookingOrder(res.data.value);
+            }).catch(e => console.log(e));
     }, []);
 
     return (
