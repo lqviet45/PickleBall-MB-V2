@@ -31,7 +31,7 @@ const Profile = () => {
 
     const [isEdit, setIsEdit] = useState(false);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         console.log(userLogin?.uid);
         //getUserInform();
         getUserInform().catch(e => console.log(e));

@@ -68,7 +68,9 @@ const OrderPage = () => {
     }
 
     const submitOrder = async (values: any) => {
+        console.log('submit order');
         try {
+            console.log(values);
             const data = {
                 courtGroupId: values.id,
                 userId: userId,
@@ -76,13 +78,14 @@ const OrderPage = () => {
                 dateWorking: values.startTime + ' - ' + values.endTime,
             }
 
-            const res = await axiosInstance
-                .post('/booking', data);
+            // const res = await axiosInstance
+            //     .post('/booking', data);
 
+            console.log("run here");
             await schedulePushNotification();
 
             router.push({
-                pathname: '(order)/[id]',
+                pathname: '/(order)/order/',
                 params: {
                     id: values.id
                 }
@@ -134,8 +137,8 @@ const OrderPage = () => {
                         <Formik
                             initialValues={order}
                             onSubmit={submitOrder}
-                            validationSchema={orderSchema}
-                            validateOnBlur={true}
+                            //validationSchema={orderSchema}
+                            //validateOnBlur={true}
                         >
                             {({handleChange, handleSubmit, values
                             , setFieldValue, errors, touched}) => (
