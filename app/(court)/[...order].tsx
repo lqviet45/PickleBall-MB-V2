@@ -8,7 +8,7 @@ import {DateTimePickerAndroid} from "@react-native-community/datetimepicker";
 import {date, number, object, string} from "yup";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import * as Notifications from "expo-notifications";
-import {registerForPushNotificationsAsync} from "@/lib/notification";
+import {axiosInstance} from "@/lib/axios";
 
 let orderSchema = object({
     id: string().required(),
@@ -16,7 +16,8 @@ let orderSchema = object({
     price: number().required(),
     number: number().required(),
     date: date().required(),
-    time: string().required()
+    startTime: string().required(),
+    endTime: string().required()
 });
 
 const OrderPage = () => {
@@ -67,24 +68,33 @@ const OrderPage = () => {
     }
 
     const submitOrder = async (values: any) => {
-        //console.log(values);
-        const data = {
-            courtGroupId: values.id,
-            userId: userId,
-            numberOfPlayers: values.number,
-            dateWorking: values.startTime + ' - ' + values.endTime,
-        }
+        console.log('submit order');
+        try {
+            console.log(values);
+            const data = {
+                courtGroupId: values.id,
+                userId: userId,
+                numberOfPlayers: values.number,
+                dateWorking: values.startTime + ' - ' + values.endTime,
+            }
 
-        console.log(data);
-        console.log(expoPushToken);
-        await schedulePushNotification();
-        // await axiosInstance.post('order', values)
-        //     .then((res) => {
-        //         console.log(res);
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //     });
+            // const res = await axiosInstance
+            //     .post('/booking', data);
+
+            console.log("run here");
+            await schedulePushNotification();
+
+            router.push({
+                pathname: '/(order)/order/',
+                params: {
+                    id: values.id
+                }
+            });
+
+        } catch (e) {
+            console.log(e);
+            Alert.alert('Error', 'An error occurred while booking');
+        }
     }
 
     return (
@@ -127,9 +137,11 @@ const OrderPage = () => {
                         <Formik
                             initialValues={order}
                             onSubmit={submitOrder}
+                            //validationSchema={orderSchema}
+                            //validateOnBlur={true}
                         >
                             {({handleChange, handleSubmit, values
-                            , setFieldValue}) => (
+                            , setFieldValue, errors, touched}) => (
                                 <>
                                     <View className="justify-start w-full mb-4">
                                         <TouchableOpacity
@@ -166,7 +178,6 @@ const OrderPage = () => {
                                             onChangeText={handleChange('number')}
                                             value={values.number.toString()}
                                         />
-
                                     </View>
 
                                     {/*<View className="justify-start w-full mb-4">*/}

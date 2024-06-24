@@ -5,6 +5,8 @@ import {FlatList, View, Text, RefreshControl, TouchableOpacity} from "react-nati
 import {BookingOrder} from "@/model/bookingOrder";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {axiosInstance} from "@/lib/axios";
+import {router} from "expo-router";
 
 const Order = () => {
 
@@ -21,6 +23,10 @@ const Order = () => {
 
     useEffect(() => {
         //getBookingOrder();
+        // axiosInstance.get(`/bookings/2024-06-23`)
+        //     .then(res => {
+        //         setBookingOrder(res.data.value);
+        //     }).catch(e => console.log(e));
         for (let i = 0; i < 10; i++) {
             setBookingOrder((prev) => [
                 ...prev,
@@ -31,7 +37,7 @@ const Order = () => {
                     userId: i.toString(),
                     dateId: i.toString(),
                     numberOfPlayers: i,
-                    bookingStatus: (i - 50) > 0 ? 'Approved' : 'Pending',
+                    bookingStatus: (i % 2) === 0 ? 'Pending' : 'Confirmed',
                     createOnUtc: i.toString(),
                     date: new Date(),
                     courtGroup: {
@@ -66,7 +72,11 @@ const Order = () => {
                     ({item}) => (
                         <TouchableOpacity
                             onPress={() => {
-                                console.log(item.id)
+                                console.log(item.id);
+                                router.push({
+                                    pathname: `(order)/[id]`,
+                                    params: {id: item.id}
+                                });
                             }}
                         >
                             <View className="my-2">
