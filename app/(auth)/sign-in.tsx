@@ -7,8 +7,13 @@ import CustomButton from "@/components/CustomButton";
 import {Link, router} from "expo-router";
 //import {useGlobalContext} from "@/context/GlobalProvider";
 import auth from "@react-native-firebase/auth";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import {GoogleSignin} from "@react-native-google-signin/google-signin";
+import {
+    GoogleSignin,
+    GoogleSigninButton,
+    isErrorWithCode,
+    statusCodes
+} from "@react-native-google-signin/google-signin";
+import {CheckUserRole} from "@/lib/authServices";
 
 const SignIn = () => {
     const [form, setForm] = useState({
@@ -28,14 +33,14 @@ const SignIn = () => {
         setIsSubmitting(true);
         try {
             const userCredential = await auth().signInWithEmailAndPassword(form.email, form.password);
-            //await signIn(form.email, form.password);
-            //const result = await getCurrentUser();
 
-            //setUser(userCredential.user);
-            //setIsLoggedIn(true);
-            Alert.alert('Success', 'Logged in successfully');
+            const isCustomer = await CheckUserRole();
+            console.log(isCustomer);
+            if (isCustomer) {
+                Alert.alert('Success', 'Logged in successfully');
 
-            router.replace('/home');
+                router.replace('/home');
+            }
         } catch (error: any) {
             Alert.alert('Error', error.message);
         } finally {
@@ -44,18 +49,43 @@ const SignIn = () => {
     }
 
     const SignInWithGoogle = async () => {
+        setIsSubmitting(true);
+        try {
+
+            const { idToken } = await GoogleSignin.signIn();
+
+            const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+            await auth().signInWithCredential(googleCredential);
+            const isCustomer = await CheckUserRole();
+            console.log(isCustomer);
+            if (isCustomer) {
+                Alert.alert('Success', 'Logged in successfully');
+                router.replace('/home');
+            }
+        } catch (error: any) {
+            if (isErrorWithCode(error)) {
+                switch (error.code) {
+                    case statusCodes.SIGN_IN_CANCELLED:
+                        Alert.alert('cancel login', 'You have cancelled the login flow');
+                        break;
+                    case statusCodes.IN_PROGRESS:
+                        Alert.alert('in progress', 'Sign in is in progress');
+                        break;
+                    case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+                        Alert.alert('play services not available', 'Play services are not available');
+                        break;
+                    default:
+                        Alert.alert('error', error.message);
+                        break;
+                }
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
         await GoogleSignin.hasPlayServices({
             showPlayServicesUpdateDialog: true,
         });
-        const { idToken } = await GoogleSignin.signIn();
-
-        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-        await auth().signInWithCredential(googleCredential);
-
-        Alert.alert('Success', 'Logged in successfully');
-
-        router.replace('/home');
     }
 
     return (
@@ -123,15 +153,21 @@ const SignIn = () => {
                         </View>
 
                         <View className="pt-5 items-center">
-                            <TouchableOpacity
-                                className="justify-center items-center"
-                                onPress={() => SignInWithGoogle()}
-                            >
-                                <Ionicons name={'logo-google'} size={30} color={'#fff'} />
-                                <Text className="text-lg text-gray-100 font-pregular">
-                                    Sign in with Google
-                                </Text>
-                            </TouchableOpacity>
+                            {/*<TouchableOpacity*/}
+                            {/*    className="justify-center items-center"*/}
+                            {/*    onPress={() => SignInWithGoogle()}*/}
+                            {/*>*/}
+                            {/*    <Ionicons name={'logo-google'} size={30} color={'#fff'} />*/}
+                            {/*    <Text className="text-lg text-gray-100 font-pregular">*/}
+                            {/*        Sign in with Google*/}
+                            {/*    </Text>*/}
+                            {/*</TouchableOpacity>*/}
+                            <GoogleSigninButton
+                                size={GoogleSigninButton.Size.Wide}
+                                color={GoogleSigninButton.Color.Dark}
+                                onPress={SignInWithGoogle}
+                                disabled={isSubmitting}
+                            />
                         </View>
                     </View>
                 </View>

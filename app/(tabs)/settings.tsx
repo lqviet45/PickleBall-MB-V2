@@ -6,6 +6,7 @@ import SettingButton from "@/components/SettingButton";
 import {router} from "expo-router";
 import auth from "@react-native-firebase/auth";
 import {StatusBar} from "expo-status-bar";
+import {GoogleSignin} from "@react-native-google-signin/google-signin";
 
 const Settings = () => {
     const accountArea = [
@@ -99,6 +100,9 @@ const Settings = () => {
             color: 'black',
             HandlePress: async () => {
                 await auth().signOut();
+                if (GoogleSignin.hasPreviousSignIn()) {
+                    await GoogleSignin.signOut();
+                }
                 router.push('sign-in')
             }
         }
