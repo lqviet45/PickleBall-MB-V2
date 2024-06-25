@@ -75,6 +75,11 @@ const OrderPage = () => {
                 courtGroupId: values.id,
                 userId: userId,
                 numberOfPlayers: values.number,
+                bookingDate: values.date.toLocaleDateString('fr-CA', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                }),
                 dateWorking: values.startTime + ' - ' + values.endTime,
             }
 
@@ -82,6 +87,7 @@ const OrderPage = () => {
             //     .post('/booking', data);
 
             console.log("run here");
+            console.log(data);
             await schedulePushNotification();
 
             router.push({

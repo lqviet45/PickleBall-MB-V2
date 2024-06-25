@@ -1,12 +1,14 @@
 import React, {useState} from 'react';
 import {SafeAreaView} from "react-native-safe-area-context";
-import {ScrollView, Image, View, Text, Alert} from "react-native";
+import {ScrollView, Image, View, Text, Alert, TouchableOpacity} from "react-native";
 import images from "@/constants/images";
 import FormField from "@/components/FormField";
 import CustomButton from "@/components/CustomButton";
 import {Link, router} from "expo-router";
 //import {useGlobalContext} from "@/context/GlobalProvider";
 import auth from "@react-native-firebase/auth";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import {GoogleSignin} from "@react-native-google-signin/google-signin";
 
 const SignIn = () => {
     const [form, setForm] = useState({
@@ -39,6 +41,21 @@ const SignIn = () => {
         } finally {
             setIsSubmitting(false);
         }
+    }
+
+    const SignInWithGoogle = async () => {
+        await GoogleSignin.hasPlayServices({
+            showPlayServicesUpdateDialog: true,
+        });
+        const { idToken } = await GoogleSignin.signIn();
+
+        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+        await auth().signInWithCredential(googleCredential);
+
+        Alert.alert('Success', 'Logged in successfully');
+
+        router.replace('/home');
     }
 
     return (
@@ -103,6 +120,18 @@ const SignIn = () => {
                             <Link href='/forgot-password' className='text-lg font-psemibold text-secondary'>
                                 Reset
                             </Link>
+                        </View>
+
+                        <View className="pt-5 items-center">
+                            <TouchableOpacity
+                                className="justify-center items-center"
+                                onPress={() => SignInWithGoogle()}
+                            >
+                                <Ionicons name={'logo-google'} size={30} color={'#fff'} />
+                                <Text className="text-lg text-gray-100 font-pregular">
+                                    Sign in with Google
+                                </Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>
