@@ -80,20 +80,20 @@ const OrderPage = () => {
                     month: '2-digit',
                     day: '2-digit'
                 }),
-                dateWorking: values.startTime + ' - ' + values.endTime,
+                timeRange: values.startTime + ' - ' + values.endTime,
             }
 
-            // const res = await axiosInstance
-            //     .post('/booking', data);
+            const res = await axiosInstance
+                .post('/booking', data);
 
-            console.log("run here");
-            console.log(data);
+            console.log(res.data.value);
+
             await schedulePushNotification();
 
             router.push({
                 pathname: '/(order)/order/',
                 params: {
-                    id: values.id
+                    id: res.data.value.id
                 }
             });
 
