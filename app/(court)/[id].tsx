@@ -8,19 +8,17 @@ import {axiosInstance} from "@/lib/axios";
 
 
 const CourtDetail = () => {
-    let {id} = useLocalSearchParams<{ id: string }>();
+    // let {id} = useLocalSearchParams<{ id: string }>();
+    const  id = 'e990170a-bf22-4f42-ba57-8f4f7c787df7';
     const [court, setCourt] = useState<CourtGroup>({
         id: '',
-        userId: '',
-        wardId: '',
-        wallerId: '',
         name: '',
         price: 0,
         minSlot: 0,
         maxSlot: 0,
-        createdOnUtc: new Date(),
-        modifiedOnUtc: new Date(),
-        wardName: '',
+        location: '',
+        owner: '',
+        medias: [],
     });
 
     const [isBookedMarked, setIsBookedMarked] = useState(false);
@@ -28,29 +26,23 @@ const CourtDetail = () => {
     useEffect(() => {
 
         // fetch court
-        axiosInstance.get(`/court-groups/${id}`)
+        axiosInstance.get(`court-groups/${id}`)
             .then(res => {
-                axiosInstance.get(`/wards/${res.data.value.wardId}`)
-                    .then(data2 => {
-                        console.log(data2.data);
-                        setCourt({
-                            id: res.data.value.id,
-                            userId: res.data.value.userId,
-                            wardId: res.data.value.wardId,
-                            wallerId: res.data.value.wallerId,
-                            name: res.data.value.name,
-                            price: res.data.value.price,
-                            minSlot: res.data.value.minSlot,
-                            maxSlot: res.data.value.maxSlot,
-                            createdOnUtc: res.data.value.createdOnUtc,
-                            modifiedOnUtc: res.data.value.modifiedOnUtc,
-                            wardName: data2.data.value.name,
-                        });
-                    }).catch(e => console.log(e));
-            }).catch(e => console.log(e));
+                setCourt({
+                    id: res.data.value.id,
+                    name: res.data.value.name,
+                    price: res.data.value.price,
+                    minSlot: res.data.value.minSlot,
+                    maxSlot: res.data.value.maxSlot,
+                    location: res.data.value.location,
+                    owner: res.data.value.user.fullName,
+                    medias: res.data.value.medias
+                });
+            })
+            .catch(e => console.log(e));
 
     }, []);
-
+    console.log(court);
     const bookCourt = () => {
         // book court
         router.push({
@@ -108,7 +100,7 @@ const CourtDetail = () => {
                                 color={'white'}
                             />
                             <Text className="text-sm ml-1 font-bold text-white">
-                                {court.wardName}
+                                {court.location}
                             </Text>
                         </View>
 
@@ -140,7 +132,7 @@ const CourtDetail = () => {
             </ScrollView>
             <View className="flex-row justify-around items-center mb-4">
                 <View>
-                    <Text className="text-white text-xl">
+                    <Text className="text-white font-bold text-xl">
                         {court.price}
                     </Text>
                 </View>

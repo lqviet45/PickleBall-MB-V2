@@ -75,19 +75,25 @@ const OrderPage = () => {
                 courtGroupId: values.id,
                 userId: userId,
                 numberOfPlayers: values.number,
-                dateWorking: values.startTime + ' - ' + values.endTime,
+                bookingDate: values.date.toLocaleDateString('fr-CA', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                }),
+                timeRange: values.startTime + ' - ' + values.endTime,
             }
 
-            // const res = await axiosInstance
-            //     .post('/booking', data);
+            const res = await axiosInstance
+                .post('/booking', data);
 
-            console.log("run here");
+            console.log(res.data.value);
+
             await schedulePushNotification();
 
             router.push({
                 pathname: '/(order)/order/',
                 params: {
-                    id: values.id
+                    id: res.data.value.id
                 }
             });
 

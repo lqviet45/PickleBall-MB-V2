@@ -48,6 +48,7 @@ const Profile = () => {
             data.data.value.dateOfBirth = new Date();
         }
         setUserInform(data.data.value);
+        console.log(data.data.value);
     }
 
 

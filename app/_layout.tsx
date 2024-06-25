@@ -3,6 +3,7 @@ import {useEffect, useRef, useState} from "react";
 import {router, SplashScreen, Stack} from "expo-router";
 import GlobalProvider, {useGlobalContext} from "@/context/GlobalProvider";
 import * as Notifications from "expo-notifications";
+import {GoogleSignin} from "@react-native-google-signin/google-signin";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,6 +18,10 @@ const RootLayout = () => {
         "Poppins-Regular": require("../assets/fonts/Poppins-Regular.ttf"),
         "Poppins-SemiBold": require("../assets/fonts/Poppins-SemiBold.ttf"),
         "Poppins-Thin": require("../assets/fonts/Poppins-Thin.ttf"),
+    });
+
+    GoogleSignin.configure({
+        webClientId: '313812647101-fjon9ikpvhch84nskqb0v62tomculnja.apps.googleusercontent.com',
     });
 
     const notificationListener = useRef<Notifications.Subscription>();
