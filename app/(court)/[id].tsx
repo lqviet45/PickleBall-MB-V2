@@ -8,8 +8,8 @@ import {axiosInstance} from "@/lib/axios";
 
 
 const CourtDetail = () => {
-    // let {id} = useLocalSearchParams<{ id: string }>();
-    const  id = 'cd5c17ee-e58f-4001-240a-08dc9519f4f7';
+    let {id} = useLocalSearchParams<{ id: string }>();
+    //const  id = 'cd5c17ee-e58f-4001-240a-08dc9519f4f7';
     const [court, setCourt] = useState<CourtGroup>({
         id: '',
         name: '',
@@ -42,7 +42,7 @@ const CourtDetail = () => {
             .catch(e => console.log(e));
 
     }, []);
-    console.log(court);
+    console.log("(court/[id])",court);
     const bookCourt = () => {
         // book court
         router.push({

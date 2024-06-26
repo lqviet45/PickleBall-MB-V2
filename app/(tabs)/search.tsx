@@ -1,42 +1,55 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useLayoutEffect} from 'react';
 import {SafeAreaView} from "react-native-safe-area-context";
-import {FlatList, Image, ScrollView, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, FlatList, Image, ScrollView, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {CourtGroup} from "@/model/courtGroup";
 import FormField from "@/components/FormField";
 import values from "ajv/lib/vocabularies/jtd/values";
 import CourtCardHorizonal from "@/components/CourtCardHorizontal";
 import icons from "@/constants/icons";
+import axios from "axios";
+import {axiosInstance} from "@/lib/axios";
+import {router} from "expo-router";
 
 const Search = () => {
-    let [search, setSearch] = useState<string>('');
+    let [search, setSearch] = useState<string>("");
     let [searchResult, setSearchResult] = useState<CourtGroup[]>([]);
+    let [isLoading, setIsLoading] = useState<boolean>(false);
 
-    useEffect(() => {
-        //searchCourt();
-
-        for (let i = 0; i < 10; i++) {
-            setSearchResult((prev) => [
-                ...prev,
-                {
-                    id: i.toString(),
-                    userId: i.toString(),
-                    wardId: i.toString(),
-                    wallerId: i.toString(),
-                    name: `Court ${i}`,
-                    price: i,
-                    minSlot: i,
-                    maxSlot: i,
-                    wardName: `Ward ${i}`,
-                    createdOnUtc: new Date(),
-                    modifiedOnUtc: new Date()
-                }
-            ]);
+    useLayoutEffect(() => {
+        setIsLoading(true);
+        const fetchAllCourt = async () => {
+            const params = {
+                Name: search,
+                PageSize: 10
+            }
+            const data = search === "" ?
+                await axiosInstance.get('/court-groups/') :
+                await axiosInstance.get('/court-groups/search', {params});
+            setSearchResult(data.data.value);
+            console.log("fetched");
         }
-    }, []);
+        fetchAllCourt()
+           .catch(e => console.log(e));
+        setIsLoading(false);
+
+
+    }, [search]);
 
     const handleSearch = (text: string) => {
         setSearch(text);
     }
+
+    if (isLoading) {
+        return (
+            <SafeAreaView>
+                <ActivityIndicator size="large" color="black"/>
+                <Text className="text-center text-black font-pmedium text-lg">
+                    Loading...
+                </Text>
+            </SafeAreaView>
+        );
+    }
+
     return (
         <SafeAreaView className={"bg-white h-full"}>
 
@@ -55,26 +68,30 @@ const Search = () => {
                             editable={true}
                             placeholder={"Nhập tên sân"}
                             placeholderTextColor={'#7b7b8b'}
-                            onChangeText={handleSearch}
+                            onChangeText={e => handleSearch(e)}
                         />
                     </View>
                 </View>
                 {/*Search result*/}
-                {/*<FlatList data={searchResult}*/}
-                {/*          initialNumToRender={10}*/}
-                {/*          renderItem={({item}) => (*/}
-                {/*            )}*/}
-                {/*/>*/}
-
-                <CourtCardHorizonal
-                    courtId={'item.id'}
-                    courtImage={'https://via.placeholder.com/150'}
-                    rating={4.5}
-                    courtName={'Sân B'}
-                    time={'08:00 - 16:00'}
-                />
-
-
+                <View className={"flex-1"}>
+                    <Text className="text-xl font-pbold px-2 pt-3">Kết quả tìm kiếm</Text>
+                    <FlatList
+                        data={searchResult}
+                        keyExtractor={(item) => item.id}
+                        initialNumToRender={10}
+                        renderItem={(
+                            ({item}) => (
+                                <CourtCardHorizonal
+                                    courtId={item.id}
+                                    courtImage={"https://via.placeholder.com/150"}
+                                    rating={4.5}
+                                    courtName={item.name}
+                                    time={'08:00 - 16:00'}
+                                />
+                            )
+                        )}
+                    />
+                </View>
         </SafeAreaView>
     );
 };

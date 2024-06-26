@@ -64,7 +64,6 @@ const Home = () => {
                             courtName={'Sân B'}
                             time={'08:00 - 16:00'}
                         />
-
                     </View>
                 </View>
             </ScrollView>
