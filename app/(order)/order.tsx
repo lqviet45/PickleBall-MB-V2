@@ -1,7 +1,6 @@
 import {SafeAreaView} from "react-native-safe-area-context";
-
 import {useEffect, useState} from "react";
-import {FlatList, View, Text, RefreshControl, TouchableOpacity} from "react-native";
+import {FlatList, View, Text, RefreshControl, TouchableOpacity, ActivityIndicator} from "react-native";
 import {BookingOrder} from "@/model/bookingOrder";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -10,57 +9,50 @@ import {router} from "expo-router";
 
 const Order = () => {
 
+    const [isLoading, setIsLoading] = useState(false);
     const [bookingOrder, setBookingOrder] = useState<BookingOrder[]>([]);
-    const {userFullName} = useGlobalContext();
+    const {userFullName, userId} = useGlobalContext();
 
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = () => {
         setRefreshing(true);
+
+        fetchBookingOrder()
+            .catch(e => console.log(e));
+
         setTimeout(() => {
             setRefreshing(false);
         }, 2000);
     }
 
+    const fetchBookingOrder = async () => {
+        const data = await axiosInstance
+            .get(`users/${userId}/bookings`);
+
+        setBookingOrder(data.data.value);
+
+    }
+
     useEffect(() => {
-        //getBookingOrder();
-        // axiosInstance.get(`/bookings/2024-06-23`)
-        //     .then(res => {
-        //         setBookingOrder(res.data.value);
-        //     }).catch(e => console.log(e));
-        for (let i = 0; i < 10; i++) {
-            setBookingOrder((prev) => [
-                ...prev,
-                {
-                    id: i.toString(),
-                    courtYardId: i.toString(),
-                    courtGroupId: i.toString(),
-                    userId: i.toString(),
-                    dateId: i.toString(),
-                    numberOfPlayers: i,
-                    bookingStatus: (i % 2) === 0 ? 'Pending' : 'Confirmed',
-                    createOnUtc: i.toString(),
-                    date: new Date(),
-                    courtGroup: {
-                        id: i.toString(),
-                        name: `Court ${i}`,
-                        description: `Court ${i}`,
-                        courtYardId: i.toString(),
-                        courtYard: {
-                            id: i.toString(),
-                            name: `Yard ${i}`,
-                            description: `Yard ${i}`,
-                            address: `Address ${i}`,
-                            phoneNumber: '123456789',
-                            createOnUtc: i.toString(),
-                            updateOnUtc: i.toString(),
-                        },
-                        createOnUtc: i.toString(),
-                        updateOnUtc: i.toString(),
-                    }
-                }
-            ])
-        }
+        setIsLoading(true);
+
+        fetchBookingOrder()
+            .catch(e => console.log(e));
+
+        setIsLoading(false);
+        console.log(bookingOrder);
     }, []);
+
+    if (isLoading) {
+        return (
+            <SafeAreaView>
+                <ActivityIndicator size="large" color="black"/>
+                <Text className="text-center text-black font-pmedium text-lg">
+                    Loading...
+                </Text>
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView>
@@ -83,18 +75,29 @@ const Order = () => {
                                 {/*<OrderItem item={item}/>*/}
                                 <View className="flex flex-row
                                 bg-blue-400 rounded-lg w-[95%] mx-auto
-                                items-center justify-between
+                                justify-between
                                 px-4 py-2">
                                     <View>
                                         <Text className="font-pmedium text-lg text-black">
                                             {item.courtGroup.name}
                                         </Text>
                                         <Text className="text-amber-300">
-                                            {item.date.toLocaleDateString('vi-VN', {
-                                                day: '2-digit',
-                                                month: '2-digit',
-                                                year: 'numeric'
-                                            })}
+                                            {item.numberOfPlayers} players
+                                        </Text>
+                                    </View>
+                                    <View className="flex-row items-end">
+                                        <Text className="text-black">
+                                            {
+                                                new Date(item.date.dateWorking)
+                                                    .toLocaleDateString('vi-VN',{
+                                                        year: 'numeric',
+                                                        month: '2-digit',
+                                                        day: '2-digit'
+                                                    })
+                                            }
+                                        </Text>
+                                        <Text className="text-black">
+                                            {item.timeRange}
                                         </Text>
                                     </View>
                                     <View className="flex flex-row items-center">

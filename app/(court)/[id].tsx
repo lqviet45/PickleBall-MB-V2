@@ -9,7 +9,7 @@ import {axiosInstance} from "@/lib/axios";
 
 const CourtDetail = () => {
     // let {id} = useLocalSearchParams<{ id: string }>();
-    const  id = 'e990170a-bf22-4f42-ba57-8f4f7c787df7';
+    const  id = 'cd5c17ee-e58f-4001-240a-08dc9519f4f7';
     const [court, setCourt] = useState<CourtGroup>({
         id: '',
         name: '',
@@ -104,6 +104,17 @@ const CourtDetail = () => {
                             </Text>
                         </View>
 
+                        <View className="flex-row justify-start items-center w-full mb-2">
+                            <Ionicons
+                                name={'person'}
+                                size={20}
+                                color={'white'}
+                            />
+                            <Text className="text-sm ml-1 font-bold text-white">
+                                {court.owner}
+                            </Text>
+                        </View>
+
                         <Text className="text-lg font-bold text-white">
                             Open Time: 6:00 AM - 10:00 PM
                         </Text>
@@ -133,7 +144,7 @@ const CourtDetail = () => {
             <View className="flex-row justify-around items-center mb-4">
                 <View>
                     <Text className="text-white font-bold text-xl">
-                        {court.price}
+                        {court.price} h/VND
                     </Text>
                 </View>
                 <TouchableOpacity
