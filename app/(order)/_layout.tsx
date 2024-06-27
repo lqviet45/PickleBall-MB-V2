@@ -3,6 +3,7 @@ import {Stack} from "expo-router";
 
 const OrderLayout = () => {
 
+
     return (
         <Stack>
             <Stack.Screen
@@ -12,8 +13,20 @@ const OrderLayout = () => {
                     headerShown: false
                 }}
             />
+            <Stack.Screen
+                name="[id]"
+                options={{
+                    title: 'Chi tiết giao dịch',
+                    headerShown: true,
+                    headerStyle: {
+                        backgroundColor: 'white'
+                    }
+                }}
+
+            />
         </Stack>
     );
 };
+
 
 export default OrderLayout;
