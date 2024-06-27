@@ -8,5 +8,12 @@ export interface CourtGroup {
     maxSlot: number;
     location: string;
     owner: string;
-    medias: string[];
+    medias?: [
+        {
+            id: string;
+            mediaUrl: string;
+            createOnUtc: string;
+            modifiedOnUtc: string;
+        }
+    ];
 }

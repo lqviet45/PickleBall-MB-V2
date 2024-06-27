@@ -19,14 +19,15 @@ const Search = () => {
         setIsLoading(true);
         const fetchAllCourt = async () => {
             const params = {
-                Name: search,
+                Name: search == "" ? undefined : search,
                 PageSize: 10
             }
-            const data = search === "" ?
-                await axiosInstance.get('/court-groups/') :
+            const data =
+                //search === "" ? await axiosInstance.get('/court-groups/') :
                 await axiosInstance.get('/court-groups/search', {params});
             setSearchResult(data.data.value);
-            console.log("fetched");
+            console.log("fetched search", searchResult.map(e => e.medias));
+
         }
         fetchAllCourt()
            .catch(e => console.log(e));
@@ -73,6 +74,7 @@ const Search = () => {
                     </View>
                 </View>
                 {/*Search result*/}
+                {/*item.medias != undefined ? item.medias[0].mediaUrl : */}
                 <View className={"flex-1"}>
                     <Text className="text-xl font-pbold px-2 pt-3">Kết quả tìm kiếm</Text>
                     <FlatList
@@ -83,10 +85,12 @@ const Search = () => {
                             ({item}) => (
                                 <CourtCardHorizonal
                                     courtId={item.id}
-                                    courtImage={"https://via.placeholder.com/150"}
+                                    courtImage={
+                                        (item.medias !== undefined && item.medias[0] !== undefined) ? item.medias[0].mediaUrl : "https://www.thespruce.com/thmb/1J6"
+                                    }
                                     rating={4.5}
                                     courtName={item.name}
-                                    time={'08:00 - 16:00'}
+                                    location={item.location}
                                 />
                             )
                         )}
