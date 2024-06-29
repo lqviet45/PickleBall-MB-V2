@@ -77,7 +77,7 @@ const Order = () => {
                                 bg-blue-400 rounded-lg w-[95%] mx-auto
                                 justify-between
                                 px-4 py-2">
-                                    <View>
+                                    <View className="w-28">
                                         <Text className="font-pmedium text-lg text-black">
                                             {item.courtGroup.name}
                                         </Text>
@@ -85,11 +85,11 @@ const Order = () => {
                                             {item.numberOfPlayers} players
                                         </Text>
                                     </View>
-                                    <View className="flex-row items-end">
+                                    <View className="flex-col items-end end">
                                         <Text className="text-black">
                                             {
                                                 new Date(item.date.dateWorking)
-                                                    .toLocaleDateString('vi-VN',{
+                                                    .toLocaleDateString('vi-VN', {
                                                         year: 'numeric',
                                                         month: '2-digit',
                                                         day: '2-digit'
@@ -101,7 +101,7 @@ const Order = () => {
                                         </Text>
                                     </View>
                                     <View className="flex flex-row items-center">
-                                        <Text className="text-black font-pmedium text-lg">
+                                        <Text className="text-black font-pmedium text-sm">
                                             {item.bookingStatus}
                                         </Text>
                                         {

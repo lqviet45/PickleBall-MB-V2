@@ -88,7 +88,7 @@ const OrderPage = () => {
 
             console.log(res.data.value);
 
-            await schedulePushNotification();
+            //await schedulePushNotification();
 
             router.push({
                 pathname: '/(order)/order/',
