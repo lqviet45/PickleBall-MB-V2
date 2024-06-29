@@ -1,47 +1,82 @@
 import {SafeAreaView} from "react-native-safe-area-context";
 import {router, useLocalSearchParams} from "expo-router";
-import {Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {useEffect, useState} from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {CourtGroup} from "@/model/courtGroup";
 import {axiosInstance} from "@/lib/axios";
+import {useGlobalContext} from "@/context/GlobalProvider";
 
 
 const CourtDetail = () => {
     let {id} = useLocalSearchParams<{ id: string }>();
     //const  id = 'cd5c17ee-e58f-4001-240a-08dc9519f4f7';
+    const {userId} = useGlobalContext();
+    const [isLoading, setIsLoading] = useState(true);
     const [court, setCourt] = useState<CourtGroup>({
         id: '',
+        userId: '',
+        wardId: '',
         name: '',
         price: 0,
         minSlot: 0,
         maxSlot: 0,
         location: '',
         owner: '',
-        medias: [],
+        medias: [{
+            id: '',
+            mediaUrl: '',
+            createOnUtc: '',
+            modifiedOnUtc: ''
+        }]
     });
 
     const [isBookedMarked, setIsBookedMarked] = useState(false);
 
+    const fetchCourt = async () => {
+        setIsLoading(true);
+        const data = await axiosInstance.get(`court-groups/${id}`);
+        setCourt(data.data.value);
+        setIsLoading(false);
+    }
+
+    const fetchBookMark = async () => {
+
+    }
+
+    const createBookMark = async () => {
+        try {
+            await axiosInstance.post(`court-groups/bookmarks`,{
+                courtGroupId: court.id,
+                userId: userId
+            });
+            setIsBookedMarked(true);
+        } catch (e) {
+            Alert.alert("Error", "Failed to create bookmark");
+            return;
+        }
+    }
+
+    const deleteBookMark = async () => {
+        try {
+            await axiosInstance.delete(`court-groups/bookmarks`,{
+                data: {
+                    courtGroupId: court.id,
+                    userId: userId
+                }
+            });
+            setIsBookedMarked(false);
+        } catch (e) {
+            Alert.alert("Error", "Failed to delete bookmark");
+            return;
+        }
+    }
+
     useEffect(() => {
-
-        // fetch court
-        axiosInstance.get(`court-groups/${id}`)
-            .then(res => {
-                setCourt({
-                    id: res.data.value.id,
-                    name: res.data.value.name,
-                    price: res.data.value.price,
-                    minSlot: res.data.value.minSlot,
-                    maxSlot: res.data.value.maxSlot,
-                    location: res.data.value.location,
-                    owner: res.data.value.user.fullName,
-                    medias: res.data.value.medias
-                });
-            })
+        fetchCourt()
             .catch(e => console.log(e));
-
     }, []);
+
     console.log("(court/[id])",court);
     const bookCourt = () => {
         // book court
@@ -55,14 +90,24 @@ const CourtDetail = () => {
         });
     }
 
+    if (isLoading) {
+        return (
+            <SafeAreaView>
+                <ActivityIndicator size="large" color="black"/>
+                <Text className="text-center text-black font-pmedium text-lg">
+                    Loading...
+                </Text>
+            </SafeAreaView>
+        );
+    }
+
     return (
         <SafeAreaView className="bg-Base h-full w-full">
             <ScrollView className="w-full">
                 <View className="w-full flex flex-col">
                     <View className="w-full items-center mt-10 relative">
                         <Image
-                            source={{uri: 'https://via.placeholder.com/200'}}
-                            // style={{width: 150, height: 150}}
+                            source={{uri: (court.medias !== undefined && court.medias[0] !== undefined) ? court.medias[0].mediaUrl : "https://www.thespruce.com/thmb/1J6"}}
                             className="w-[350] h-[400] items-center rounded-lg"
                             resizeMode={'cover'}
                         />
@@ -118,15 +163,6 @@ const CourtDetail = () => {
                         <Text className="text-lg font-bold text-white">
                             Open Time: 6:00 AM - 10:00 PM
                         </Text>
-
-                        {/*<View className="w-[95%]">*/}
-                        {/*    <Text className="text-lg font-bold text-white mt-2">*/}
-                        {/*        Description*/}
-                        {/*    </Text>*/}
-                        {/*    <Text className="text-white break-all text-justify tracking-wide">*/}
-                        {/*        /!*{court.description}*!/*/}
-                        {/*    </Text>*/}
-                        {/*</View>*/}
 
                         <View className="flex-row mt-10 items-center">
                             <Ionicons

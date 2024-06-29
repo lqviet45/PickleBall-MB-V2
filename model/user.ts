@@ -10,9 +10,10 @@ export type User = {
 }
 
 export interface UserProfileInform {
-    fullName: string;
+    firstName: string;
+    lastName: string;
     email: string;
-    dateOfBirth: Date;
+    dayOfBirth: Date;
     location: string;
     phoneNumber: string;
 }

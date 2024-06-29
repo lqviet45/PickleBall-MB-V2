@@ -9,7 +9,7 @@ import {router} from "expo-router";
 
 const Order = () => {
 
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(false);
     const [bookingOrder, setBookingOrder] = useState<BookingOrder[]>([]);
     const {userFullName, userId} = useGlobalContext();
 
@@ -34,16 +34,16 @@ const Order = () => {
     }
 
     useEffect(() => {
-        setIsLoading(true);
+        setIsLoaded(false);
 
         fetchBookingOrder()
             .catch(e => console.log(e));
 
-        setIsLoading(false);
+        setIsLoaded(true);
         console.log(bookingOrder);
     }, []);
 
-    if (isLoading) {
+    if (!isLoaded) {
         return (
             <SafeAreaView>
                 <ActivityIndicator size="large" color="black"/>
