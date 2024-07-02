@@ -14,6 +14,7 @@ const Order = () => {
     const {userFullName, userId} = useGlobalContext();
     const [pageNumber, setPageNumber] = useState(1);
     const [refreshing, setRefreshing] = useState(false);
+    const pageSize: number = 10;
     const onRefresh = () => {
         setRefreshing(true);
 
@@ -37,7 +38,7 @@ const Order = () => {
             .get(`users/${userId}/bookings`, {
                 params: {
                     userId: userId,
-                    pageSize: 10,
+                    pageSize: pageSize,
                     pageNumber: pageNumber
                 }
             });
@@ -163,7 +164,8 @@ const Order = () => {
                     </View>
                 )}
 
-
+                onEndReached={onEndReached}
+                onEndReachedThreshold={0.1}
 
                 refreshControl={
                     <RefreshControl
