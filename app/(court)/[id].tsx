@@ -1,7 +1,7 @@
 import {SafeAreaView} from "react-native-safe-area-context";
 import {router, useLocalSearchParams} from "expo-router";
 import {ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {CourtGroup} from "@/model/courtGroup";
 import {axiosInstance} from "@/lib/axios";
@@ -10,7 +10,7 @@ import {useGlobalContext} from "@/context/GlobalProvider";
 
 const CourtDetail = () => {
     let {id} = useLocalSearchParams<{ id: string }>();
-    //const  id = 'cd5c17ee-e58f-4001-240a-08dc9519f4f7';
+
     const {userId} = useGlobalContext();
     const [isLoading, setIsLoading] = useState(true);
     const [court, setCourt] = useState<CourtGroup>({
@@ -31,7 +31,15 @@ const CourtDetail = () => {
         }]
     });
 
-    const [isBookedMarked, setIsBookedMarked] = useState(false);
+    const [bookMark, setBookMark] = useState({
+        isBookedMarked: false,
+        id: ''
+    });
+
+    const [isBlocked, setIsBlocked] = useState(false);
+    const [time, setTime] = useState(10);
+    const timer = useRef(time);
+    const clickCountRef = useRef(0);
 
     const fetchCourt = async () => {
         setIsLoading(true);
@@ -49,25 +57,33 @@ const CourtDetail = () => {
                     courtGroupId: id
                }
             });
-            if (data.data.value) {
-                setIsBookedMarked(true);
-            } else {
-                setIsBookedMarked(false);
-            }
+            console.log(data.data.value.isDeleted);
+            setBookMark({
+                isBookedMarked: !data.data.value.isDeleted,
+                id: data.data.value.id
+            });
+
         } catch (e) {
-            setIsBookedMarked(false);
+            setBookMark((prev) =>
+                ({...prev, isBookedMarked: false})
+            );
         }
     }
 
     const createBookMark = async () => {
         try {
-            await axiosInstance.post(`/bookmarks`,{
+            const data = await axiosInstance.post(`/bookmarks`,{
                 courtGroupId: court.id,
                 userId: userId
             });
-            setIsBookedMarked(true);
+            setBookMark({
+                isBookedMarked: !data.data.value.isDeleted,
+                id: data.data.value.id
+            });
         } catch (e) {
-            setIsBookedMarked(false);
+            setBookMark((prev) =>
+                ({...prev, isBookedMarked: false})
+            );
             Alert.alert("Error", "Failed to create bookmark");
             return;
         }
@@ -75,16 +91,55 @@ const CourtDetail = () => {
 
     const deleteBookMark = async () => {
         try {
-            await axiosInstance.delete(`court-groups/bookmarks`,{
-                data: {
-                    courtGroupId: court.id,
-                    userId: userId
+            await axiosInstance.delete(`/bookmarks/${bookMark.id}`,{
+                params: {
+                    Id: bookMark.id
                 }
             });
-            setIsBookedMarked(false);
+            setBookMark((prev) =>
+                ({...prev, isBookedMarked: false})
+            );
         } catch (e) {
+            console.log(e);
             Alert.alert("Error", "Failed to delete bookmark");
             return;
+        }
+    }
+
+    const onPressBookMark = async () => {
+        console.log(isBlocked)
+        if (isBlocked) {
+            Alert.alert("Error", `You have clicked too many times. Please wait ${time} seconds`);
+            return;
+        }
+
+        clickCountRef.current += 1;
+        console.log(clickCountRef.current);
+
+        if (clickCountRef.current > 2) {
+            setIsBlocked(true);
+            setTime(10);
+            const countDown = setInterval(() => {
+                timer.current -= 1;
+               if (timer.current <= 0) {
+                   clearInterval(countDown);
+                   setIsBlocked(false);
+                   clickCountRef.current = 0;
+                   timer.current = 10;
+               } else {
+                   setTime(timer.current);
+               }
+            }, 1000);
+        } else {
+            setTimeout(() => {
+                clickCountRef.current = 0;
+            }, 2000)
+        }
+
+        if (bookMark.isBookedMarked) {
+            await deleteBookMark();
+        } else {
+            await createBookMark();
         }
     }
 
@@ -130,11 +185,11 @@ const CourtDetail = () => {
                         />
                         <View className="absolute bottom-12 right-16">
                             <TouchableOpacity
-                                onPress={() => createBookMark()}
+                                onPress={onPressBookMark}
                             >
                                 <View className="bg-white w-10 h-10 items-center justify-center rounded-3xl">
                                     {
-                                        isBookedMarked
+                                        bookMark.isBookedMarked
                                             ? <Ionicons
                                                 name={'heart'}
                                                 size={30}
