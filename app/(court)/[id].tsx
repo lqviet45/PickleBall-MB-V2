@@ -36,22 +36,38 @@ const CourtDetail = () => {
     const fetchCourt = async () => {
         setIsLoading(true);
         const data = await axiosInstance.get(`court-groups/${id}`);
+        await fetchBookMark();
         setCourt(data.data.value);
         setIsLoading(false);
     }
 
     const fetchBookMark = async () => {
-
+        try {
+            const data = await axiosInstance.get('/bookmarks', {
+               params: {
+                    userId: userId,
+                    courtGroupId: id
+               }
+            });
+            if (data.data.value) {
+                setIsBookedMarked(true);
+            } else {
+                setIsBookedMarked(false);
+            }
+        } catch (e) {
+            setIsBookedMarked(false);
+        }
     }
 
     const createBookMark = async () => {
         try {
-            await axiosInstance.post(`court-groups/bookmarks`,{
+            await axiosInstance.post(`/bookmarks`,{
                 courtGroupId: court.id,
                 userId: userId
             });
             setIsBookedMarked(true);
         } catch (e) {
+            setIsBookedMarked(false);
             Alert.alert("Error", "Failed to create bookmark");
             return;
         }
@@ -77,7 +93,6 @@ const CourtDetail = () => {
             .catch(e => console.log(e));
     }, []);
 
-    console.log("(court/[id])",court);
     const bookCourt = () => {
         // book court
         router.push({
@@ -92,11 +107,13 @@ const CourtDetail = () => {
 
     if (isLoading) {
         return (
-            <SafeAreaView>
-                <ActivityIndicator size="large" color="black"/>
-                <Text className="text-center text-black font-pmedium text-lg">
-                    Loading...
-                </Text>
+            <SafeAreaView className="h-full w-full">
+                <View className="items-center h-full justify-center">
+                    <ActivityIndicator size="large" color="black"/>
+                    <Text className="text-center text-black font-pmedium text-lg">
+                        Loading...
+                    </Text>
+                </View>
             </SafeAreaView>
         );
     }
@@ -113,7 +130,7 @@ const CourtDetail = () => {
                         />
                         <View className="absolute bottom-12 right-16">
                             <TouchableOpacity
-                                onPress={() => setIsBookedMarked(!isBookedMarked)}
+                                onPress={() => createBookMark()}
                             >
                                 <View className="bg-white w-10 h-10 items-center justify-center rounded-3xl">
                                     {

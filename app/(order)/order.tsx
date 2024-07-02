@@ -30,7 +30,6 @@ const Order = () => {
             .get(`users/${userId}/bookings`);
 
         setBookingOrder(data.data.value);
-
     }
 
     useEffect(() => {
@@ -40,7 +39,6 @@ const Order = () => {
             .catch(e => console.log(e));
 
         setIsLoaded(true);
-        console.log(bookingOrder);
     }, []);
 
     if (!isLoaded) {
