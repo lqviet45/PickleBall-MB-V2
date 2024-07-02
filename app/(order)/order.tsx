@@ -1,5 +1,5 @@
 import {SafeAreaView} from "react-native-safe-area-context";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {FlatList, View, Text, RefreshControl, TouchableOpacity, ActivityIndicator} from "react-native";
 import {BookingOrder} from "@/model/bookingOrder";
 import {useGlobalContext} from "@/context/GlobalProvider";
@@ -12,25 +12,39 @@ const Order = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [bookingOrder, setBookingOrder] = useState<BookingOrder[]>([]);
     const {userFullName, userId} = useGlobalContext();
-    const [pageNumber, setPageNumber] = useState(1);
     const [refreshing, setRefreshing] = useState(false);
-    const pageSize: number = 10;
+    const [isEnd, setIsEnd] = useState(false);
+    const currentPage = useRef<number>(1);
+    const pageSize: number = 5;
+
+    // use this function to refresh the list
     const onRefresh = () => {
         setRefreshing(true);
-
-        fetchBookingOrder(pageNumber)
-            .catch(e => console.log(e));
+        setIsEnd(false);
+        currentPage.current = 1;
+        fetchBookingOrder(currentPage.current)
+            .catch(e => console.log(e.response.data.errors[0]));
 
         setTimeout(() => {
             setRefreshing(false);
-        }, 2000);
+        }, 1000);
     }
 
+    // use this function to fetch more data when user scroll to the end of the list
     const onEndReached = () => {
-        setPageNumber(pageNumber + 1);
-        console.log(pageNumber);
-        fetchBookingOrder(pageNumber)
-            .catch(e => console.log(e));
+        if (isEnd || !isLoaded) return;
+        console.log("onEndReached");
+        currentPage.current = currentPage.current + 1;
+        console.log(currentPage.current);
+        fetchBookingOrder(currentPage.current)
+            .catch(e => {
+                // the one who make this response message
+                // 'Bookings are not found' is a bad person
+                // it should be 'No more booking'
+                if (e.response.data.errors[0] === 'Bookings are not found') {
+                    setIsEnd(true);
+                }
+            });
     }
 
     const fetchBookingOrder = async (pageNumber: number) => {
@@ -43,16 +57,16 @@ const Order = () => {
                 }
             });
 
-        setBookingOrder(data.data.value);
+        setBookingOrder([...bookingOrder, ...data.data.value]);
+        console.log("booking order")
     }
 
     useEffect(() => {
         setIsLoaded(false);
-
-        fetchBookingOrder(pageNumber)
+        console.log("useEffect");
+        fetchBookingOrder(currentPage.current)
+            .then(() => setIsLoaded(true))
             .catch(e => console.log(e));
-
-        setIsLoaded(true);
     }, []);
 
     if (!isLoaded) {
@@ -70,8 +84,8 @@ const Order = () => {
         <SafeAreaView>
             <FlatList
                 data={bookingOrder}
-                keyExtractor={(item) => item.id}
-                initialNumToRender={10}
+                keyExtractor={(item, index) => item.id}
+                initialNumToRender={5}
                 renderItem={(
                     ({item}) => (
                         <TouchableOpacity
@@ -164,7 +178,9 @@ const Order = () => {
                     </View>
                 )}
 
+                // this function will be called when user scroll to the end of the list
                 onEndReached={onEndReached}
+                // this value is used to determine how far from the end of the list to trigger onEndReached
                 onEndReachedThreshold={0.1}
 
                 refreshControl={
