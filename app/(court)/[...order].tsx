@@ -84,11 +84,11 @@ const OrderPage = () => {
             }
 
             const res = await axiosInstance
-                .post('/booking', data);
+                .post('/bookings', data);
 
             console.log(res.data.value);
 
-            await schedulePushNotification();
+            //await schedulePushNotification();
 
             router.push({
                 pathname: '/(order)/order/',

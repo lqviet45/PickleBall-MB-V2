@@ -21,9 +21,10 @@ let userSchema = object({
 const Profile = () => {
 
     const [userInform, setUserInform] = useState<UserProfileInform>({
-        fullName: '',
+        firstName: '',
+        lastName: '',
         email: '',
-        dateOfBirth: new Date(),
+        dayOfBirth: new Date(),
         location: '',
         phoneNumber: '',
     });
@@ -33,7 +34,6 @@ const Profile = () => {
 
     useEffect(() => {
         console.log(userLogin?.uid);
-        //getUserInform();
         getUserInform().catch(e => console.log(e));
     }, []);
 
@@ -44,16 +44,19 @@ const Profile = () => {
                 firebaseId: userLogin?.uid
             }
         );
-        if (!data.data.value.dateOfBirth) {
-            data.data.value.dateOfBirth = new Date();
+        if (!data.data.value.dayOfBirth) {
+            data.data.value.dayOfBirth = new Date();
         }
+        data.data.value.dayOfBirth = new Date(data.data.value.dayOfBirth);
         setUserInform(data.data.value);
-        console.log(data.data.value);
     }
 
 
-    const submit = () => {
-        //saveUserInform();
+    const submit = async (values: any) => {
+        console.log(userInform);
+        const data = await axiosInstance.put('/users/update-user', values);
+        console.log(data);
+        setIsEdit(false);
     }
 
     return (
@@ -69,16 +72,25 @@ const Profile = () => {
                     <Formik
                         initialValues={userInform}
                         onSubmit={submit}
-                        validationSchema={userSchema}
+                        //validationSchema={userSchema}
                         enableReinitialize={true}
                     >
                         {({ handleChange, handleBlur, handleSubmit, values,
                           setFieldValue }) => (
                             <View>
                                 <FormField
-                                    title="Full Name"
-                                    value={values.fullName}
-                                    handleChangeText={handleChange('fullName')}
+                                    title="First Name"
+                                    value={values.firstName}
+                                    handleChangeText={handleChange('firstName')}
+                                    otherStyles="mt-10"
+                                    keyBoardType="default"
+                                    isEditable={isEdit}
+                                />
+
+                                <FormField
+                                    title="last Name"
+                                    value={values.lastName}
+                                    handleChangeText={handleChange('lastName')}
                                     otherStyles="mt-10"
                                     keyBoardType="default"
                                     isEditable={isEdit}
@@ -90,22 +102,22 @@ const Profile = () => {
                                     handleChangeText={handleChange('email')}
                                     otherStyles="mt-10"
                                     keyBoardType="default"
-                                    isEditable={isEdit}
+                                    isEditable={false}
                                 />
 
-                                <FormField
-                                    title="Phone Number"
-                                    value={values.phoneNumber}
-                                    handleChangeText={handleChange('phoneNumber')}
-                                    otherStyles="mt-10"
-                                    keyBoardType="default"
-                                    isEditable={isEdit}
-                                />
+                                {/*<FormField*/}
+                                {/*    title="Phone Number"*/}
+                                {/*    value={values.phoneNumber}*/}
+                                {/*    handleChangeText={handleChange('phoneNumber')}*/}
+                                {/*    otherStyles="mt-10"*/}
+                                {/*    keyBoardType="default"*/}
+                                {/*    isEditable={isEdit}*/}
+                                {/*/>*/}
 
                                 <CustomDateTimePicker
-                                    date={values.dateOfBirth}
+                                    date={values.dayOfBirth}
                                     setFieldValue={setFieldValue}
-                                    fieldValueName={"dateOfBirth"}
+                                    fieldValueName={"dayOfBirth"}
                                     title={"Date of Birth"}
                                     otherStyles={"mt-10"}
                                     isEdit={isEdit}

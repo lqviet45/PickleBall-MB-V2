@@ -1,3 +1,5 @@
+import {CourtGroup} from "@/model/courtGroup";
+
 export interface BookingOrder {
     id: string;
     courtYardId: string;
@@ -5,8 +7,12 @@ export interface BookingOrder {
     userId: string;
     dateId: string;
     numberOfPlayers: number;
+    timeRange: string;
     bookingStatus: string;
-    createOnUtc: string;
-    date: any;
-    courtGroup: any;
+    createOnUtc: Date;
+    courtYard: any;
+    courtGroup: CourtGroup;
+    date: {
+        dateWorking: string;
+    };
 }
