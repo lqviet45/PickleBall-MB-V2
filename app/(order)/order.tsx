@@ -12,12 +12,12 @@ const Order = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [bookingOrder, setBookingOrder] = useState<BookingOrder[]>([]);
     const {userFullName, userId} = useGlobalContext();
-
+    const [pageNumber, setPageNumber] = useState(1);
     const [refreshing, setRefreshing] = useState(false);
     const onRefresh = () => {
         setRefreshing(true);
 
-        fetchBookingOrder()
+        fetchBookingOrder(pageNumber)
             .catch(e => console.log(e));
 
         setTimeout(() => {
@@ -25,9 +25,22 @@ const Order = () => {
         }, 2000);
     }
 
-    const fetchBookingOrder = async () => {
+    const onEndReached = () => {
+        setPageNumber(pageNumber + 1);
+        console.log(pageNumber);
+        fetchBookingOrder(pageNumber)
+            .catch(e => console.log(e));
+    }
+
+    const fetchBookingOrder = async (pageNumber: number) => {
         const data = await axiosInstance
-            .get(`users/${userId}/bookings`);
+            .get(`users/${userId}/bookings`, {
+                params: {
+                    userId: userId,
+                    pageSize: 10,
+                    pageNumber: pageNumber
+                }
+            });
 
         setBookingOrder(data.data.value);
     }
@@ -35,7 +48,7 @@ const Order = () => {
     useEffect(() => {
         setIsLoaded(false);
 
-        fetchBookingOrder()
+        fetchBookingOrder(pageNumber)
             .catch(e => console.log(e));
 
         setIsLoaded(true);
@@ -56,7 +69,7 @@ const Order = () => {
         <SafeAreaView>
             <FlatList
                 data={bookingOrder}
-                //keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.id}
                 initialNumToRender={10}
                 renderItem={(
                     ({item}) => (
@@ -149,6 +162,8 @@ const Order = () => {
                         </Text>
                     </View>
                 )}
+
+
 
                 refreshControl={
                     <RefreshControl

@@ -12,6 +12,8 @@ const CourtDetail = () => {
     let {id} = useLocalSearchParams<{ id: string }>();
 
     const {userId} = useGlobalContext();
+    // because using img tag, we need to use set the state to true
+    // then there will be no error when the image is loaded
     const [isLoading, setIsLoading] = useState(true);
     const [court, setCourt] = useState<CourtGroup>({
         id: '',
@@ -107,18 +109,18 @@ const CourtDetail = () => {
     }
 
     const onPressBookMark = async () => {
-        console.log(isBlocked)
         if (isBlocked) {
             Alert.alert("Error", `You have clicked too many times. Please wait ${time} seconds`);
             return;
         }
 
+        // increase click count
         clickCountRef.current += 1;
-        console.log(clickCountRef.current);
 
         if (clickCountRef.current > 2) {
             setIsBlocked(true);
             setTime(10);
+            // start timer to unblock
             const countDown = setInterval(() => {
                 timer.current -= 1;
                if (timer.current <= 0) {
@@ -160,6 +162,7 @@ const CourtDetail = () => {
         });
     }
 
+    // if loading, show loading screen and it will be render first
     if (isLoading) {
         return (
             <SafeAreaView className="h-full w-full">
