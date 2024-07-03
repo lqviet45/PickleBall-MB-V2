@@ -1,5 +1,5 @@
 import {SafeAreaView} from "react-native-safe-area-context";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {FlatList, View, Text, RefreshControl, TouchableOpacity, ActivityIndicator} from "react-native";
 import {BookingOrder} from "@/model/bookingOrder";
 import {useGlobalContext} from "@/context/GlobalProvider";
@@ -12,33 +12,77 @@ const Order = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [bookingOrder, setBookingOrder] = useState<BookingOrder[]>([]);
     const {userFullName, userId} = useGlobalContext();
-
+    const [isEnd, setIsEnd] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
-    const onRefresh = () => {
-        setRefreshing(true);
+    const [isInit, setIsInit] = useState(true);
+    const currentPage = useRef<number>(1);
+    const refresh = useRef<boolean>(false);
+    const pageSize: number = 5;
 
-        fetchBookingOrder()
-            .catch(e => console.log(e));
-
-        setTimeout(() => {
-            setRefreshing(false);
-        }, 2000);
+    // use this function to refresh the list
+    const onRefresh = async () => {
+        try {
+            console.log("onRefresh");
+            setIsEnd(false);
+            refresh.current = true;
+            setRefreshing(true);
+            currentPage.current = 1;
+            console.log("before set timeout");
+            setTimeout(async () => {
+                console.log("timeout");
+                await fetchBookingOrder(currentPage.current);
+                setRefreshing(false);
+            }, 1000);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
-    const fetchBookingOrder = async () => {
-        const data = await axiosInstance
-            .get(`users/${userId}/bookings`);
+    // use this function to fetch more data when user scroll to the end of the list
+    const onEndReached = () => {
+        if (isEnd || !isLoaded) return;
+        console.log("onEndReached");
+        currentPage.current = currentPage.current + 1;
+        console.log(currentPage.current);
+        fetchBookingOrder(currentPage.current)
+            .catch(e => {
+                // the one who make this response message
+                // 'Bookings are not found' is a bad person
+                // it should be 'No more booking'
+                if (e.response.data.errors[0] === 'Bookings are not found') {
+                    setIsEnd(true);
+                }
+            });
+    }
 
-        setBookingOrder(data.data.value);
+    const fetchBookingOrder = async (pageNumber: number) => {
+        const data = await axiosInstance
+            .get(`users/${userId}/bookings`, {
+                params: {
+                    userId: userId,
+                    pageSize: pageSize,
+                    pageNumber: pageNumber
+                }
+            });
+        console.log(refresh.current + " refreshing")
+        if (refresh.current || isInit) {
+            setBookingOrder(data.data.value);
+            refresh.current = false;
+            setIsInit(false);
+            return;
+        }
+        setBookingOrder([...bookingOrder, ...data.data.value]);
+        console.log("booking order")
     }
 
     useEffect(() => {
         setIsLoaded(false);
+        console.log("useEffect");
+        currentPage.current = 1;
+        fetchBookingOrder(currentPage.current)
+            .then(() => setIsLoaded(true))
+            .catch(e => console.log(e.response));
 
-        fetchBookingOrder()
-            .catch(e => console.log(e));
-
-        setIsLoaded(true);
     }, []);
 
     if (!isLoaded) {
@@ -56,8 +100,8 @@ const Order = () => {
         <SafeAreaView>
             <FlatList
                 data={bookingOrder}
-                //keyExtractor={(item) => item.id}
-                initialNumToRender={10}
+                keyExtractor={(item) => item.id}
+                initialNumToRender={pageSize}
                 renderItem={(
                     ({item}) => (
                         <TouchableOpacity
@@ -149,6 +193,11 @@ const Order = () => {
                         </Text>
                     </View>
                 )}
+
+                // this function will be called when user scroll to the end of the list
+                onEndReached={onEndReached}
+                // this value is used to determine how far from the end of the list to trigger onEndReached
+                onEndReachedThreshold={0.1}
 
                 refreshControl={
                     <RefreshControl
