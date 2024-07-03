@@ -14,6 +14,7 @@ const Order = () => {
     const {userFullName, userId} = useGlobalContext();
     const [isEnd, setIsEnd] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
+    const [isInit, setIsInit] = useState(true);
     const currentPage = useRef<number>(1);
     const refresh = useRef<boolean>(false);
     const pageSize: number = 5;
@@ -64,9 +65,10 @@ const Order = () => {
                 }
             });
         console.log(refresh.current + " refreshing")
-        if (refresh.current) {
+        if (refresh.current || isInit) {
             setBookingOrder(data.data.value);
             refresh.current = false;
+            setIsInit(false);
             return;
         }
         setBookingOrder([...bookingOrder, ...data.data.value]);
