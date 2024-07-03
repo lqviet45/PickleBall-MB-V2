@@ -12,22 +12,29 @@ const Order = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [bookingOrder, setBookingOrder] = useState<BookingOrder[]>([]);
     const {userFullName, userId} = useGlobalContext();
-    const [refreshing, setRefreshing] = useState(false);
     const [isEnd, setIsEnd] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const currentPage = useRef<number>(1);
+    const refresh = useRef<boolean>(false);
     const pageSize: number = 5;
 
     // use this function to refresh the list
-    const onRefresh = () => {
-        setRefreshing(true);
-        setIsEnd(false);
-        currentPage.current = 1;
-        fetchBookingOrder(currentPage.current)
-            .catch(e => console.log(e.response.data.errors[0]));
-
-        setTimeout(() => {
-            setRefreshing(false);
-        }, 1000);
+    const onRefresh = async () => {
+        try {
+            console.log("onRefresh");
+            setIsEnd(false);
+            refresh.current = true;
+            setRefreshing(true);
+            currentPage.current = 1;
+            console.log("before set timeout");
+            setTimeout(async () => {
+                console.log("timeout");
+                await fetchBookingOrder(currentPage.current);
+                setRefreshing(false);
+            }, 1000);
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     // use this function to fetch more data when user scroll to the end of the list
@@ -56,7 +63,12 @@ const Order = () => {
                     pageNumber: pageNumber
                 }
             });
-
+        console.log(refresh.current + " refreshing")
+        if (refresh.current) {
+            setBookingOrder(data.data.value);
+            refresh.current = false;
+            return;
+        }
         setBookingOrder([...bookingOrder, ...data.data.value]);
         console.log("booking order")
     }
@@ -64,9 +76,11 @@ const Order = () => {
     useEffect(() => {
         setIsLoaded(false);
         console.log("useEffect");
+        currentPage.current = 1;
         fetchBookingOrder(currentPage.current)
             .then(() => setIsLoaded(true))
-            .catch(e => console.log(e));
+            .catch(e => console.log(e.response));
+
     }, []);
 
     if (!isLoaded) {
@@ -85,7 +99,7 @@ const Order = () => {
             <FlatList
                 data={bookingOrder}
                 keyExtractor={(item, index) => item.id}
-                initialNumToRender={5}
+                initialNumToRender={pageSize}
                 renderItem={(
                     ({item}) => (
                         <TouchableOpacity
