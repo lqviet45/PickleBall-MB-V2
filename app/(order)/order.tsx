@@ -98,7 +98,7 @@ const Order = () => {
         <SafeAreaView>
             <FlatList
                 data={bookingOrder}
-                keyExtractor={(item, index) => item.id}
+                keyExtractor={(item) => item.id}
                 initialNumToRender={pageSize}
                 renderItem={(
                     ({item}) => (
