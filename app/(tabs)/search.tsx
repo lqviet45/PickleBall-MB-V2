@@ -20,13 +20,13 @@ const Search = () => {
         const fetchAllCourt = async () => {
             const params = {
                 Name: search == "" ? undefined : search,
-                PageSize: 10
+                PageSize: 5
             }
             const data =
                 //search === "" ? await axiosInstance.get('/court-groups/') :
                 await axiosInstance.get('/court-groups/search', {params});
-            setSearchResult(data.data.value);
-            console.log("fetched search", searchResult.map(e => e.medias));
+            setSearchResult(data.data.value.items);
+            console.log(searchResult);
 
         }
         fetchAllCourt()

@@ -28,7 +28,14 @@ const BookingDetail = () => {
             maxSlot: 0,
             location: '',
             owner: '',
-            medias: [],
+            medias: [
+                {
+                    id: '',
+                    mediaUrl: '',
+                    createOnUtc: '',
+                    modifiedOnUtc: ''
+                }
+            ],
         }
     });
 

@@ -14,6 +14,10 @@ const UserLayout = () => {
                     name="wallet"
                     options={{ headerShown: false }}
                 />
+                <Stack.Screen
+                    name="topup"
+                    options={{ headerShown: false }}
+                />
                 {/*<Stack.Screen name="edit-profile" options={{ headerShown: false }} />*/}
             </Stack>
 
