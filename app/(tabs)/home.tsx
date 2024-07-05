@@ -7,7 +7,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import CourtCardVertical from "@/components/CourtCardVertical";
 
 const Home = () => {
-    let name = 'John Doe';
+    const {userFullName} = useGlobalContext();
     //const {userLogin, isLoading, setIsLoading} = useGlobalContext();
 
 
@@ -16,7 +16,7 @@ const Home = () => {
             <ScrollView>
                 {/*Welcome view*/}
                 <View className="flex-row justify-between pt-3 px-2">
-                    <Text className="text-xl">Xin chào, {name}</Text>
+                    <Text className="text-xl">Xin chào, {userFullName}</Text>
                     <Ionicons name="notifications-outline"
                               size={30} color="black" onPress={() => router.push('notification')}/>
                 </View>

@@ -22,30 +22,34 @@ const Topup = () => {
     const handleDeposit = async (amount: string) => {
         if (amount === "") {
             Alert.alert("Vui lòng nhập số tiền cần nạp");
+            return;
         }
         if (parseInt(amount) < 50000) {
             Alert.alert("Số tiền nạp tối thiểu là 50.000đ");
+            return;
         }
         if (parseInt(amount) > 2000000) {
             Alert.alert("Số tiền nạp tối đa là 2.000.000đ");
+            return;
         }
         console.log("userId", userId);
         console.log("walletId", walletId);
         console.log("amount", amount);
+        var money = parseInt(amount);
+        console.log("money", money);
         await axiosInstance
             .post(`/deposits`, {
-                body: {
+                    walletId: walletId,
                     userId: userId,
-                    wallet: walletId,
-                    amount: parseInt(amount)
+                    amount: amount
                 }
-            })
+            )
             .then(() => {
                 Alert.alert("Nạp tiền thành công");
-                router.push("wallet");
+                router.replace("wallet");
             })
             .catch(e => {
-                console.log("catching handleDeposit", e);
+                console.log("catching handleDeposit", e.response.data);
                 Alert.alert("Nạp tiền thất bại");
             })
     }

@@ -44,8 +44,8 @@ const Wallet = () => {
     }
 
     useEffect(() => {
-        // fetch user wallet amount
         setIsRefreshing(true);
+        // fetch user wallet amount
         fetchWallet()
             .then(() => {
                 setIsRefreshing(false);
@@ -61,11 +61,10 @@ const Wallet = () => {
             .catch(e => {
                 console.log("catching fetchTransaction", e);
             })
-
     },[]);
     if (isRefreshing) {
         return(
-            <SafeAreaView>
+            <SafeAreaView className={"h-full flex-row items-center justify-center"}>
                 <ActivityIndicator size="large" color="black"/>
                 <Text className="text-center text-black font-pmedium text-lg">
                     Loading...
@@ -101,7 +100,7 @@ const Wallet = () => {
                         <View className={"flex-col items-center justify-center w-[48%]"}>
                             <TouchableOpacity
                                 onPress={() => {
-                                    router.push({
+                                    router.replace({
                                         pathname: `(users)/topup/`,
                                         params: {
                                             walletId: walletId
@@ -117,7 +116,7 @@ const Wallet = () => {
                         <View className={"flex-col items-center justify-center w-[48%]"}>
                             <TouchableOpacity
                                 onPress={() => {
-                                    router.push({
+                                    router.replace({
                                         pathname: `(users)/withdraw/`,
                                         params: {
                                             walletId: walletId

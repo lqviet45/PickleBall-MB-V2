@@ -22,30 +22,31 @@ const Withdraw = () => {
     const handleWithdraw = async (amount: string) => {
         if (amount === "") {
             Alert.alert("Vui lòng nhập số tiền cần nạp");
+            return;
         }
         if (parseInt(amount) < 50000) {
-            Alert.alert("Số tiền nạp tối thiểu là 50.000đ");
+            Alert.alert("Số tiền rút tối thiểu là 50.000đ");
+            return;
         }
         if (parseInt(amount) > 2000000) {
-            Alert.alert("Số tiền nạp tối đa là 2.000.000đ");
+            Alert.alert("Số tiền rút tối đa là 2.000.000đ");
+            return;
         }
         console.log("userId", userId);
         console.log("walletId", walletId);
         console.log("amount", amount);
         await axiosInstance
             .post(`/withdraws`, {
-                body: {
                     userId: userId,
-                    wallet: walletId,
+                    walletId: walletId,
                     amount: parseInt(amount)
-                }
             })
             .then(() => {
                 Alert.alert("Rút tiền thành công");
-                router.push("wallet");
+                router.replace("wallet");
             })
             .catch(e => {
-                console.log("catching handleDeposit", e);
+                console.log("catching handleDeposit", e.response.data);
                 Alert.alert("Rút tiền thất bại");
             })
     }
