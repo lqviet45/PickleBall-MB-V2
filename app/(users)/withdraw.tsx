@@ -6,7 +6,7 @@ import {useGlobalContext} from "@/context/GlobalProvider";
 import {router, useLocalSearchParams} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-const Topup = () => {
+const Withdraw = () => {
     const [input, setInput] = useState<string>("");
     const {userId} = useGlobalContext();
     const walletId = useLocalSearchParams<{walletId: string}>().walletId;
@@ -19,7 +19,7 @@ const Topup = () => {
     const handleQuickInput = (amount: number) : void => {
         setInput(amount.toString());
     }
-    const handleDeposit = async (amount: string) => {
+    const handleWithdraw = async (amount: string) => {
         if (amount === "") {
             Alert.alert("Vui lòng nhập số tiền cần nạp");
         }
@@ -33,7 +33,7 @@ const Topup = () => {
         console.log("walletId", walletId);
         console.log("amount", amount);
         await axiosInstance
-            .post(`/deposits`, {
+            .post(`/withdraws`, {
                 body: {
                     userId: userId,
                     wallet: walletId,
@@ -41,18 +41,18 @@ const Topup = () => {
                 }
             })
             .then(() => {
-                Alert.alert("Nạp tiền thành công");
+                Alert.alert("Rút tiền thành công");
                 router.push("wallet");
             })
             .catch(e => {
                 console.log("catching handleDeposit", e);
-                Alert.alert("Nạp tiền thất bại");
+                Alert.alert("Rút tiền thất bại");
             })
     }
     return (
         <SafeAreaView className={"h-full"}>
             <View className={"mx-2 flex-col"}>
-                <Text className={"text-xl font-bold my-1"}>Nạp tiền vào</Text>
+                <Text className={"text-xl font-bold my-1"}>Rút tiền từ</Text>
                 <View className={"bg-white rounded-2xl p-2"}>
                     {/*Wallet selection*/}
                     <View className={"flex-col bg-amber-50 my-1 p-3 rounded-2xl border-2 border-amber-400"}>
@@ -103,7 +103,7 @@ const Topup = () => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <Text className={"text-xl font-bold my-1"}>Từ nguồn tiền</Text>
+                <Text className={"text-xl font-bold my-1"}>Đến nguồn tiền</Text>
                 <View className={"bg-white rounded-2xl p-2"}>
                     {/*Bank selection*/}
                     <View className={"flex-row bg-amber-50 my-1 p-1 items-center rounded-2xl border-2 border-amber-400"}>
@@ -125,9 +125,9 @@ const Topup = () => {
                 <View>
                     <TouchableOpacity
                         className={"bg-amber-400 w-full p-2 rounded-2xl mt-2"}
-                        onPress={() => handleDeposit(input)}
+                        onPress={() => handleWithdraw(input)}
                     >
-                        <Text className={"text-white text-lg font-pbold text-center"}>Nạp tiền</Text>
+                        <Text className={"text-white text-lg font-pbold text-center"}>Rút tiền</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -135,4 +135,4 @@ const Topup = () => {
     );
 };
 
-export default Topup;
+export default Withdraw;

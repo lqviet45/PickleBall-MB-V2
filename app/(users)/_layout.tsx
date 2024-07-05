@@ -16,8 +16,21 @@ const UserLayout = () => {
                 />
                 <Stack.Screen
                     name="topup"
-                    options={{ headerShown: false }}
+                    options={{
+                        headerShown: true,
+                        title: "Nạp",
+                        headerStyle: {backgroundColor: '#ffde5b'},
+                }}
                 />
+                <Stack.Screen
+                    name="withdraw"
+                    options={{
+                        headerShown: true,
+                        title: "Rút",
+                        headerStyle: {backgroundColor: '#ffde5b'},
+                }}
+                />
+
                 {/*<Stack.Screen name="edit-profile" options={{ headerShown: false }} />*/}
             </Stack>
 

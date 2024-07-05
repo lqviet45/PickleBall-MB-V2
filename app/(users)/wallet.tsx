@@ -1,21 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from "react-native-safe-area-context";
-import {FlatList, Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, FlatList, Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import {axiosInstance} from "@/lib/axios";
-import {WalletData} from "@/model/wallet";
 import {Transaction} from "@/model/transaction";
 import {router} from "expo-router";
-import {setParams} from "expo-router/build/global-state/routing";
 
 
 
 const Wallet = () => {
     const {userFullName, userId} = useGlobalContext();
-    const [wallet, setWallet] = useState<WalletData>();
+    const [walletId, setWalletId] = useState<string>("");
     const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [amount, setAmount] = useState<string>();
+    const [amount, setAmount] = useState<string>("");
     const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
     const addDotToAmount = (amount: number) => {
         return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -28,19 +26,10 @@ const Wallet = () => {
                     userId: userId
                 }
             });
-        setWallet(data.data.value);
-    }
-
-    const Topup = async () => {
-        // implement topup function
-        const data = await axiosInstance
-            .post(`/deposits`, {
-                body: {
-                    userId: userId,
-                    wallet: wallet?.id,
-                    amount: 100000
-                }
-            })
+        setWalletId(data.data.value.id);
+        setAmount(addDotToAmount(data.data.value.balance));
+        //console.log("logging walletId: ", walletId);
+        //console.log("logging wallet amount: ", amount);
     }
 
     const fetchTransaction = async () => {
@@ -59,15 +48,31 @@ const Wallet = () => {
         setIsRefreshing(true);
         fetchWallet()
             .then(() => {
-            setAmount(addDotToAmount(wallet!.balance));
-            console.log(amount);
+                setIsRefreshing(false);
+            })
+            .catch(e => {
+                console.log("catching fetchWallet", e);
             });
-        setIsRefreshing(false);
-        // fetch user transactions
-        fetchTransaction();
-
+        // fetch user transaction
+        fetchTransaction()
+            .then(() => {
+                setIsRefreshing(false);
+            })
+            .catch(e => {
+                console.log("catching fetchTransaction", e);
+            })
 
     },[]);
+    if (isRefreshing) {
+        return(
+            <SafeAreaView>
+                <ActivityIndicator size="large" color="black"/>
+                <Text className="text-center text-black font-pmedium text-lg">
+                    Loading...
+                </Text>
+            </SafeAreaView>
+        )
+    }
     return (
         <SafeAreaView className={"bg-blue-950"}>
             {/*Wallet Container*/}
@@ -99,7 +104,7 @@ const Wallet = () => {
                                     router.push({
                                         pathname: `(users)/topup/`,
                                         params: {
-                                            walletId: wallet?.id
+                                            walletId: walletId
                                         }
                                     })
                                 }}
@@ -110,7 +115,16 @@ const Wallet = () => {
                         </View>
                         {/*Withdraw*/}
                         <View className={"flex-col items-center justify-center w-[48%]"}>
-                            <TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    router.push({
+                                        pathname: `(users)/withdraw/`,
+                                        params: {
+                                            walletId: walletId
+                                        }
+                                    })
+                                }}
+                            >
                                 <Ionicons name={"arrow-down-circle-outline"} size={20} color={"white"}/>
                                 <Text className={"text-white "}>Withdraw</Text>
                             </TouchableOpacity>
