@@ -66,18 +66,19 @@ const Order = () => {
             });
         console.log(refresh.current + " refreshing")
         if (refresh.current || isInit) {
-            setBookingOrder(data.data.value);
+            setBookingOrder(data.data.value.items);
             refresh.current = false;
             setIsInit(false);
             return;
         }
-        setBookingOrder([...bookingOrder, ...data.data.value]);
+        setBookingOrder([...bookingOrder, ...data.data.value.items]);
         console.log("booking order")
     }
 
     useEffect(() => {
         setIsLoaded(false);
         console.log("useEffect");
+        console.log(userId);
         currentPage.current = 1;
         fetchBookingOrder(currentPage.current)
             .then(() => setIsLoaded(true))

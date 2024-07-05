@@ -104,7 +104,7 @@ const SignIn = () => {
                     </View>
                     <Text className="text-2xl text-white
           text-semibold mt-10 font-psemibold self-center">
-                        Login to Our App
+                        Login
                     </Text>
 
                     <FormField
