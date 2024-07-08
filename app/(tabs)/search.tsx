@@ -30,9 +30,8 @@ const Search = () => {
 
         }
         fetchAllCourt()
-           .catch(e => console.log(e));
-        setIsLoading(false);
-
+            .then(() => setIsLoading(false))
+            .catch(e => console.log(e));
 
     }, [search]);
 
@@ -42,7 +41,7 @@ const Search = () => {
 
     if (isLoading) {
         return (
-            <SafeAreaView>
+            <SafeAreaView className={"justify-center items-center h-full"}>
                 <ActivityIndicator size="large" color="black"/>
                 <Text className="text-center text-black font-pmedium text-lg">
                     Loading...

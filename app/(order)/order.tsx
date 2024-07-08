@@ -64,7 +64,6 @@ const Order = () => {
                     pageNumber: pageNumber
                 }
             });
-        console.log(refresh.current + " refreshing")
         if (refresh.current || isInit) {
             setBookingOrder(data.data.value.items);
             refresh.current = false;
@@ -72,23 +71,20 @@ const Order = () => {
             return;
         }
         setBookingOrder([...bookingOrder, ...data.data.value.items]);
-        console.log("booking order")
     }
 
     useEffect(() => {
         setIsLoaded(false);
-        console.log("useEffect");
-        console.log(userId);
         currentPage.current = 1;
         fetchBookingOrder(currentPage.current)
             .then(() => setIsLoaded(true))
-            .catch(e => console.log(e.response));
+            .catch(e => console.log("catching fetchBookingOrder", e.response));
 
     }, []);
 
     if (!isLoaded) {
         return (
-            <SafeAreaView>
+            <SafeAreaView className={"h-full items-center justify-center"}>
                 <ActivityIndicator size="large" color="black"/>
                 <Text className="text-center text-black font-pmedium text-lg">
                     Loading...
@@ -107,7 +103,7 @@ const Order = () => {
                     ({item}) => (
                         <TouchableOpacity
                             onPress={() => {
-                                console.log(item.id);
+                                console.log("item id: ",item.id);
                                 router.push({
                                     pathname: `(order)/[id]`,
                                     params: {id: item.id}

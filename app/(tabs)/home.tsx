@@ -8,8 +8,6 @@ import CourtCardVertical from "@/components/CourtCardVertical";
 
 const Home = () => {
     const {userFullName} = useGlobalContext();
-    //const {userLogin, isLoading, setIsLoading} = useGlobalContext();
-
 
     return (
         <SafeAreaView className={"bg-white h-full"}>
@@ -34,7 +32,7 @@ const Home = () => {
                             <Ionicons name="wallet-outline" size={28} color="black"/>
                             <View className="flex-row justify-between">
                                 <Text>Wallet</Text>
-                                <Text>200.000NVD</Text>
+                                <Text className={"text-gray-500"}>Nhấn để xem ví</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
