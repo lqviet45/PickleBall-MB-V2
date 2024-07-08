@@ -17,7 +17,7 @@ const Order = () => {
     const [isInit, setIsInit] = useState(true);
     const currentPage = useRef<number>(1);
     const refresh = useRef<boolean>(false);
-    const pageSize: number = 5;
+    const pageSize: number = 10;
 
     // use this function to refresh the list
     const onRefresh = async () => {
@@ -71,6 +71,43 @@ const Order = () => {
             return;
         }
         setBookingOrder([...bookingOrder, ...data.data.value.items]);
+    }
+
+    const renderBookingStatus = (status: string) => {
+        switch (status) {
+            case 'Pending':
+                return (
+                    <Ionicons
+                        name="time-outline"
+                        size={24}
+                        color="yellow"
+                    />
+                );
+            case 'Confirmed':
+                return (
+                    <Ionicons
+                        name="checkmark-done-circle"
+                        size={24}
+                        color="green"
+                    />
+                );
+            case 'Cancelled':
+                return (
+                    <Ionicons
+                        name="close-circle"
+                        size={24}
+                        color="red"
+                    />
+                );
+            default:
+                return (
+                    <Ionicons
+                        name="time-outline"
+                        size={24}
+                        color="yellow"
+                    />
+                );
+        }
     }
 
     useEffect(() => {
@@ -144,17 +181,7 @@ const Order = () => {
                                             {item.bookingStatus}
                                         </Text>
                                         {
-                                            item.bookingStatus === 'Pending' ?
-                                                <Ionicons
-                                                    name="time-outline"
-                                                    size={24}
-                                                    color="red"
-                                                /> :
-                                                <Ionicons
-                                                    name="checkmark-done-circle"
-                                                    size={24}
-                                                    color="green"
-                                                />
+                                            renderBookingStatus(item.bookingStatus)
                                         }
                                     </View>
                                 </View>
