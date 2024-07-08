@@ -16,20 +16,17 @@ const Order = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [isInit, setIsInit] = useState(true);
     const currentPage = useRef<number>(1);
-    const refresh = useRef<boolean>(false);
     const pageSize: number = 10;
+    const refresh = useRef<boolean>(false);
 
     // use this function to refresh the list
     const onRefresh = async () => {
         try {
-            console.log("onRefresh");
             setIsEnd(false);
             refresh.current = true;
             setRefreshing(true);
             currentPage.current = 1;
-            console.log("before set timeout");
             setTimeout(async () => {
-                console.log("timeout");
                 await fetchBookingOrder(currentPage.current);
                 setRefreshing(false);
             }, 1000);
@@ -41,9 +38,7 @@ const Order = () => {
     // use this function to fetch more data when user scroll to the end of the list
     const onEndReached = () => {
         if (isEnd || !isLoaded) return;
-        console.log("onEndReached");
         currentPage.current = currentPage.current + 1;
-        console.log(currentPage.current);
         fetchBookingOrder(currentPage.current)
             .catch(e => {
                 // the one who make this response message
