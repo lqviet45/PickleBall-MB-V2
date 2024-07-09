@@ -6,19 +6,21 @@ import {useGlobalContext} from "@/context/GlobalProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import CourtCardVertical from "@/components/CourtCardVertical";
 import {axiosInstance} from "@/lib/axios";
-import {CourtGroup} from "@/model/courtGroup";
 import {StatusBar} from "expo-status-bar";
+import {useIsFocused} from "@react-navigation/core";
 
-const Home = () => {
-    const {userFullName} = useGlobalContext();
-
+const Home = ({navigation} : any) => {
+    const {userFullName, userId, isLoading} = useGlobalContext();
+    const isFocused = useIsFocused();
     const [isLoaded, setIsLoaded] = useState(false);
-    const [courtGroup, setCourtGroup] = useState<CourtGroup[]>([]);
+    const [bookMarks, setBookMarks] = useState<any>([]);
     const [refreshing, setRefreshing] = useState(false);
     const [isInit, setIsInit] = useState(true);
     const [isScrollToTop, setIsScrollToTop] = useState(true);
+    const [isEnd, setIsEnd] = useState(false);
     const currentPage = useRef<number>(1);
     const refresh = useRef<boolean>(false);
+    const isInitialMount = useRef(true);
     const pageSize: number = 10;
     const scrollY = new Animated.Value(0);
 
@@ -27,28 +29,73 @@ const Home = () => {
         outputRange: [0, -200],
         extrapolate: 'clamp'
     });
+
+    const onRefresh = async () => {
+        try {
+            setIsEnd(false);
+            refresh.current = true;
+            setRefreshing(true);
+            currentPage.current = 1;
+            await fetchCourtGroup(currentPage.current);
+            setRefreshing(false);
+        } catch (error) {
+            Alert.alert('Error', 'Failed to get court group');
+        }
+    }
+
+    const onEndReached = async () => {
+        try {
+            if (isEnd || !isLoaded) return;
+            currentPage.current = currentPage.current + 1;
+            await fetchCourtGroup(currentPage.current);
+        } catch (error) {
+            Alert.alert('Error', 'Failed to get court group');
+        }
+    }
+
     const fetchCourtGroup = async (pageNumber: number) => {
         try {
-            const data = await axiosInstance.get('court-groups', {
+            const data = await axiosInstance.get(`users/${userId}/bookmarks`, {
                 params: {
                     pageSize: pageSize,
                     pageNumber: pageNumber
                 }
             });
-            setCourtGroup(data.data.value.items);
+
+            if (data.data.value.items.length === 0) {
+                setIsEnd(true);
+                return;
+            }
+            if (refresh.current || isInit || isInitialMount.current) {
+                setBookMarks(data.data.value.items);
+                refresh.current = false;
+                isInitialMount.current = false;
+                setIsInit(false);
+                return;
+            }
+            setBookMarks([...bookMarks, ...data.data.value.items]);
         } catch (error) {
             Alert.alert('Error', 'Failed to get court group');
         }
     }
 
     useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            currentPage.current = 1;
+            isInitialMount.current = true;
+            fetchCourtGroup(currentPage.current)
+                .then(() => isInitialMount.current = false)
+                .catch(e => console.log(e));
+        })
+
         if (isInit) {
             fetchCourtGroup(currentPage.current)
                 .then(() => setIsLoaded(true))
                 .catch(e => console.log(e));
             setIsInit(false);
         }
-    }, []);
+        return unsubscribe;
+    }, [navigation]);
 
     return (
         <SafeAreaView className={"bg-white h-full"}>
@@ -105,11 +152,14 @@ const Home = () => {
                 {/*  Booked Court  */}
             </Animated.View>
 
-
+            <View className={'flex-1'}>
             <Animated.FlatList
-                className="bg-white pt-28"
-                data={courtGroup}
+                className="bg-white pt-28 flex-1"
+                data={bookMarks}
                 numColumns={2}
+                initialNumToRender={pageSize}
+                onEndReached={onEndReached}
+                onEndReachedThreshold={0.1}
                 keyExtractor={(item) => item.id}
                 onScroll={(e) => {
                     // e is an event that contains various data
@@ -117,20 +167,19 @@ const Home = () => {
                     scrollY.setValue(e.nativeEvent.contentOffset.y);
                 }}
                 renderItem={({item}) => (
-                    <>
                         <CourtCardVertical
-                            courtId={item.id}
-                            courtImage={(item.medias !== undefined && item.medias[0] !== undefined)
-                                ? item.medias[0].mediaUrl
+                            courtId={item.courtGroup.id}
+                            courtImage={(item.courtGroup.medias !== undefined && item.courtGroup.medias[0] !== undefined)
+                                ? item.courtGroup.medias[0].mediaUrl
                                 : "https://www.thespruce.com/thmb/1J6"}
                             rating={4.5}
-                            courtName={item.name}
+                            courtName={item.courtGroup.name}
                             time={'08:00 - 16:00'}
                         />
-                    </>
                 )}
 
             />
+            </View>
 
             <StatusBar backgroundColor={'#FFFFFF'} style="dark"/>
         </SafeAreaView>
