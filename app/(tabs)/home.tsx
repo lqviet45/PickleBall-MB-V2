@@ -26,7 +26,7 @@ const Home = ({navigation} : any) => {
 
     const translateY = scrollY.interpolate({
         inputRange: [0, 200],
-        outputRange: [0, -200],
+        outputRange: [0, -300],
         extrapolate: 'clamp'
     });
 
@@ -153,8 +153,8 @@ const Home = ({navigation} : any) => {
             </Animated.View>
 
             <View className={'flex-1'}>
-            <Animated.FlatList
-                className="bg-white pt-28 flex-1"
+            <FlatList
+                className="bg-white pt-28 flex-1 pb-6"
                 data={bookMarks}
                 numColumns={2}
                 initialNumToRender={pageSize}
@@ -177,10 +177,24 @@ const Home = ({navigation} : any) => {
                             time={'08:00 - 16:00'}
                         />
                 )}
-
+                ListFooterComponent={() => {
+                    return (
+                        <>
+                            <View className="flex-row justify-center pt-5">
+                                {!isEnd && bookMarks.length !== 0 && (
+                                    <Text className="text-gray-500 text-center">Loading...</Text>
+                                )}
+                                {isEnd && bookMarks.length !== 0 && (
+                                    <Text className="text-gray-500 text-center">No more court</Text>
+                                )}
+                            </View>
+                            <View className="flex-row justify-center pt-24 pb-6">
+                            </View>
+                        </>
+                    );
+                }}
             />
             </View>
-
             <StatusBar backgroundColor={'#FFFFFF'} style="dark"/>
         </SafeAreaView>
     );
