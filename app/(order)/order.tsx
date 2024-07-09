@@ -17,7 +17,7 @@ const Order = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [isInit, setIsInit] = useState(true);
 
-    const searchBookingStatusRef = useRef<string>('All');
+    const searchBookingStatusRef = useRef<string>('');
     // The variable use to check is first time search with the same status
     const isFirstSearch = useRef<boolean>(false);
     const currentPage = useRef<number>(1);
@@ -26,7 +26,7 @@ const Order = () => {
 
     // this is the data for the dropdown
     const bookingStatus = [
-        {label: 'All', value: 'All'},
+        {label: 'All', value: null},
         {label: 'Pending', value: 'Pending'},
         {label: 'Confirmed', value: 'Confirmed'},
         {label: 'Cancelled', value: 'Cancelled'}
@@ -69,8 +69,7 @@ const Order = () => {
                 isFirstSearch.current = true;
                 setIsEnd(false);
                 searchBookingStatusRef.current = item.value;
-                //await fetchBookingOrder(currentPage.current);
-
+                await fetchBookingOrder(currentPage.current);
             }
         } catch (error) {
             Alert.alert('Error', 'Failed to search bookings');
@@ -78,12 +77,14 @@ const Order = () => {
     }
 
     const fetchBookingOrder = async (pageNumber: number) => {
+        console.log("fetchBookingOrder ", searchBookingStatusRef.current);
         const data = await axiosInstance
             .get(`users/${userId}/bookings`, {
                 params: {
                     userId: userId,
                     pageSize: pageSize,
-                    pageNumber: pageNumber
+                    pageNumber: pageNumber,
+                    bookingStatus: searchBookingStatusRef.current
                 }
             });
         if (refresh.current || isInit || isFirstSearch.current) {
