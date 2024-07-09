@@ -56,7 +56,7 @@ const Home = ({navigation} : any) => {
             }
             setBookMarks([...bookMarks, ...data.data.value.items]);
         } catch (error) {
-            Alert.alert('Error', 'Failed to get court group');
+            Alert.alert('Error', 'Failed to get court group bookmarks');
         }
     }
 

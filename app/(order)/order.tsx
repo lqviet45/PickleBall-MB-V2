@@ -6,6 +6,7 @@ import {useGlobalContext} from "@/context/GlobalProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {axiosInstance} from "@/lib/axios";
 import {router} from "expo-router";
+import CustomDropdown from "@/components/CustomDropdown";
 
 const Order = () => {
 
@@ -15,10 +16,18 @@ const Order = () => {
     const [isEnd, setIsEnd] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [isInit, setIsInit] = useState(true);
+    const [searchBookingStatus, setSearchBookingStatus] = useState<string>('All');
+    const isSearch = useRef<boolean>(false);
     const currentPage = useRef<number>(1);
     const pageSize: number = 10;
     const refresh = useRef<boolean>(false);
 
+    const bookingStatus = [
+        {label: 'All', value: 'All'},
+        {label: 'Pending', value: 'Pending'},
+        {label: 'Confirmed', value: 'Confirmed'},
+        {label: 'Cancelled', value: 'Cancelled'}
+    ];
     // use this function to refresh the list
     const onRefresh = async () => {
         try {
@@ -59,9 +68,10 @@ const Order = () => {
                     pageNumber: pageNumber
                 }
             });
-        if (refresh.current || isInit) {
+        if (refresh.current || isInit || isSearch.current) {
             setBookingOrder(data.data.value.items);
             refresh.current = false;
+            isSearch.current = false;
             setIsInit(false);
             return;
         }
@@ -106,11 +116,13 @@ const Order = () => {
     }
 
     useEffect(() => {
-        setIsLoaded(false);
-        currentPage.current = 1;
-        fetchBookingOrder(currentPage.current)
-            .then(() => setIsLoaded(true))
-            .catch(e => console.log("catching fetchBookingOrder", e.response));
+        if (isInit) {
+            setIsLoaded(false);
+            currentPage.current = 1;
+            fetchBookingOrder(currentPage.current)
+                .then(() => setIsLoaded(true))
+                .catch(e => console.log("catching fetchBookingOrder", e.response));
+        }
 
     }, []);
 
@@ -127,6 +139,7 @@ const Order = () => {
 
     return (
         <SafeAreaView>
+
             <FlatList
                 data={bookingOrder}
                 keyExtractor={(item) => item.id}
@@ -187,7 +200,7 @@ const Order = () => {
 
                 ListHeaderComponent={() => (
                     <View className="flex my-6 px-4 space-y-6">
-                        <View className="flex justify-between items-start flex-row mb-6">
+                        <View className="flex justify-between items-start flex-row">
                             <View>
                                 <Text className="font-pmedium text-lg text-black">
                                     Take your booking
@@ -195,6 +208,21 @@ const Order = () => {
                                 <Text className="text-2xl font-psemibold text-amber-300">
                                     {userFullName}
                                 </Text>
+                            </View>
+
+                            <View className="flex justify-between items-start flex-row">
+                                <CustomDropdown
+                                    label={"booking status"}
+                                    data={bookingStatus}
+                                    labelField={'label'}
+                                    valueField={'value'}
+                                    value={searchBookingStatus}
+                                    onChange={item => {
+                                        isSearch.current = true;
+                                        setSearchBookingStatus(item.value);
+                                    }}
+                                    isSearchable={false}
+                                />
                             </View>
                         </View>
                     </View>
