@@ -17,11 +17,14 @@ const Order = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [isInit, setIsInit] = useState(true);
     const [searchBookingStatus, setSearchBookingStatus] = useState<string>('All');
-    const isSearch = useRef<boolean>(false);
+
+    // The variable use to check is first time search with the same status
+    const isFirstSearch = useRef<boolean>(false);
     const currentPage = useRef<number>(1);
     const pageSize: number = 10;
     const refresh = useRef<boolean>(false);
 
+    // this is the data for the dropdown
     const bookingStatus = [
         {label: 'All', value: 'All'},
         {label: 'Pending', value: 'Pending'},
@@ -68,10 +71,10 @@ const Order = () => {
                     pageNumber: pageNumber
                 }
             });
-        if (refresh.current || isInit || isSearch.current) {
+        if (refresh.current || isInit || isFirstSearch.current) {
             setBookingOrder(data.data.value.items);
             refresh.current = false;
-            isSearch.current = false;
+            isFirstSearch.current = false;
             setIsInit(false);
             return;
         }
@@ -218,7 +221,7 @@ const Order = () => {
                                     valueField={'value'}
                                     value={searchBookingStatus}
                                     onChange={item => {
-                                        isSearch.current = true;
+                                        isFirstSearch.current = true;
                                         setSearchBookingStatus(item.value);
                                     }}
                                     isSearchable={false}
