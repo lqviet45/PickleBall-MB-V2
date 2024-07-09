@@ -26,7 +26,7 @@ const Order = () => {
 
     // this is the data for the dropdown
     const bookingStatus = [
-        {label: 'All', value: null},
+        {label: 'All', value: ''},
         {label: 'Pending', value: 'Pending'},
         {label: 'Confirmed', value: 'Confirmed'},
         {label: 'Cancelled', value: 'Cancelled'}
@@ -77,7 +77,6 @@ const Order = () => {
     }
 
     const fetchBookingOrder = async (pageNumber: number) => {
-        console.log("fetchBookingOrder ", searchBookingStatusRef.current);
         const data = await axiosInstance
             .get(`users/${userId}/bookings`, {
                 params: {
@@ -87,6 +86,10 @@ const Order = () => {
                     bookingStatus: searchBookingStatusRef.current
                 }
             });
+        if (data.data.value.items.length === 0) {
+            setIsEnd(true);
+            return;
+        }
         if (refresh.current || isInit || isFirstSearch.current) {
             setBookingOrder(data.data.value.items);
             refresh.current = false;
@@ -235,7 +238,7 @@ const Order = () => {
                                     data={bookingStatus}
                                     labelField={'label'}
                                     valueField={'value'}
-                                    value={searchBookingStatusRef.current}
+                                    value={searchBookingStatusRef.current === null ? 'All' : searchBookingStatusRef.current}
                                     onChange={onDropListChange}
                                     isSearchable={false}
                                 />
