@@ -64,6 +64,8 @@ const Order = () => {
 
     const onDropListChange = async (item: any) => {
         try {
+            // if the selected value is not the same as the current value
+            // then we will fetch the data again
             if (searchBookingStatusRef.current !== item.value) {
                 currentPage.current = 1;
                 isFirstSearch.current = true;
