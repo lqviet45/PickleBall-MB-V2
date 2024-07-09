@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, View, Text, TouchableOpacity, ScrollView, Image, Alert, FlatList} from "react-native";
+import {Animated, View, Text, TouchableOpacity, Alert, FlatList} from "react-native";
 import {router} from "expo-router";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useGlobalContext} from "@/context/GlobalProvider";
@@ -7,19 +7,14 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import CourtCardVertical from "@/components/CourtCardVertical";
 import {axiosInstance} from "@/lib/axios";
 import {StatusBar} from "expo-status-bar";
-import {useIsFocused} from "@react-navigation/core";
 
 const Home = ({navigation} : any) => {
-    const {userFullName, userId, isLoading} = useGlobalContext();
-    const isFocused = useIsFocused();
+    const {userFullName, userId} = useGlobalContext();
     const [isLoaded, setIsLoaded] = useState(false);
     const [bookMarks, setBookMarks] = useState<any>([]);
-    const [refreshing, setRefreshing] = useState(false);
     const [isInit, setIsInit] = useState(true);
-    const [isScrollToTop, setIsScrollToTop] = useState(true);
     const [isEnd, setIsEnd] = useState(false);
     const currentPage = useRef<number>(1);
-    const refresh = useRef<boolean>(false);
     const isInitialMount = useRef(true);
     const pageSize: number = 10;
     const scrollY = new Animated.Value(0);
@@ -29,19 +24,6 @@ const Home = ({navigation} : any) => {
         outputRange: [0, -300],
         extrapolate: 'clamp'
     });
-
-    const onRefresh = async () => {
-        try {
-            setIsEnd(false);
-            refresh.current = true;
-            setRefreshing(true);
-            currentPage.current = 1;
-            await fetchCourtGroup(currentPage.current);
-            setRefreshing(false);
-        } catch (error) {
-            Alert.alert('Error', 'Failed to get court group');
-        }
-    }
 
     const onEndReached = async () => {
         try {
@@ -66,9 +48,8 @@ const Home = ({navigation} : any) => {
                 setIsEnd(true);
                 return;
             }
-            if (refresh.current || isInit || isInitialMount.current) {
+            if (isInit || isInitialMount.current) {
                 setBookMarks(data.data.value.items);
-                refresh.current = false;
                 isInitialMount.current = false;
                 setIsInit(false);
                 return;
@@ -124,7 +105,7 @@ const Home = ({navigation} : any) => {
                     padding: 10,
                 }}
             >
-                {/*Welcome view*/}
+                {/*Welcome to view*/}
                 <View className="flex-row justify-between pt-3 px-2">
                     <Text className="text-xl">Xin chào, {userFullName}</Text>
                     <Ionicons name="notifications-outline"
