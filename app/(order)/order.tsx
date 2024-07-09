@@ -1,6 +1,6 @@
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useEffect, useRef, useState} from "react";
-import {FlatList, View, Text, RefreshControl, TouchableOpacity, ActivityIndicator} from "react-native";
+import {FlatList, View, Text, RefreshControl, TouchableOpacity, ActivityIndicator, Alert} from "react-native";
 import {BookingOrder} from "@/model/bookingOrder";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -16,8 +16,8 @@ const Order = () => {
     const [isEnd, setIsEnd] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [isInit, setIsInit] = useState(true);
-    const [searchBookingStatus, setSearchBookingStatus] = useState<string>('All');
 
+    const searchBookingStatusRef = useRef<string>('All');
     // The variable use to check is first time search with the same status
     const isFirstSearch = useRef<boolean>(false);
     const currentPage = useRef<number>(1);
@@ -60,6 +60,21 @@ const Order = () => {
                     setIsEnd(true);
                 }
             });
+    }
+
+    const onDropListChange = async (item: any) => {
+        try {
+            if (searchBookingStatusRef.current !== item.value) {
+                currentPage.current = 1;
+                isFirstSearch.current = true;
+                setIsEnd(false);
+                searchBookingStatusRef.current = item.value;
+                //await fetchBookingOrder(currentPage.current);
+
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to search bookings');
+        }
     }
 
     const fetchBookingOrder = async (pageNumber: number) => {
@@ -219,11 +234,8 @@ const Order = () => {
                                     data={bookingStatus}
                                     labelField={'label'}
                                     valueField={'value'}
-                                    value={searchBookingStatus}
-                                    onChange={item => {
-                                        isFirstSearch.current = true;
-                                        setSearchBookingStatus(item.value);
-                                    }}
+                                    value={searchBookingStatusRef.current}
+                                    onChange={onDropListChange}
                                     isSearchable={false}
                                 />
                             </View>
