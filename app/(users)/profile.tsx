@@ -1,5 +1,5 @@
 import React, {useEffect, useLayoutEffect, useState} from 'react';
-import {View, Text, ScrollView} from "react-native";
+import {View, Text, ScrollView, Image, TouchableOpacity} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import FormField from "@/components/FormField";
 import CustomDateTimePicker from "@/components/CustomDateTimePicker";
@@ -9,6 +9,7 @@ import {Formik} from "formik";
 import {axiosInstance} from "@/lib/axios";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import {UserProfileInform} from "@/model/user";
+import * as ImagePicker from 'expo-image-picker';
 
 let userSchema = object({
     name: string().required(),
@@ -29,11 +30,10 @@ const Profile = () => {
         phoneNumber: '',
     });
     const {userLogin} = useGlobalContext();
-
+    const [image, setImage] = useState(null);
     const [isEdit, setIsEdit] = useState(false);
 
     useEffect(() => {
-        console.log(userLogin?.uid);
         getUserInform().catch(e => console.log(e));
     }, []);
 
@@ -51,6 +51,19 @@ const Profile = () => {
         setUserInform(data.data.value);
     }
 
+    const handleChangeImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+        console.log(result);
+
+        if (!result.canceled) {
+            setImage(result.assets[0].uri);
+        }
+    }
 
     const submit = async (values: any) => {
         console.log(userInform);
@@ -67,6 +80,18 @@ const Profile = () => {
                         <Text className="text-2xl text-yellow-100 text-semibold mt-10 font-psemibold">
                             Profile
                         </Text>
+                    </View>
+
+                    <View>
+                        <TouchableOpacity
+                            onPress={() => console.log("Change Avatar")}
+                        >
+                            <Image
+                                source={{uri: userLogin?.photoURL ?? 'https://www.w3schools.com/howto/img_avatar.png'}}
+                                className="w-32 h-32 rounded-full mt-10 mx-auto"
+                                resizeMode={'cover'}
+                            />
+                        </TouchableOpacity>
                     </View>
 
                     <Formik

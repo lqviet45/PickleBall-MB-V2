@@ -31,7 +31,8 @@
     "typescript": "~5.3.3",
     "yup": "^1.4.0",
     "expo-notifications": "~0.28.9",
-    "expo-device": "~6.0.2"
+    "expo-device": "~6.0.2",
+    "expo-image-picker": "~15.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
