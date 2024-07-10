@@ -30,7 +30,7 @@ const Profile = () => {
         phoneNumber: '',
     });
     const {userLogin} = useGlobalContext();
-    const [image, setImage] = useState(null);
+    const [image, setImage] = useState(userLogin?.photoURL);
     const [isEdit, setIsEdit] = useState(false);
 
     useEffect(() => {
@@ -84,10 +84,10 @@ const Profile = () => {
 
                     <View>
                         <TouchableOpacity
-                            onPress={() => console.log("Change Avatar")}
+                            onPress={handleChangeImage}
                         >
                             <Image
-                                source={{uri: userLogin?.photoURL ?? 'https://www.w3schools.com/howto/img_avatar.png'}}
+                                source={{uri: image ?? 'https://www.w3schools.com/howto/img_avatar.png'}}
                                 className="w-32 h-32 rounded-full mt-10 mx-auto"
                                 resizeMode={'cover'}
                             />
