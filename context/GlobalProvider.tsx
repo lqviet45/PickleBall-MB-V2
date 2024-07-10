@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useEffect, useState} from "react";
+import React, {createContext, useContext, useEffect, useRef, useState} from "react";
 import auth, {FirebaseAuthTypes} from "@react-native-firebase/auth";
 import {axiosInstance} from "@/lib/axios";
 import {User} from "@/model/user";
@@ -31,7 +31,7 @@ const defaultValues: GlobalContextType = {
     setIsLoggedIn: () => {},
     setUser: () => {},
     setIsLoading: () => {},
-    setExpoPushToken: () => {}
+    setExpoPushToken: () => {},
 };
 
 const GlobalContext = createContext<GlobalContextType>(defaultValues);
@@ -54,10 +54,6 @@ const GlobalProvider = ({ children } : ContextProps) => {
                     setIsLoggedIn(true);
                     setIsLoading(false);
                     getUserInform(user?.uid)
-                        .then(user => {
-                            updateDeviceToken(user.id, expoPushToken)
-                                .catch(e => console.log(e));
-                        })
                         .catch(e => console.log(e));
                 } else {
                     setIsLoggedIn(false);
@@ -69,6 +65,17 @@ const GlobalProvider = ({ children } : ContextProps) => {
             console.log(error);
         }
     }, []);
+
+    const updateDeviceToken = async (userId: string ,token: string) => {
+        if (token === '' || userId === '') return;
+        const data = await axiosInstance.post(
+            'users/device-token',
+            {
+                userId: userId,
+                deviceToken: token
+            }
+        );
+    }
 
     const getUserInform = async (userId: string) => {
         const data = await axiosInstance.post(
@@ -85,18 +92,8 @@ const GlobalProvider = ({ children } : ContextProps) => {
         return data.data.value;
     }
 
-    const updateDeviceToken = async (userId: string ,token: string) => {
-        console.log("updateDeviceToken run")
-        if (token === '') return;
-        const data = await axiosInstance.post(
-            'users/device-token',
-            {
-                userId: userId,
-                deviceToken: token
-            }
-        );
-    }
-
+    updateDeviceToken(userId ?? '', expoPushToken)
+        .catch(e => console.log(e));
     return (
         <GlobalContext.Provider
             value={{
