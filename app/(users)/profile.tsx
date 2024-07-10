@@ -32,7 +32,7 @@ const Profile = () => {
         location: '',
         phoneNumber: '',
     });
-    const {userLogin} = useGlobalContext();
+    const {userLogin, setUser} = useGlobalContext();
     const [image, setImage] = useState(userLogin?.photoURL);
     const [isEdit, setIsEdit] = useState(false);
     const imgUploadName = useRef('');
@@ -64,7 +64,6 @@ const Profile = () => {
         });
 
         if (!result.canceled) {
-            console.log(result);
             imgUploadName.current = filePath + `${userInform.email}-${new Date()}.jpg`;
             const imgRef = storage().ref(imgUploadName.current);
             await imgRef.putFile(result.assets[0].uri);
@@ -74,18 +73,24 @@ const Profile = () => {
         if (result.assets !== null && result.assets[0].uri) {
             const imgUrl = await storage().ref(imgUploadName.current).getDownloadURL();
             console.log(imgUrl);
-            // auth().currentUser?.updateProfile({
-            //
-            // })
+            await auth().currentUser?.updateProfile({
+                photoURL: imgUrl
+            })
+            if (userLogin !== null) {
+                setUser({...userLogin,
+                    photoURL: imgUrl
+                });
+            }
         }
     }
 
     const submit = async (values: any) => {
         console.log(userInform);
         const data = await axiosInstance.put('/users/update-user', values);
-        console.log(data);
         setIsEdit(false);
     }
+
+    console.log(userLogin)
 
     return (
         <SafeAreaView className="bg-Base h-full">

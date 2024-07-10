@@ -1,12 +1,11 @@
 import React, {createContext, useContext, useEffect, useRef, useState} from "react";
 import auth, {FirebaseAuthTypes} from "@react-native-firebase/auth";
 import {axiosInstance} from "@/lib/axios";
-import {User} from "@/model/user";
 
 
 type GlobalContextType = {
     isLoggedIn: boolean;
-    userLogin: FirebaseAuthTypes.User | null | undefined;
+    userLogin: FirebaseAuthTypes.User | null;
     isLoading: boolean;
     setIsLoggedIn: (value: boolean) => void;
     setUser: (value: FirebaseAuthTypes.User | null) => void;
