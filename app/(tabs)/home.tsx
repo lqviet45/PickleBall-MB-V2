@@ -158,6 +158,17 @@ const Home = ({navigation} : any) => {
                             time={'08:00 - 16:00'}
                         />
                 )}
+
+                ListHeaderComponent={() => {
+                    return (
+                        <>
+                            <View className="flex-row justify-center pt-5">
+                                <Text className="text-xl">BookMark court</Text>
+                            </View>
+                        </>
+                    );
+                }}
+
                 ListFooterComponent={() => {
                     return (
                         <>
