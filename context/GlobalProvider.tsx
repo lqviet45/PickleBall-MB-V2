@@ -1,6 +1,7 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 import auth, {FirebaseAuthTypes} from "@react-native-firebase/auth";
 import {axiosInstance} from "@/lib/axios";
+import {User} from "@/model/user";
 
 
 type GlobalContextType = {
@@ -53,7 +54,11 @@ const GlobalProvider = ({ children } : ContextProps) => {
                     setIsLoggedIn(true);
                     setIsLoading(false);
                     getUserInform(user?.uid)
-                    .catch(e => console.log(e));
+                        .then(user => {
+                            updateDeviceToken(user.id, expoPushToken)
+                                .catch(e => console.log(e));
+                        })
+                        .catch(e => console.log(e));
                 } else {
                     setIsLoggedIn(false);
                     setUser(null);
@@ -77,6 +82,19 @@ const GlobalProvider = ({ children } : ContextProps) => {
         }
         setUserFullName(data.data.value.fullName);
         setUserId(data.data.value.id);
+        return data.data.value;
+    }
+
+    const updateDeviceToken = async (userId: string ,token: string) => {
+        console.log("updateDeviceToken run")
+        if (token === '') return;
+        const data = await axiosInstance.post(
+            'users/device-token',
+            {
+                userId: userId,
+                deviceToken: token
+            }
+        );
     }
 
     return (
