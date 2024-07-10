@@ -68,7 +68,7 @@ const Home = ({navigation} : any) => {
             isInitialMount.current = true;
             fetchCourtGroup(currentPage.current)
                 .then(() => isInitialMount.current = false)
-                .catch(e => console.log(e));
+                .catch(e => {});
         })
 
         if (isInit) {

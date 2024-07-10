@@ -85,8 +85,6 @@ const OrderPage = () => {
             const res = await axiosInstance
                 .post('/bookings', data);
 
-            console.log(res.data.value);
-
             //await schedulePushNotification();
 
             router.push({
@@ -257,7 +255,6 @@ const OrderPage = () => {
                                                     return;
                                                 }
 
-                                                console.log(playTime);
                                                 await setFieldValue('price', (playTime * order.price));
 
                                                 const timeString = currentTime.toLocaleTimeString('vi-VN', {
