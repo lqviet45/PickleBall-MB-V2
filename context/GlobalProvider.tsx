@@ -8,7 +8,7 @@ type GlobalContextType = {
     userLogin: FirebaseAuthTypes.User | null;
     isLoading: boolean;
     setIsLoggedIn: (value: boolean) => void;
-    setUser: (value: FirebaseAuthTypes.User | null) => void;
+    setUser: (value: FirebaseAuthTypes.User) => void;
     setIsLoading: (value: boolean) => void;
     userId?: string | null;
     expoPushToken: string;

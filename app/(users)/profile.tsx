@@ -72,14 +72,13 @@ const Profile = () => {
 
         if (result.assets !== null && result.assets[0].uri) {
             const imgUrl = await storage().ref(imgUploadName.current).getDownloadURL();
-            console.log(imgUrl);
-            await auth().currentUser?.updateProfile({
-                photoURL: imgUrl
-            })
+
             if (userLogin !== null) {
-                setUser({...userLogin,
+                await userLogin?.updateProfile({
                     photoURL: imgUrl
-                });
+                })
+                const user = auth().currentUser;
+                setUser(user!);
             }
         }
     }
@@ -90,7 +89,6 @@ const Profile = () => {
         setIsEdit(false);
     }
 
-    console.log(userLogin)
 
     return (
         <SafeAreaView className="bg-Base h-full">

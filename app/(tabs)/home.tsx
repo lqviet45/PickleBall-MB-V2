@@ -31,6 +31,7 @@ const Home = ({navigation} : any) => {
             currentPage.current = currentPage.current + 1;
             await fetchCourtGroup(currentPage.current);
         } catch (error) {
+            console.log(error);
             Alert.alert('Error', 'Failed to get court group');
         }
     }
@@ -56,6 +57,7 @@ const Home = ({navigation} : any) => {
             }
             setBookMarks([...bookMarks, ...data.data.value.items]);
         } catch (error) {
+            console.log(error);
             Alert.alert('Error', 'Failed to get court group bookmarks');
         }
     }
