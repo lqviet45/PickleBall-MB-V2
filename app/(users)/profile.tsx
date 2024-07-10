@@ -1,4 +1,4 @@
-import React, {useEffect, useLayoutEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {View, Text, ScrollView, Image, TouchableOpacity} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import FormField from "@/components/FormField";
@@ -10,6 +10,8 @@ import {axiosInstance} from "@/lib/axios";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import {UserProfileInform} from "@/model/user";
 import * as ImagePicker from 'expo-image-picker';
+import auth from "@react-native-firebase/auth";
+import storage from "@react-native-firebase/storage";
 
 let userSchema = object({
     name: string().required(),
@@ -21,6 +23,7 @@ let userSchema = object({
 
 const Profile = () => {
 
+    const filePath = 'users/';
     const [userInform, setUserInform] = useState<UserProfileInform>({
         firstName: '',
         lastName: '',
@@ -32,6 +35,7 @@ const Profile = () => {
     const {userLogin} = useGlobalContext();
     const [image, setImage] = useState(userLogin?.photoURL);
     const [isEdit, setIsEdit] = useState(false);
+    const imgUploadName = useRef('');
 
     useEffect(() => {
         getUserInform().catch(e => console.log(e));
@@ -58,10 +62,21 @@ const Profile = () => {
             aspect: [4, 3],
             quality: 1,
         });
-        console.log(result);
 
         if (!result.canceled) {
+            console.log(result);
+            imgUploadName.current = filePath + `${userInform.email}-${new Date()}.jpg`;
+            const imgRef = storage().ref(imgUploadName.current);
+            await imgRef.putFile(result.assets[0].uri);
             setImage(result.assets[0].uri);
+        }
+
+        if (result.assets !== null && result.assets[0].uri) {
+            const imgUrl = await storage().ref(imgUploadName.current).getDownloadURL();
+            console.log(imgUrl);
+            // auth().currentUser?.updateProfile({
+            //
+            // })
         }
     }
 
