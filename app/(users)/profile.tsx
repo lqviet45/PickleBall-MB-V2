@@ -38,6 +38,7 @@ const Profile = () => {
     const imgUploadName = useRef('');
 
     useEffect(() => {
+        setImage(userLogin?.photoURL);
         getUserInform().catch(e => console.log(e));
     }, []);
 
