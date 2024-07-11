@@ -29,7 +29,8 @@ const Order = () => {
         {label: 'All', value: ''},
         {label: 'Pending', value: 'Pending'},
         {label: 'Confirmed', value: 'Confirmed'},
-        {label: 'Cancelled', value: 'Cancelled'}
+        {label: 'Cancelled', value: 'Cancelled'},
+        {label: 'Completed', value: 'Completed'}
     ];
     // use this function to refresh the list
     const onRefresh = async () => {
@@ -128,6 +129,14 @@ const Order = () => {
                         color="red"
                     />
                 );
+                case 'Completed':
+                    return (
+                        <Ionicons
+                            name="checkmark-done-circle"
+                            size={24}
+                            color="green"
+                        />
+                    );
             default:
                 return (
                     <Ionicons
