@@ -4,14 +4,14 @@ import {ActivityIndicator, Alert, Image, ScrollView, Text, TouchableOpacity, Vie
 import {useEffect, useRef, useState} from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {CourtGroup} from "@/model/courtGroup";
-import {axiosInstance} from "@/lib/axios";
+import {axiosInstance, axiosInstanceAuth} from "@/lib/axios";
 import {useGlobalContext} from "@/context/GlobalProvider";
 
 
 const CourtDetail = () => {
     let {id} = useLocalSearchParams<{ id: string }>();
 
-    const {userId} = useGlobalContext();
+    const {userId, userLogin} = useGlobalContext();
     // because using img tag, we need to use set the state to true
     // then there will be no error when the image is loaded
     const [isLoading, setIsLoading] = useState(true);
@@ -74,6 +74,15 @@ const CourtDetail = () => {
 
     const createBookMark = async () => {
         try {
+            const token = await userLogin?.getIdToken();
+            if (!token) {
+                Alert.alert("Error", "Session expired. Please login again.");
+                router.push({
+                    pathname: '(auth)/sign-in'
+                });
+                return;
+            }
+            const axiosInstance = axiosInstanceAuth(token);
             const data = await axiosInstance.post(`/bookmarks`,{
                 courtGroupId: court.id,
                 userId: userId
@@ -93,6 +102,15 @@ const CourtDetail = () => {
 
     const deleteBookMark = async () => {
         try {
+            const token = await userLogin?.getIdToken();
+            if (!token) {
+                Alert.alert("Error", "Session expired. Please login again.");
+                router.push({
+                    pathname: '(auth)/sign-in'
+                });
+                return;
+            }
+            const axiosInstance = axiosInstanceAuth(token);
             await axiosInstance.delete(`/bookmarks/${bookMark.id}`,{
                 params: {
                     Id: bookMark.id

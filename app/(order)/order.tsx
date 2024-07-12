@@ -89,6 +89,10 @@ const Order = () => {
                     bookingStatus: searchBookingStatusRef.current
                 }
             });
+        if (data.data.value.items.length === 0 && isFirstSearch.current) {
+            setBookingOrder([]);
+        }
+
         if (data.data.value.items.length === 0) {
             setIsEnd(true);
             return;
