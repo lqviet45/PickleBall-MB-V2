@@ -1,6 +1,7 @@
 import auth from "@react-native-firebase/auth";
 import {GoogleSignin} from "@react-native-google-signin/google-signin";
 import {Alert} from "react-native";
+import {router} from "expo-router";
 
 export const CheckUserRole = async () => {
 
@@ -16,4 +17,18 @@ export const CheckUserRole = async () => {
         return false;
     }
     return true;
+}
+
+export const getUserToken = async () => {
+    const token = await auth().currentUser?.getIdToken();
+    if (!token) {
+        await auth().signOut();
+        if (GoogleSignin.hasPreviousSignIn()) {
+            await GoogleSignin.signOut();
+        }
+        Alert.alert('Error', 'Token is invalid');
+        router.push('(auth)/sign-in');
+        return '';
+    }
+    return token;
 }

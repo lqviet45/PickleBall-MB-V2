@@ -6,6 +6,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import {CourtGroup} from "@/model/courtGroup";
 import {axiosInstance, axiosInstanceAuth} from "@/lib/axios";
 import {useGlobalContext} from "@/context/GlobalProvider";
+import {getUserToken} from "@/lib/authServices";
 
 
 const CourtDetail = () => {
@@ -74,14 +75,7 @@ const CourtDetail = () => {
 
     const createBookMark = async () => {
         try {
-            const token = await userLogin?.getIdToken();
-            if (!token) {
-                Alert.alert("Error", "Session expired. Please login again.");
-                router.push({
-                    pathname: '(auth)/sign-in'
-                });
-                return;
-            }
+            const token = await getUserToken();
             const axiosInstance = axiosInstanceAuth(token);
             const data = await axiosInstance.post(`/bookmarks`,{
                 courtGroupId: court.id,
@@ -102,7 +96,7 @@ const CourtDetail = () => {
 
     const deleteBookMark = async () => {
         try {
-            const token = await userLogin?.getIdToken();
+            const token = await getUserToken();
             if (!token) {
                 Alert.alert("Error", "Session expired. Please login again.");
                 router.push({
