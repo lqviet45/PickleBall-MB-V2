@@ -6,12 +6,13 @@ import CustomDateTimePicker from "@/components/CustomDateTimePicker";
 import CustomButton from "@/components/CustomButton";
 import {date, object, string} from "yup";
 import {Formik} from "formik";
-import {axiosInstance} from "@/lib/axios";
+import {axiosInstance, axiosInstanceAuth} from "@/lib/axios";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import {UserProfileInform} from "@/model/user";
 import * as ImagePicker from 'expo-image-picker';
 import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
+import {getUserToken} from "@/lib/authServices";
 
 let userSchema = object({
     name: string().required(),
@@ -85,7 +86,8 @@ const Profile = () => {
     }
 
     const submit = async (values: any) => {
-        console.log(userInform);
+        const token = await getUserToken();
+        const axiosInstance = axiosInstanceAuth(token);
         const data = await axiosInstance.put('/users/update-user', values);
         setIsEdit(false);
     }

@@ -7,8 +7,9 @@ import {Formik} from "formik";
 import {DateTimePickerAndroid} from "@react-native-community/datetimepicker";
 import {date, number, object, string} from "yup";
 import * as Notifications from "expo-notifications";
-import {axiosInstance} from "@/lib/axios";
+import {axiosInstance, axiosInstanceAuth} from "@/lib/axios";
 import {useGlobalContext} from "@/context/GlobalProvider";
+import {getUserToken} from "@/lib/authServices";
 
 let orderSchema = object({
     id: string().required(),
@@ -81,6 +82,8 @@ const OrderPage = () => {
                 }),
                 timeRange: values.startTime + ' - ' + values.endTime,
             }
+            const token = await getUserToken();
+            const axiosInstance = axiosInstanceAuth(token);
 
             const res = await axiosInstance
                 .post('/bookings', data);
