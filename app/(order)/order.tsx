@@ -1,11 +1,12 @@
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useEffect, useRef, useState} from "react";
-import {FlatList, View, Text, RefreshControl, TouchableOpacity, ActivityIndicator} from "react-native";
+import {FlatList, View, Text, RefreshControl, TouchableOpacity, ActivityIndicator, Alert} from "react-native";
 import {BookingOrder} from "@/model/bookingOrder";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {axiosInstance} from "@/lib/axios";
 import {router} from "expo-router";
+import CustomDropdown from "@/components/CustomDropdown";
 
 const Order = () => {
 
@@ -15,21 +16,30 @@ const Order = () => {
     const [isEnd, setIsEnd] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [isInit, setIsInit] = useState(true);
-    const currentPage = useRef<number>(1);
-    const refresh = useRef<boolean>(false);
-    const pageSize: number = 5;
 
+    const searchBookingStatusRef = useRef<string>('');
+    // The variable use to check is first time search with the same status
+    const isFirstSearch = useRef<boolean>(false);
+    const currentPage = useRef<number>(1);
+    const pageSize: number = 10;
+    const refresh = useRef<boolean>(false);
+
+    // this is the data for the dropdown
+    const bookingStatus = [
+        {label: 'All', value: ''},
+        {label: 'Pending', value: 'Pending'},
+        {label: 'Confirmed', value: 'Confirmed'},
+        {label: 'Cancelled', value: 'Cancelled'},
+        {label: 'Completed', value: 'Completed'}
+    ];
     // use this function to refresh the list
     const onRefresh = async () => {
         try {
-            console.log("onRefresh");
             setIsEnd(false);
             refresh.current = true;
             setRefreshing(true);
             currentPage.current = 1;
-            console.log("before set timeout");
             setTimeout(async () => {
-                console.log("timeout");
                 await fetchBookingOrder(currentPage.current);
                 setRefreshing(false);
             }, 1000);
@@ -41,9 +51,7 @@ const Order = () => {
     // use this function to fetch more data when user scroll to the end of the list
     const onEndReached = () => {
         if (isEnd || !isLoaded) return;
-        console.log("onEndReached");
         currentPage.current = currentPage.current + 1;
-        console.log(currentPage.current);
         fetchBookingOrder(currentPage.current)
             .catch(e => {
                 // the one who make this response message
@@ -55,40 +63,109 @@ const Order = () => {
             });
     }
 
+    const onDropListChange = async (item: any) => {
+        try {
+            // if the selected value is not the same as the current value
+            // then we will fetch the data again
+            if (searchBookingStatusRef.current !== item.value) {
+                currentPage.current = 1;
+                isFirstSearch.current = true;
+                setIsEnd(false);
+                searchBookingStatusRef.current = item.value;
+                await fetchBookingOrder(currentPage.current);
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Failed to search bookings');
+        }
+    }
+
     const fetchBookingOrder = async (pageNumber: number) => {
         const data = await axiosInstance
             .get(`users/${userId}/bookings`, {
                 params: {
                     userId: userId,
                     pageSize: pageSize,
-                    pageNumber: pageNumber
+                    pageNumber: pageNumber,
+                    bookingStatus: searchBookingStatusRef.current
                 }
             });
-        console.log(refresh.current + " refreshing")
-        if (refresh.current || isInit) {
+        if (data.data.value.items.length === 0 && isFirstSearch.current) {
+            setBookingOrder([]);
+        }
+
+        if (data.data.value.items.length === 0) {
+            setIsEnd(true);
+            return;
+        }
+        if (refresh.current || isInit || isFirstSearch.current) {
             setBookingOrder(data.data.value.items);
             refresh.current = false;
+            isFirstSearch.current = false;
             setIsInit(false);
             return;
         }
         setBookingOrder([...bookingOrder, ...data.data.value.items]);
-        console.log("booking order")
+    }
+
+    const renderBookingStatus = (status: string) => {
+        switch (status) {
+            case 'Pending':
+                return (
+                    <Ionicons
+                        name="time-outline"
+                        size={24}
+                        color="yellow"
+                    />
+                );
+            case 'Confirmed':
+                return (
+                    <Ionicons
+                        name="checkmark-done-circle"
+                        size={24}
+                        color="green"
+                    />
+                );
+            case 'Cancelled':
+                return (
+                    <Ionicons
+                        name="close-circle"
+                        size={24}
+                        color="red"
+                    />
+                );
+                case 'Completed':
+                    return (
+                        <Ionicons
+                            name="checkmark-done-circle"
+                            size={24}
+                            color="green"
+                        />
+                    );
+            default:
+                return (
+                    <Ionicons
+                        name="time-outline"
+                        size={24}
+                        color="yellow"
+                    />
+                );
+        }
     }
 
     useEffect(() => {
-        setIsLoaded(false);
-        console.log("useEffect");
-        console.log(userId);
-        currentPage.current = 1;
-        fetchBookingOrder(currentPage.current)
-            .then(() => setIsLoaded(true))
-            .catch(e => console.log(e.response));
+        if (isInit) {
+            setIsLoaded(false);
+            currentPage.current = 1;
+            fetchBookingOrder(currentPage.current)
+                .then(() => setIsLoaded(true))
+                .catch(e => console.log("catching fetchBookingOrder", e.response));
+        }
 
     }, []);
 
     if (!isLoaded) {
         return (
-            <SafeAreaView>
+            <SafeAreaView className={"h-full items-center justify-center"}>
                 <ActivityIndicator size="large" color="black"/>
                 <Text className="text-center text-black font-pmedium text-lg">
                     Loading...
@@ -99,6 +176,7 @@ const Order = () => {
 
     return (
         <SafeAreaView>
+
             <FlatList
                 data={bookingOrder}
                 keyExtractor={(item) => item.id}
@@ -107,7 +185,7 @@ const Order = () => {
                     ({item}) => (
                         <TouchableOpacity
                             onPress={() => {
-                                console.log(item.id);
+                                console.log("item id: ",item.id);
                                 router.push({
                                     pathname: `(order)/[id]`,
                                     params: {id: item.id}
@@ -148,17 +226,7 @@ const Order = () => {
                                             {item.bookingStatus}
                                         </Text>
                                         {
-                                            item.bookingStatus === 'Pending' ?
-                                                <Ionicons
-                                                    name="time-outline"
-                                                    size={24}
-                                                    color="red"
-                                                /> :
-                                                <Ionicons
-                                                    name="checkmark-done-circle"
-                                                    size={24}
-                                                    color="green"
-                                                />
+                                            renderBookingStatus(item.bookingStatus)
                                         }
                                     </View>
                                 </View>
@@ -169,7 +237,7 @@ const Order = () => {
 
                 ListHeaderComponent={() => (
                     <View className="flex my-6 px-4 space-y-6">
-                        <View className="flex justify-between items-start flex-row mb-6">
+                        <View className="flex justify-between items-start flex-row">
                             <View>
                                 <Text className="font-pmedium text-lg text-black">
                                     Take your booking
@@ -177,6 +245,18 @@ const Order = () => {
                                 <Text className="text-2xl font-psemibold text-amber-300">
                                     {userFullName}
                                 </Text>
+                            </View>
+
+                            <View className="flex justify-between items-start flex-row">
+                                <CustomDropdown
+                                    label={"booking status"}
+                                    data={bookingStatus}
+                                    labelField={'label'}
+                                    valueField={'value'}
+                                    value={searchBookingStatusRef.current === null ? 'All' : searchBookingStatusRef.current}
+                                    onChange={onDropListChange}
+                                    isSearchable={false}
+                                />
                             </View>
                         </View>
                     </View>

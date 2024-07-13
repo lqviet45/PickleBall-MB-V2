@@ -1,38 +1,70 @@
-import React, {useEffect, useState, useLayoutEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {SafeAreaView} from "react-native-safe-area-context";
-import {ActivityIndicator, FlatList, Image, ScrollView, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, FlatList, RefreshControl, Text, TextInput, View} from "react-native";
 import {CourtGroup} from "@/model/courtGroup";
-import FormField from "@/components/FormField";
-import values from "ajv/lib/vocabularies/jtd/values";
 import CourtCardHorizonal from "@/components/CourtCardHorizontal";
-import icons from "@/constants/icons";
-import axios from "axios";
 import {axiosInstance} from "@/lib/axios";
-import {router} from "expo-router";
-
 const Search = () => {
-    let [search, setSearch] = useState<string>("");
-    let [searchResult, setSearchResult] = useState<CourtGroup[]>([]);
-    let [isLoading, setIsLoading] = useState<boolean>(false);
+    const [search, setSearch] = useState<string>("");
+    const [searchResult, setSearchResult] = useState<CourtGroup[]>([]);
+    const [isEnd, setIsEnd] = useState(false);
+    const currentPage = useRef<number>(1);
+    const pageSize: number = 10;
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [isInit, setIsInit] = useState(true);
+    const refresh = useRef<boolean>(false);
+    const [refreshing, setRefreshing] = useState(false);
 
-    useLayoutEffect(() => {
-        setIsLoading(true);
-        const fetchAllCourt = async () => {
-            const params = {
-                Name: search == "" ? undefined : search,
-                PageSize: 5
-            }
-            const data =
-                //search === "" ? await axiosInstance.get('/court-groups/') :
-                await axiosInstance.get('/court-groups/search', {params});
-            setSearchResult(data.data.value.items);
-            console.log(searchResult);
-
+    const onRefresh = async () => {
+        try {
+            setIsEnd(false);
+            refresh.current = true;
+            setRefreshing(true);
+            currentPage.current = 1;
+            setTimeout(async () => {
+                await fetchAllCourt(currentPage.current);
+                setRefreshing(false);
+            }, 1000);
+        } catch (error) {
+            console.log("OnRefresh catching: ", error);
         }
-        fetchAllCourt()
-           .catch(e => console.log(e));
-        setIsLoading(false);
+    }
 
+    const onEndReached = () => {
+        if (isEnd || !isLoaded) return;
+        currentPage.current = currentPage.current + 1;
+        fetchAllCourt(currentPage.current)
+            .catch(e => {
+                if (e.response.data.errors[0] === 'Courts are not found') {
+                    setIsEnd(true);
+                }
+            });
+    }
+    const fetchAllCourt = async (pageNumber: number) => {
+        const params = {
+            Name: search == "" ? undefined : search,
+            PageSize: 5,
+            PageNumber: pageNumber
+        }
+        const data =
+            //search === "" ? await axiosInstance.get('/court-groups/') :
+            await axiosInstance.get('/court-groups/search', {params});
+        if (refresh.current || isInit) {
+            setSearchResult(data.data.value.items);
+            refresh.current = false;
+            setIsInit(false);
+            return;
+        }
+        setSearchResult([...searchResult, ...data.data.value.items]);
+
+    }
+
+    useEffect(() => {
+        setIsLoaded(false);
+        currentPage.current = 1;
+        fetchAllCourt(currentPage.current)
+            .then(() => setIsLoaded(true))
+            .catch(e => console.log("fetchAllCourt catching: ",e));
 
     }, [search]);
 
@@ -40,12 +72,12 @@ const Search = () => {
         setSearch(text);
     }
 
-    if (isLoading) {
+    if (!isLoaded) {
         return (
-            <SafeAreaView>
+            <SafeAreaView className={"justify-center items-center h-full"}>
                 <ActivityIndicator size="large" color="black"/>
                 <Text className="text-center text-black font-pmedium text-lg">
-                    Loading...
+                    Loading....
                 </Text>
             </SafeAreaView>
         );
@@ -80,7 +112,7 @@ const Search = () => {
                     <FlatList
                         data={searchResult}
                         keyExtractor={(item) => item.id}
-                        initialNumToRender={10}
+                        initialNumToRender={pageSize}
                         renderItem={(
                             ({item}) => (
                                 <CourtCardHorizonal
@@ -94,6 +126,17 @@ const Search = () => {
                                 />
                             )
                         )}
+                        // this function will be called when user scroll to the end of the list
+                        onEndReached={onEndReached}
+                        // this value is used to determine how far from the end of the list to trigger onEndReached
+                        onEndReachedThreshold={0.1}
+
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                            />
+                        }
                     />
                 </View>
         </SafeAreaView>

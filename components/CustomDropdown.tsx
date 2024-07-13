@@ -2,11 +2,12 @@ import {View, Text, StyleSheet} from "react-native";
 import {Dropdown} from "react-native-element-dropdown";
 
 interface CustomDropdownProps {
-    label: string;
+    label?: string;
     data: any;
     labelField: string;
     valueField: string;
     onChange: (value: any) => void;
+    onBlur?: () => void;
     value?: any;
     isFocus?: boolean;
     isSearchable?: boolean;
@@ -19,6 +20,7 @@ const CustomDropdown = (
         labelField,
         valueField,
         onChange,
+        onBlur,
         value,
         isFocus,
         isSearchable
@@ -26,31 +28,28 @@ const CustomDropdown = (
 
     const renderLabel = () => {
         return (
-            <Text className='text-base text-gray-100 font-pmedium'>
+            <Text className='font-pmedium text-lg text-black'>
                 {label}
             </Text>
         );
     };
     return (
-        <View className="bg-Base p-2">
+        <View className="p-2">
             {renderLabel()}
-            <View className="border-2 border-black-200
-            w-fit h-16 px-4 bg-black-100
-            rounded-2xl">
-                <Dropdown
-                    data={data}
-                    labelField={labelField}
-                    valueField={valueField}
-                    onChange={onChange}
-                    style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
-                    placeholderStyle={styles.placeholderStyle}
-                    selectedTextStyle={styles.selectedTextStyle}
-                    inputSearchStyle={styles.inputSearchStyle}
-                    iconStyle={styles.iconStyle}
-                    value={value}
-                    search={isSearchable}
-                />
-            </View>
+            <Dropdown
+                data={data}
+                labelField={labelField}
+                valueField={valueField}
+                onChange={onChange}
+                onBlur={onBlur}
+                style={[styles.dropdown, isFocus && {borderColor: 'blue'}]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                value={value}
+                search={isSearchable}
+            />
         </View>
     );
 };
@@ -60,9 +59,14 @@ const styles = StyleSheet.create({
         backgroundColor: 'white'
     },
     dropdown: {
-        height: 60,
-        width: 330,
-        borderColor: 'gray'
+        height: 30,
+        width: 150,
+        borderColor: 'gray',
+        borderWidth: 1,
+        borderRadius: 5,
+        padding: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     icon: {
         marginRight: 5

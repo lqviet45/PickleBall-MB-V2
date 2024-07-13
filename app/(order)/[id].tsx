@@ -1,74 +1,144 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {router, useLocalSearchParams} from "expo-router";
 import {SafeAreaView} from "react-native-safe-area-context";
-import {ScrollView, Text, View} from "react-native";
-import {Booking} from "@/model/booking";
-import {CourtGroup} from "@/model/courtGroup";
+import {Text, TouchableOpacity, View} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {axiosInstance} from "@/lib/axios";
+import {switchCase} from "@babel/types";
 
 const BookingDetail = () => {
-    let {id} = useLocalSearchParams<{id: string}>();
-    let [booking, setBooking] = useState<Booking>({
-        id: '',
-        courtYardId: '',
-        courtGroupId: '',
-        userId: '',
-        dateId: '',
-        numberOfPlayers: 0,
-        bookingStatus: 1,
-        createdOnUtc: new Date(),
-        modifiedOnUtc: new Date(),
-        courtGroup: {
-            id: '',
-            userId: '',
-            wardId: '',
-            name: '',
-            price: 0,
-            minSlot: 0,
-            maxSlot: 0,
-            location: '',
-            owner: '',
-            medias: [
-                {
-                    id: '',
-                    mediaUrl: '',
-                    createOnUtc: '',
-                    modifiedOnUtc: ''
-                }
-            ],
+    const {id} = useLocalSearchParams<{id: string}>();
+    const [booking, setBooking] = useState<any>();
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    const formatDateTime = (date: string) => {
+        const newDate = new Date(date);
+        return newDate.toLocaleString();
+    }
+    const formatDateOnly = (date: string, timeRange: string) => {
+        const newDate = new Date(date);
+        return newDate.toLocaleDateString() + " " + timeRange;
+    }
+
+
+    const fetchBookingDetail = async () => {
+        const data = await axiosInstance
+            .get(`/bookings/${id}/detail`)
+            .then(res => {
+                setBooking(res.data.value);
+            })
+            .catch(err => {
+                console.log("fetchBookingDetail catching: ", err);
+            });
+    }
+
+    const renderBookingStatus = () => {
+        switch(booking.bookingStatus){
+            case "Pending":
+                return(
+                    <View className={"flex-row self-start px-2 py-0.5 bg-yellow-200 rounded-3xl "}>
+                        <Text className={"text-yellow-700 font-bold"}>{booking?.bookingStatus}</Text>
+                    </View>
+                )
+            case "Cancelled":
+                return (
+                    <View className={"flex-row self-start px-2 py-0.5 bg-red-200 rounded-3xl "}>
+                        <Text className={"text-red-700 font-bold"}>{booking?.bookingStatus}</Text>
+                    </View>
+                )
+            case "Completed":
+                return (
+                    <View className={"flex-row self-start px-2 py-0.5 bg-green-200 rounded-3xl "}>
+                        <Text className={"text-green-700 font-bold"}>{booking?.bookingStatus}</Text>
+                    </View>
+                )
         }
-    });
-
-
-    return (
-        <SafeAreaView className={"px-3"}>
-                <View className={"rounded-2xl bg-white row-col"}>
+    }
+const renderInfoCard = () => {
+        switch(booking.bookingStatus){
+            case "Pending":
+                return(
                     <View className={"flex-row items-center m-2 px-5 py-2 border-amber-400 border-2 rounded-2xl"}>
                         <Ionicons name={"alert-circle-outline"} size={56} color={"yellow"}/>
                         <View className={"flex-col ml-4"}>
-                            <Text className={"text-lg mb-2 text-gray-500"}>
-                                Đã thanh toán
+                            <Text className={"text-lg text-gray-500"}>
+                                Tên sân
                             </Text>
-                            <Text className={"font-pbold text-3xl"}>
-                                -200.000đ
+                            <Text className={"font-bold text-amber-300 text-3xl"}>
+                                {booking?.courtGroup.name}
                             </Text>
                         </View>
                     </View>
+                )
+            case "Cancelled":
+                return (
+                    <View className={"flex-row items-center m-2 px-5 py-2 border-red-400 border-2 rounded-2xl"}>
+                        <Ionicons name={"ban-outline"} size={56} color={"red"}/>
+                        <View className={"flex-col ml-4"}>
+                            <Text className={"text-lg text-gray-500"}>
+                                Tên sân
+                            </Text>
+                            <Text className={"font-bold text-red-300 text-3xl"}>
+                                {booking?.courtGroup.name}
+                            </Text>
+                        </View>
+                    </View>
+                )
+            case "Completed":
+                return (
+                    <View className={"flex-row items-center m-2 px-5 py-2 border-green-400 border-2 rounded-2xl"}>
+                        <Ionicons name={"checkmark-circle-outline"} size={56} color={"green"}/>
+                        <View className={"flex-col ml-4"}>
+                            <Text className={"text-lg text-gray-500"}>
+                                Tên sân
+                            </Text>
+                            <Text className={"font-bold text-green-300 text-3xl"}>
+                                {booking?.courtGroup.name}
+                            </Text>
+                        </View>
+                    </View>
+                )
+        }
+    }
+
+    useEffect(() => {
+        setIsLoaded(false);
+        fetchBookingDetail().then(() => {
+            setIsLoaded(true);
+        });
+    },[]);
+
+    if(!isLoaded){
+        return (
+            <SafeAreaView className={"flex-col items-center justify-center"}>
+                <View className={"flex-row items-center"}>
+                    <Ionicons name={"refresh"} size={24} color={"gray"}/>
+                    <Text className={"text-lg text-gray-500 ml-2"}>
+                        Loading...
+                    </Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
+    return (
+        <SafeAreaView className={"px-3"}>
+                <View className={"rounded-2xl bg-white row-col"}>
+                    {/*Render Info Card*/}
+                    {renderInfoCard()}
+
                     <View className={"row-col p-4"}>
                         <View className={"flex-row justify-between mb-2"}>
                             <Text className={"text-lg text-gray-500"}>
                                 Trạng thái
                             </Text>
-                            <View className={"flex-row self-start px-2 py-0.5 bg-yellow-200 rounded-3xl "}>
-                                <Text className={"text-yellow-700 font-bold"}>Đang chờ</Text>
-                            </View>
+                            {renderBookingStatus()}
                         </View>
                         <View className={"flex-row justify-between mb-2"}>
                             <Text className={"text-lg text-gray-500"}>
-                                Thời gian
+                                Thời gian đặt
                             </Text>
                             <Text className={"text-lg"}>
-                                13:31 27/06/2024
+                                {formatDateTime(booking?.date.createdOnUtc.toString())}
                             </Text>
                         </View>
                         <View className={"flex-row justify-between mb-2"}>
@@ -86,44 +156,61 @@ const BookingDetail = () => {
                 <View className={"rounded-2xl my-2 p-4 bg-white row-col "}>
                     <View className={"flex-row justify-between mb-2"}>
                         <Text className={"text-lg text-gray-500"}>
-                            Dịch vụ
+                            Thời hạn sử dụng
                         </Text>
                         <Text className={"text-lg"}>
-                            Đặt cọc sân
+                            {formatDateOnly(booking?.date.dateWorking.toString(), booking?.timeRange.toString())}
                         </Text>
                     </View>
                     <View className={"flex-row justify-between mb-2"}>
                         <Text className={"text-lg text-gray-500"}>
-                            Tên cửa hàng
+                            Địa chỉ
                         </Text>
                         <Text className={"text-lg"}>
-                            Pickleball Cort Q.8
+                            {booking?.courtGroup.location}
                         </Text>
                     </View>
                     <View className={"flex-row justify-between mb-2"}>
                         <Text className={"text-lg text-gray-500"}>
-                            Mô tả
+                            Số lượng người chơi
                         </Text>
-                        <View className={"w-[55%]"}>
-                            <Text className={"text-lg"}>
-                                Thanh toan dat coc ONLINE-FRI-06-27-2024-AWCGSW
-                            </Text>
-                        </View>
+                        <Text className={"text-lg font-bold"}>
+                            {booking?.numberOfPlayers}
+                        </Text>
                     </View>
                 </View>
                 {/*Buttons*/}
                 <View className={"mt-5"}>
                     <View className={"flex-row justify-between px-2"}>
-                        <View className={"rounded-2xl px-5 py-1.5 w-[46%] items-center border-2 border-amber-300 bg-white"}>
-                            <Text className={"text-xl text-amber-300"}>
-                                Quay lại
-                            </Text>
-                        </View>
-                        <View className={"rounded-2xl px-3 py-1.5 w-[46%] items-center bg-green-500"}>
-                            <Text className={"text-xl text-white"}>
-                                Giao dịch mới
-                            </Text>
-                        </View>
+                        <TouchableOpacity
+                            className={"rounded-2xl px-5 py-1.5 w-[46%] items-center border-2 border-amber-300 bg-white"}
+                        onPress={() => {
+                            router.back()
+                        }}>
+                            <View >
+                                <Text className={"text-xl text-amber-300"}>
+                                    Quay lại
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                        className={"rounded-2xl px-3 py-1.5 w-[46%] items-center bg-green-500"}
+                        onPress={() => {
+                            router.push({
+                                pathname: `(court)/${id}/order`,
+                                params: {
+                                    id: booking.courtGroup.courtId,
+                                    name: booking.courtGroup.name,
+                                    price: booking.courtGroup.price
+                                }
+                            })
+                        }}>
+                            <View >
+                                <Text className={"text-xl text-white"}>
+                                    Giao dịch mới
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
         </SafeAreaView>

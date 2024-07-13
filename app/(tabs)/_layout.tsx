@@ -58,7 +58,8 @@ const TagsLayout = () => {
                                  color={color}
                                  name="Home"
                                  focused={focused}/>
-                    )
+                    ),
+                    unmountOnBlur: false
                 }}
             />
             <Tabs.Screen

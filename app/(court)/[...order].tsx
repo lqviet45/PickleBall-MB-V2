@@ -6,9 +6,10 @@ import React, {useEffect, useRef, useState} from "react";
 import {Formik} from "formik";
 import {DateTimePickerAndroid} from "@react-native-community/datetimepicker";
 import {date, number, object, string} from "yup";
-import {useGlobalContext} from "@/context/GlobalProvider";
 import * as Notifications from "expo-notifications";
-import {axiosInstance} from "@/lib/axios";
+import {axiosInstance, axiosInstanceAuth} from "@/lib/axios";
+import {useGlobalContext} from "@/context/GlobalProvider";
+import {getUserToken} from "@/lib/authServices";
 
 let orderSchema = object({
     id: string().required(),
@@ -28,12 +29,12 @@ const OrderPage = () => {
         price: string;
     }>();
 
-    const {userId, expoPushToken} = useGlobalContext();
+    const {userLogin} = useGlobalContext();
 
     const [order, setOrder] = useState({
         id: id,
         name: name,
-        userId: userId,
+        email: userLogin?.email,
         price: parseInt(price ?? '0'),
         number: 2,
         date: new Date(),
@@ -70,10 +71,9 @@ const OrderPage = () => {
     const submitOrder = async (values: any) => {
         console.log('submit order');
         try {
-            console.log(values);
             const data = {
                 courtGroupId: values.id,
-                userId: userId,
+                email: userLogin?.email,
                 numberOfPlayers: values.number,
                 bookingDate: values.date.toLocaleDateString('fr-CA', {
                     year: 'numeric',
@@ -82,11 +82,11 @@ const OrderPage = () => {
                 }),
                 timeRange: values.startTime + ' - ' + values.endTime,
             }
+            const token = await getUserToken();
+            const axiosInstance = axiosInstanceAuth(token);
 
             const res = await axiosInstance
                 .post('/bookings', data);
-
-            console.log(res.data.value);
 
             //await schedulePushNotification();
 
@@ -258,7 +258,6 @@ const OrderPage = () => {
                                                     return;
                                                 }
 
-                                                console.log(playTime);
                                                 await setFieldValue('price', (playTime * order.price));
 
                                                 const timeString = currentTime.toLocaleTimeString('vi-VN', {

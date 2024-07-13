@@ -1,14 +1,14 @@
-import React, {createContext, useContext, useEffect, useState} from "react";
+import React, {createContext, useContext, useEffect, useRef, useState} from "react";
 import auth, {FirebaseAuthTypes} from "@react-native-firebase/auth";
 import {axiosInstance} from "@/lib/axios";
 
 
 type GlobalContextType = {
     isLoggedIn: boolean;
-    userLogin: FirebaseAuthTypes.User | null | undefined;
+    userLogin: FirebaseAuthTypes.User | null;
     isLoading: boolean;
     setIsLoggedIn: (value: boolean) => void;
-    setUser: (value: FirebaseAuthTypes.User | null) => void;
+    setUser: (value: FirebaseAuthTypes.User) => void;
     setIsLoading: (value: boolean) => void;
     userId?: string | null;
     expoPushToken: string;
@@ -30,7 +30,7 @@ const defaultValues: GlobalContextType = {
     setIsLoggedIn: () => {},
     setUser: () => {},
     setIsLoading: () => {},
-    setExpoPushToken: () => {}
+    setExpoPushToken: () => {},
 };
 
 const GlobalContext = createContext<GlobalContextType>(defaultValues);
@@ -53,7 +53,7 @@ const GlobalProvider = ({ children } : ContextProps) => {
                     setIsLoggedIn(true);
                     setIsLoading(false);
                     getUserInform(user?.uid)
-                    .catch(e => console.log(e));
+                        .catch(e => console.log(e));
                 } else {
                     setIsLoggedIn(false);
                     setUser(null);
@@ -64,6 +64,17 @@ const GlobalProvider = ({ children } : ContextProps) => {
             console.log(error);
         }
     }, []);
+
+    const updateDeviceToken = async (userId: string ,token: string) => {
+        if (token === '' || userId === '') return;
+        const data = await axiosInstance.post(
+            'users/device-token',
+            {
+                userId: userId,
+                deviceToken: token
+            }
+        );
+    }
 
     const getUserInform = async (userId: string) => {
         const data = await axiosInstance.post(
@@ -77,8 +88,11 @@ const GlobalProvider = ({ children } : ContextProps) => {
         }
         setUserFullName(data.data.value.fullName);
         setUserId(data.data.value.id);
+        return data.data.value;
     }
 
+    updateDeviceToken(userId ?? '', expoPushToken)
+        .catch(e => console.log(e));
     return (
         <GlobalContext.Provider
             value={{
