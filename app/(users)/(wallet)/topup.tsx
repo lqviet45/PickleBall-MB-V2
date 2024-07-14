@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Alert, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {axiosInstance} from "@/lib/axios";
@@ -10,6 +10,8 @@ const Topup = () => {
     const [input, setInput] = useState<string>("");
     const {userId} = useGlobalContext();
     const walletId = useLocalSearchParams<{walletId: string}>().walletId;
+    const [wallet, setWallet] = useState<any>();
+    const [isLoaded, setIsLoaded] = useState<boolean>(false);
     const handleInput = (text: string) => {
         setInput(text);
     }
@@ -32,11 +34,7 @@ const Topup = () => {
             Alert.alert("Số tiền nạp tối đa là 2.000.000đ");
             return;
         }
-        console.log("userId", userId);
-        console.log("walletId", walletId);
-        console.log("amount", amount);
         var money = parseInt(amount);
-        console.log("money", money);
         await axiosInstance
             .post(`/deposits`, {
                     walletId: walletId,
@@ -53,15 +51,37 @@ const Topup = () => {
                 Alert.alert("Nạp tiền thất bại");
             })
     }
+    useEffect(() => {
+        setIsLoaded(false);
+        const data = axiosInstance
+            .get("/wallets/" + userId)
+            .then((response) => {
+                setWallet(response.data.value);
+                setIsLoaded(true);
+            })
+            .catch((error) => {
+                console.log("catching getWallet in useEffect", error);
+            });
+        console.log("wallet", wallet)
+    }, []);
+    if(!isLoaded){
+        return (
+            <SafeAreaView className={"h-full"}>
+                <View className={"flex-col items-center justify-center h-full"}>
+                    <Text className={"text-lg font-bold"}>Loading...</Text>
+                </View>
+            </SafeAreaView>
+        );
+    }
     return (
         <SafeAreaView className={"h-full"}>
             <View className={"mx-2 flex-col"}>
                 <Text className={"text-xl font-bold my-1"}>Nạp tiền vào</Text>
                 <View className={"bg-white rounded-2xl p-2"}>
-                    {/*Wallet selection*/}
+                    {/*Index selection*/}
                     <View className={"flex-col bg-amber-50 my-1 p-3 rounded-2xl border-2 border-amber-400"}>
-                        <Text className={"text-lg font-semibold"}>Ví điện tử</Text>
-                        <Text className={"text-lg font-semibold text-amber-400"}> 200.000 VND</Text>
+                        <Text className={"text-lg font-semibold"}>Ví của bạn</Text>
+                        <Text className={"text-lg font-semibold text-amber-400"}>{addDotToAmount(wallet.balance)} VND</Text>
                     </View>
                     {/*Money input*/}
                     <View className="border-2 border-gray-100 rounded-xl

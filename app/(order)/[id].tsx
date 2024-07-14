@@ -3,11 +3,14 @@ import {router, useLocalSearchParams} from "expo-router";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {Text, TouchableOpacity, View} from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import {axiosInstance} from "@/lib/axios";
+import {axiosInstance, axiosInstanceAuth} from "@/lib/axios";
 import {switchCase} from "@babel/types";
+import {useGlobalContext} from "@/context/GlobalProvider";
+import {getUserToken} from "@/lib/authServices";
 
 const BookingDetail = () => {
     const {id} = useLocalSearchParams<{id: string}>();
+    const {userId} = useGlobalContext();
     const [booking, setBooking] = useState<any>();
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -20,6 +23,19 @@ const BookingDetail = () => {
         return newDate.toLocaleDateString() + " " + timeRange;
     }
 
+    const handlePaying = async () => {
+        const token = await getUserToken();
+        const axiosInstance = axiosInstanceAuth(token);
+        const data = await axiosInstance.put(`/bookings/${id}/complete`, {
+            userId: userId,
+            courtGroupId: booking.courtGroup.id,
+            isCompleted: true
+        });
+        if (data.data.status === "Ok") {
+            router.replace("/order");
+        }
+        console.log("data.data in handlePaying", data.data);
+    }
 
     const fetchBookingDetail = async () => {
         const data = await axiosInstance
@@ -46,12 +62,19 @@ const BookingDetail = () => {
                         <Text className={"text-red-700 font-bold"}>{booking?.bookingStatus}</Text>
                     </View>
                 )
+            case "Confirmed":
+                return (
+                    <View className={"flex-row self-start px-2 py-0.5 bg-blue-200 rounded-3xl "}>
+                        <Text className={"text-blue-700 font-bold"}>{booking?.bookingStatus}</Text>
+                    </View>
+                )
             case "Completed":
                 return (
                     <View className={"flex-row self-start px-2 py-0.5 bg-green-200 rounded-3xl "}>
                         <Text className={"text-green-700 font-bold"}>{booking?.bookingStatus}</Text>
                     </View>
                 )
+
         }
     }
 const renderInfoCard = () => {
@@ -84,6 +107,20 @@ const renderInfoCard = () => {
                         </View>
                     </View>
                 )
+            case "Confirmed":
+                return (
+                    <View className={"flex-row items-center m-2 px-5 py-2 border-blue-400 border-2 rounded-2xl"}>
+                        <Ionicons name={"checkmark-circle-outline"} size={56} color={"blue"}/>
+                        <View className={"flex-col ml-4"}>
+                            <Text className={"text-lg text-gray-500"}>
+                                Tên sân
+                            </Text>
+                            <Text className={"font-bold text-blue-300 text-3xl"}>
+                                {booking?.courtGroup.name}
+                            </Text>
+                        </View>
+                    </View>
+                )
             case "Completed":
                 return (
                     <View className={"flex-row items-center m-2 px-5 py-2 border-green-400 border-2 rounded-2xl"}>
@@ -98,6 +135,7 @@ const renderInfoCard = () => {
                         </View>
                     </View>
                 )
+
         }
     }
 
@@ -193,24 +231,47 @@ const renderInfoCard = () => {
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                        <TouchableOpacity
-                        className={"rounded-2xl px-3 py-1.5 w-[46%] items-center bg-green-500"}
-                        onPress={() => {
-                            router.push({
-                                pathname: `(court)/${id}/order`,
-                                params: {
-                                    id: booking.courtGroup.courtId,
-                                    name: booking.courtGroup.name,
-                                    price: booking.courtGroup.price
-                                }
-                            })
-                        }}>
-                            <View >
-                                <Text className={"text-xl text-white"}>
-                                    Giao dịch mới
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
+                        {booking.bookingStatus === "Confirmed" ? (
+                                <TouchableOpacity
+                                    className={"rounded-2xl px-3 py-1.5 w-[46%] items-center bg-blue-500"}
+                                    onPress={() => {
+                                        // router.push({
+                                        //     pathname: `(court)/${id}/order`,
+                                        //     params: {
+                                        //         id: booking.courtGroup.courtId,
+                                        //         name: booking.courtGroup.name,
+                                        //         price: booking.courtGroup.price
+                                        //     }
+                                        // })
+                                        handlePaying()
+                                    }}>
+                                    <View >
+                                        <Text className={"text-xl text-white"}>
+                                            Thanh toán
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                        ) :
+                        (
+                            <TouchableOpacity
+                                className={"rounded-2xl px-3 py-1.5 w-[46%] items-center bg-green-500"}
+                                onPress={() => {
+                                    router.push({
+                                        pathname: `(court)/${id}/order`,
+                                        params: {
+                                            id: booking.courtGroup.courtId,
+                                            name: booking.courtGroup.name,
+                                            price: booking.courtGroup.price
+                                        }
+                                    })
+                                }}>
+                                <View >
+                                    <Text className={"text-xl text-white"}>
+                                        Giao dịch mới
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        )}
                     </View>
                 </View>
         </SafeAreaView>

@@ -112,7 +112,7 @@ const Home = ({navigation} : any) => {
                     <Ionicons name="notifications-outline"
                               size={30} color="black" onPress={() => router.push('notification')}/>
                 </View>
-                {/*Played time and Wallet*/}
+                {/*Played time and Index*/}
                 <View className="flex-row justify-between px-2 pt-1">
                     <View className="p-2 rounded-2xl bg-[#001A27] w-[48%]">
                         <Ionicons name="time" size={28} color="white"/>
@@ -122,7 +122,7 @@ const Home = ({navigation} : any) => {
                         </View>
                     </View>
                     <View className="p-2 rounded-2xl bg-[#e6f8b3] w-[48%]">
-                        <TouchableOpacity onPress={() => router.push('(users)/wallet/')}>
+                        <TouchableOpacity onPress={() => router.push('(users)/(wallet)/')}>
                             <Ionicons name="wallet-outline" size={28} color="black"/>
                             <View className="flex-row justify-between">
                                 <Text>Wallet</Text>
@@ -164,7 +164,7 @@ const Home = ({navigation} : any) => {
                     return (
                         <>
                             <View className="flex-row justify-center pt-5">
-                                <Text className="text-xl">BookMark court</Text>
+                                <Text className="text-xl">Bookmarked courts</Text>
                             </View>
                         </>
                     );

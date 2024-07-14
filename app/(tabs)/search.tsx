@@ -14,7 +14,7 @@ const Search = () => {
     const [isInit, setIsInit] = useState(true);
     const refresh = useRef<boolean>(false);
     const [refreshing, setRefreshing] = useState(false);
-
+    const isSearching = useRef<boolean>(false);
     const onRefresh = async () => {
         try {
             setIsEnd(false);
@@ -55,18 +55,22 @@ const Search = () => {
             setIsInit(false);
             return;
         }
+        if (isSearching.current) {
+            setSearchResult(data.data.value.items);
+            isSearching.current = false;
+            return;
+        }
         setSearchResult([...searchResult, ...data.data.value.items]);
 
     }
 
     useEffect(() => {
-        setIsLoaded(false);
         currentPage.current = 1;
         fetchAllCourt(currentPage.current)
-            .then(() => setIsLoaded(true))
+            .then(() => !isLoaded ? setIsLoaded(true) : false)
             .catch(e => console.log("fetchAllCourt catching: ",e));
 
-    }, [search]);
+    }, []);
 
     const handleSearch = (text: string) => {
         setSearch(text);
@@ -102,6 +106,10 @@ const Search = () => {
                             placeholder={"Nhập tên sân"}
                             placeholderTextColor={'#7b7b8b'}
                             onChangeText={e => handleSearch(e)}
+                            onBlur={() => {
+                                isSearching.current = true;
+                                fetchAllCourt(1);
+                            }}
                         />
                     </View>
                 </View>

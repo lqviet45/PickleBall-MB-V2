@@ -267,7 +267,7 @@ const CourtDetail = () => {
             <View className="flex-row justify-around items-center mb-4">
                 <View>
                     <Text className="text-white font-bold text-xl">
-                        {court.price} h/VND
+                        {court.price} VND/hour
                     </Text>
                 </View>
                 <TouchableOpacity

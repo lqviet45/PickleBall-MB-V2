@@ -122,7 +122,7 @@ const Order = () => {
                     <Ionicons
                         name="checkmark-done-circle"
                         size={24}
-                        color="green"
+                        color="blue"
                     />
                 );
             case 'Cancelled':
