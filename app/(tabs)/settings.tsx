@@ -53,7 +53,7 @@ const Settings = () => {
             icon: 'wallet-outline' as keyof typeof Ionicons.glyphMap,
             size: 24,
             color: 'black',
-            HandlePress: () => router.push('(users)/wallet/')
+            HandlePress: () => router.push('(users)/(wallet)/')
         },
         // {
         //     title: 'Help & Support',
@@ -141,7 +141,7 @@ const Settings = () => {
                     </View>
 
                     <View className="px-2">
-                        <Text className="font-psemibold text-2xl">Wallet</Text>
+                        <Text className="font-psemibold text-2xl">Actions</Text>
                         <View className={"bg-gray-200/[0.07] h-fit rounded pb-2"}>
                             {
                                 actionsArea.map((item, index) => (

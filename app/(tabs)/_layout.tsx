@@ -37,6 +37,7 @@ const TagsLayout = () => {
         <Tabs.Navigator
             screenOptions={{
                 tabBarShowLabel: false,
+                tabBarHideOnKeyboard: true,
                 tabBarActiveTintColor: '#FFA001',
                 tabBarInactiveTintColor: '#CDCDE0',
                 tabBarStyle: {

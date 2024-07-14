@@ -7,6 +7,7 @@ export interface Transaction {
     amount: number;
     description: string;
     bookingId: string;
+    courtGroupName: string;
     createdOnUtc: string;
     modifiedOnUtc: string;
 }

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Alert, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {axiosInstance} from "@/lib/axios";
@@ -10,6 +10,8 @@ const Withdraw = () => {
     const [input, setInput] = useState<string>("");
     const {userId} = useGlobalContext();
     const walletId = useLocalSearchParams<{walletId: string}>().walletId;
+    const [wallet, setWallet] = useState<any>([]);
+    const [isLoaded, setIsLoaded] = useState<boolean>(false);
     const handleInput = (text: string) => {
         setInput(text);
     }
@@ -50,15 +52,36 @@ const Withdraw = () => {
                 Alert.alert("Rút tiền thất bại");
             })
     }
+    useEffect(() => {
+        setIsLoaded(false);
+        const data = axiosInstance
+            .get("/wallets/" + userId)
+            .then((response) => {
+                setWallet(response.data.value);
+                setIsLoaded(true);
+            })
+            .catch((error) => {
+                console.log("catching getWallet in useEffect", error);
+            });
+    }, []);
+    if(!isLoaded){
+        return(
+            <SafeAreaView className={"h-full"}>
+                <View className={"flex-1 justify-center items-center"}>
+                    <Text className={"text-2xl font-bold"}>Loading ...</Text>
+                </View>
+            </SafeAreaView>
+        )
+    }
     return (
         <SafeAreaView className={"h-full"}>
             <View className={"mx-2 flex-col"}>
                 <Text className={"text-xl font-bold my-1"}>Rút tiền từ</Text>
                 <View className={"bg-white rounded-2xl p-2"}>
-                    {/*Wallet selection*/}
+                    {/*Index selection*/}
                     <View className={"flex-col bg-amber-50 my-1 p-3 rounded-2xl border-2 border-amber-400"}>
-                        <Text className={"text-lg font-semibold"}>Ví điện tử</Text>
-                        <Text className={"text-lg font-semibold text-amber-400"}> 200.000 VND</Text>
+                        <Text className={"text-lg font-semibold"}>Ví của bạn</Text>
+                        <Text className={"text-lg font-semibold text-amber-400"}>{addDotToAmount(wallet.balance.toString())} VND</Text>
                     </View>
                     {/*Money input*/}
                     <View className="border-2 border-gray-100 rounded-xl

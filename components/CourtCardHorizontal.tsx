@@ -37,9 +37,10 @@ const CourtCardHorizonal = ({ courtId, courtImage, imageCustomStyle, rating, cou
                         {/*Heading*/}
                         <View className={"rounded-3xl px-1.5 flex-row justify-between m-2"}>
                             <Text className={"font-pbold font-bold text-2xl"}>{courtName}</Text>
-                            <TouchableOpacity className={"mt-0.5"}>
-                                <Ionicons name={"heart"} size={26} color={"red"}/>
-                            </TouchableOpacity>
+                            {/*Bookmark*/}
+                            {/*<TouchableOpacity className={"mt-0.5"}>*/}
+                            {/*    <Ionicons name={"heart"} size={26} color={"red"}/>*/}
+                            {/*</TouchableOpacity>*/}
                         </View>
                         {/*Content*/}
                         <View className={"p-1.5 flex-col justify-between mx-2 mt-1"}>
