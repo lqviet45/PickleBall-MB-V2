@@ -8,7 +8,7 @@ import {axiosInstance} from "@/lib/axios";
 import {router} from "expo-router";
 import CustomDropdown from "@/components/CustomDropdown";
 
-const Order = () => {
+const Order = ({navigation} : any) => {
 
     const [isLoaded, setIsLoaded] = useState(false);
     const [bookingOrder, setBookingOrder] = useState<BookingOrder[]>([]);
@@ -23,6 +23,7 @@ const Order = () => {
     const currentPage = useRef<number>(1);
     const pageSize: number = 10;
     const refresh = useRef<boolean>(false);
+    const isInitialMount = useRef(true);
 
     // this is the data for the dropdown
     const bookingStatus = [
@@ -97,7 +98,7 @@ const Order = () => {
             setIsEnd(true);
             return;
         }
-        if (refresh.current || isInit || isFirstSearch.current) {
+        if (refresh.current || isInit || isFirstSearch.current || isInitialMount.current) {
             setBookingOrder(data.data.value.items);
             refresh.current = false;
             isFirstSearch.current = false;
@@ -153,6 +154,13 @@ const Order = () => {
     }
 
     useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            currentPage.current = 1;
+            isInitialMount.current = true;
+            fetchBookingOrder(currentPage.current)
+                .then(() => isInitialMount.current = false)
+                .catch(e => console.log("catching fetchBookingOrder", e.response));
+        });
         if (isInit) {
             setIsLoaded(false);
             currentPage.current = 1;
@@ -160,8 +168,8 @@ const Order = () => {
                 .then(() => setIsLoaded(true))
                 .catch(e => console.log("catching fetchBookingOrder", e.response));
         }
-
-    }, []);
+        return unsubscribe;
+    }, [navigation]);
 
     if (!isLoaded) {
         return (

@@ -216,6 +216,14 @@ const renderInfoCard = () => {
                             {booking?.numberOfPlayers}
                         </Text>
                     </View>
+                    <View className={"flex-row justify-between mb-2"}>
+                        <Text className={"text-lg text-gray-500"}>
+                            Giá
+                        </Text>
+                        <Text className={"text-lg font-bold"}>
+                            {booking?.amount} VND
+                        </Text>
+                    </View>
                 </View>
                 {/*Buttons*/}
                 <View className={"mt-5"}>
