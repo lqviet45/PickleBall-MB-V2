@@ -2,7 +2,7 @@ import React from 'react';
 import {Stack} from "expo-router";
 
 const OrderLayout = () => {
-
+    console.log("OrderLayout run");
 
     return (
         <Stack>

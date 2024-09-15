@@ -7,6 +7,17 @@ import {GoogleSignin} from "@react-native-google-signin/google-signin";
 
 SplashScreen.preventAutoHideAsync();
 
+export type RootStackParamList = {
+    OrderScreen: undefined;
+    ResultScreen: { orderCode: number };
+};
+
+declare global {
+    namespace ReactNavigation {
+        interface RootParamList extends RootStackParamList { }
+    }
+}
+
 const RootLayout = () => {
     const [fontsLoaded, error] = useFonts({
         "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
@@ -69,6 +80,7 @@ const RootLayout = () => {
                 <Stack.Screen name="(users)" options={{headerShown: false}}/>
                 <Stack.Screen name="(court)" options={{headerShown: false}}/>
                 <Stack.Screen name="(order)" options={{headerShown: false}}/>
+                <Stack.Screen name="(payment)" options={{headerShown: false}}/>
             </Stack>
         </GlobalProvider>
     );

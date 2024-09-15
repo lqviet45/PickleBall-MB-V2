@@ -105,6 +105,15 @@ const Settings = () => {
                 }
                 router.push('sign-in')
             }
+        },
+        {
+            title: 'Payment',
+            icon: 'cash-outline' as keyof typeof Ionicons.glyphMap,
+            size: 24,
+            color: 'black',
+            HandlePress: async () => {
+                router.push('(payment)/OrderScreen/')
+            }
         }
     ];
     return (
