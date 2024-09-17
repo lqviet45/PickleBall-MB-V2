@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
-import {axiosInstance} from "@/lib/axios";
+import {axiosInstance, axiosInstanceAuth} from "@/lib/axios";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import {router, useLocalSearchParams} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {getUserToken} from "@/lib/authServices";
 
 const Topup = () => {
     const [input, setInput] = useState<string>("");
@@ -35,6 +36,11 @@ const Topup = () => {
             return;
         }
         var money = parseInt(amount);
+        console.log("walletid", walletId);
+        console.log("userId", userId);
+        console.log("amount", amount);
+        var token = await getUserToken();
+        var axiosInstance = axiosInstanceAuth(token);
         await axiosInstance
             .post(`/deposits`, {
                     walletId: walletId,

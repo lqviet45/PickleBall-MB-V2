@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Alert, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
-import {axiosInstance} from "@/lib/axios";
+import {axiosInstance, axiosInstanceAuth} from "@/lib/axios";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import {router, useLocalSearchParams} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import {getUserToken} from "@/lib/authServices";
 
 const Withdraw = () => {
     const [input, setInput] = useState<string>("");
@@ -37,6 +38,8 @@ const Withdraw = () => {
         console.log("userId", userId);
         console.log("walletId", walletId);
         console.log("amount", amount);
+        var token = await getUserToken();
+        var axiosInstance = axiosInstanceAuth(token);
         await axiosInstance
             .post(`/withdraws`, {
                     userId: userId,
