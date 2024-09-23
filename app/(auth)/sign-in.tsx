@@ -42,7 +42,7 @@ const SignIn = () => {
                 router.replace('/home');
             }
         } catch (error: any) {
-            Alert.alert('Error', error.message);
+            Alert.alert('Error', "Invalid email or password");
         } finally {
             setIsSubmitting(false);
         }
