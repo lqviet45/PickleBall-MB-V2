@@ -76,7 +76,7 @@ const SignIn = () => {
                         Alert.alert('play services not available', 'Play services are not available');
                         break;
                     default:
-                        Alert.alert('error', error.message);
+                        Alert.alert('error', 'Something went wrong');
                         break;
                 }
             }
