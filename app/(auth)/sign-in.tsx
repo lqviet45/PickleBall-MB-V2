@@ -60,7 +60,7 @@ const SignIn = () => {
             const isCustomer = await CheckUserRole();
             console.log(isCustomer);
             if (isCustomer) {
-                Alert.alert('Success', 'Logged in successfully');
+                //Alert.alert('Success', 'Logged in successfully');
                 router.replace('/home');
             }
         } catch (error: any) {
@@ -103,7 +103,7 @@ const SignIn = () => {
                             </Text>
                     </View>
                     <Text className="text-2xl text-white
-          text-semibold mt-10 font-psemibold self-center">
+                        text-semibold mt-10 font-psemibold self-center">
                         Login
                     </Text>
 
@@ -128,6 +128,7 @@ const SignIn = () => {
                         title='Sign In'
                         handlePress={submit}
                         containerStyles='mt-7'
+                        textStyles={"text-primary font-psemibold text-lg"}
                         isLoading={isSubmitting}
                     />
 

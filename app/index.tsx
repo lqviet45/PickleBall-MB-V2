@@ -33,7 +33,7 @@ const App = () => {
             if (!isLoading && isLoggedIn) {
                 router.replace('/home');
             } else if (!isLoading && !isLoggedIn) {
-                router.replace('/sign-in');
+                router.replace('/landing');
             }
         }, 3000);
 

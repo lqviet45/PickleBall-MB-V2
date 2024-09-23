@@ -183,8 +183,7 @@ const Order = ({navigation} : any) => {
     }
 
     return (
-        <SafeAreaView>
-
+        <SafeAreaView className={"h-full"}>
             <FlatList
                 data={bookingOrder}
                 keyExtractor={(item) => item.id}
@@ -245,16 +244,17 @@ const Order = ({navigation} : any) => {
 
                 ListHeaderComponent={() => (
                     <View className="flex my-6 px-4 space-y-6">
-                        <View className="flex justify-between items-start flex-row">
+                        <View className="flex justify-between items-center flex-row border-amber-400 border-2">
+                            {/*Header*/}
                             <View>
-                                <Text className="font-pmedium text-lg text-black">
-                                    Take your booking
+                                <Text className="font-bold text-xl text-text">
+                                    Your booking
                                 </Text>
-                                <Text className="text-2xl font-psemibold text-amber-300">
+                                <Text className="text-lg font-psemibold text-amber-300">
                                     {userFullName}
                                 </Text>
                             </View>
-
+                            {/*Status options*/}
                             <View className="flex justify-between items-start flex-row">
                                 <CustomDropdown
                                     label={"booking status"}
@@ -278,7 +278,7 @@ const Order = ({navigation} : any) => {
                             color="black"
                         />
                         <Text className="text-center text-black font-pmedium text-lg">
-                            You have no booking, please book some court
+                            Bạn chưa đặt sân nào ...
                         </Text>
                     </View>
                 )}

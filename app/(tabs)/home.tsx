@@ -32,7 +32,7 @@ const Home = ({navigation} : any) => {
             await fetchCourtGroup(currentPage.current);
         } catch (error) {
             console.log(error);
-            Alert.alert('Error', error!.toString());
+            Alert.alert('Error end reached!', error!.toString());
         }
     }
 
@@ -57,7 +57,11 @@ const Home = ({navigation} : any) => {
             }
             setBookMarks([...bookMarks, ...data.data.value.items]);
         } catch (error) {
-            Alert.alert('Error', error!.toString());
+            if(error!.response.status === 404) {
+                setIsEnd(true);
+                return;
+            }
+            Alert.alert('Error fetchCourtGroup', error!.toString());
         }
     }
 
@@ -73,7 +77,7 @@ const Home = ({navigation} : any) => {
         if (isInit) {
             fetchCourtGroup(currentPage.current)
                 .then(() => setIsLoaded(true))
-                .catch(e => console.log(e));
+                .catch(e => console.log("init: ",e));
             setIsInit(false);
         }
         return unsubscribe;
