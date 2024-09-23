@@ -21,11 +21,10 @@ const TabIcon = ({icon, color, name, focused}: TabIconProps) => {
                 source={icon}
                 resizeMode='contain'
                 tintColor={color}
-                className='w-6 h-6'
+                className={`${focused ? 'w-5 h-5' : 'w-7 h-7'}`}
             />
 
-            <Text className={`${focused ? 'font-psemibold'
-                : 'font-pregular'} text-xs`} style={{color: color}}>{name}</Text>
+            {focused ? <Text className={"font-psemibold text-xs"} style={{color: color}}>{name}</Text> : null}
 
         </View>
     )
@@ -38,13 +37,17 @@ const TagsLayout = () => {
             screenOptions={{
                 tabBarShowLabel: false,
                 tabBarHideOnKeyboard: true,
-                tabBarActiveTintColor: '#FFA001',
-                tabBarInactiveTintColor: '#CDCDE0',
+                tabBarActiveTintColor: '#ADE603',
+                tabBarInactiveTintColor: '#08222F',
                 tabBarStyle: {
-                    backgroundColor: '#232533',
+                    backgroundColor: '#FFF',
                     borderTopWidth: 1,
-                    borderTopColor: '#232533',
+                    borderTopColor: '#FFF',
                     height: 60,
+                    position: 'absolute',
+                    bottom: 25,
+                    marginHorizontal: 20,
+                    borderRadius: 50,
                 }
             }}
         >
