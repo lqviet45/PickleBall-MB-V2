@@ -8,7 +8,7 @@ import {axiosInstance} from "@/lib/axios";
 import {router} from "expo-router";
 import CustomDropdown from "@/components/CustomDropdown";
 
-const Order = () => {
+const Order = ({navigation} : any) => {
 
     const [isLoaded, setIsLoaded] = useState(false);
     const [bookingOrder, setBookingOrder] = useState<BookingOrder[]>([]);
@@ -23,6 +23,7 @@ const Order = () => {
     const currentPage = useRef<number>(1);
     const pageSize: number = 10;
     const refresh = useRef<boolean>(false);
+    const isInitialMount = useRef(true);
 
     // this is the data for the dropdown
     const bookingStatus = [
@@ -97,7 +98,7 @@ const Order = () => {
             setIsEnd(true);
             return;
         }
-        if (refresh.current || isInit || isFirstSearch.current) {
+        if (refresh.current || isInit || isFirstSearch.current || isInitialMount.current) {
             setBookingOrder(data.data.value.items);
             refresh.current = false;
             isFirstSearch.current = false;
@@ -153,6 +154,13 @@ const Order = () => {
     }
 
     useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            currentPage.current = 1;
+            isInitialMount.current = true;
+            fetchBookingOrder(currentPage.current)
+                .then(() => isInitialMount.current = false)
+                .catch(e => console.log("catching fetchBookingOrder", e.response));
+        });
         if (isInit) {
             setIsLoaded(false);
             currentPage.current = 1;
@@ -160,8 +168,8 @@ const Order = () => {
                 .then(() => setIsLoaded(true))
                 .catch(e => console.log("catching fetchBookingOrder", e.response));
         }
-
-    }, []);
+        return unsubscribe;
+    }, [navigation]);
 
     if (!isLoaded) {
         return (
@@ -175,8 +183,7 @@ const Order = () => {
     }
 
     return (
-        <SafeAreaView>
-
+        <SafeAreaView className={"h-full"}>
             <FlatList
                 data={bookingOrder}
                 keyExtractor={(item) => item.id}
@@ -237,16 +244,17 @@ const Order = () => {
 
                 ListHeaderComponent={() => (
                     <View className="flex my-6 px-4 space-y-6">
-                        <View className="flex justify-between items-start flex-row">
+                        <View className="flex justify-between items-center flex-row border-amber-400 border-2">
+                            {/*Header*/}
                             <View>
-                                <Text className="font-pmedium text-lg text-black">
-                                    Take your booking
+                                <Text className="font-bold text-xl text-text">
+                                    Your booking
                                 </Text>
-                                <Text className="text-2xl font-psemibold text-amber-300">
+                                <Text className="text-lg font-psemibold text-amber-300">
                                     {userFullName}
                                 </Text>
                             </View>
-
+                            {/*Status options*/}
                             <View className="flex justify-between items-start flex-row">
                                 <CustomDropdown
                                     label={"booking status"}
@@ -270,7 +278,7 @@ const Order = () => {
                             color="black"
                         />
                         <Text className="text-center text-black font-pmedium text-lg">
-                            You have no booking, please book some court
+                            Bạn chưa đặt sân nào ...
                         </Text>
                     </View>
                 )}

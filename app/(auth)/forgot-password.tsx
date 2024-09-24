@@ -53,6 +53,7 @@ const ForgotPassword = () => {
                         title='Send Email Reset Password'
                         handlePress={submit}
                         containerStyles='mt-7'
+                        textStyles={" text-primary font-psemibold text-lg"}
                         isLoading={isSubmitting}
                     />
 

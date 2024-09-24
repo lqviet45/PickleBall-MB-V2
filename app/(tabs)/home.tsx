@@ -32,7 +32,7 @@ const Home = ({navigation} : any) => {
             await fetchCourtGroup(currentPage.current);
         } catch (error) {
             console.log(error);
-            Alert.alert('Error', error!.toString());
+            Alert.alert('Error end reached!', error!.toString());
         }
     }
 
@@ -57,7 +57,12 @@ const Home = ({navigation} : any) => {
             }
             setBookMarks([...bookMarks, ...data.data.value.items]);
         } catch (error) {
-            Alert.alert('Error', error!.toString());
+            // @ts-ignore
+            if(error.response.status === 404) {
+                setIsEnd(true);
+                return;
+            }
+            Alert.alert('Error fetchCourtGroup', error!.toString());
         }
     }
 
@@ -67,13 +72,13 @@ const Home = ({navigation} : any) => {
             isInitialMount.current = true;
             fetchCourtGroup(currentPage.current)
                 .then(() => isInitialMount.current = false)
-                .catch(e => {});
+                .catch(e => {console.log("home/useEffect/unsubscribe/fetchCourtGroup: ",e)});
         })
 
         if (isInit) {
             fetchCourtGroup(currentPage.current)
                 .then(() => setIsLoaded(true))
-                .catch(e => console.log(e));
+                .catch(e => console.log("init: ",e));
             setIsInit(false);
         }
         return unsubscribe;
@@ -81,7 +86,6 @@ const Home = ({navigation} : any) => {
 
     return (
         <SafeAreaView className={"bg-white h-full"}>
-
             <Animated.View
                 style={{
                     transform: [
@@ -99,11 +103,12 @@ const Home = ({navigation} : any) => {
                     shadowRadius: 3.84,
                     elevation: 5,
                     zIndex: 1000,
-                    top: 14,
                     left: 0,
                     right: 0,
                     position: 'absolute',
-                    padding: 10,
+                    paddingTop: 20,
+                    paddingBottom: 10,
+                    paddingHorizontal: 5
                 }}
             >
                 {/*Welcome to view*/}
@@ -114,7 +119,7 @@ const Home = ({navigation} : any) => {
                 </View>
                 {/*Played time and Index*/}
                 <View className="flex-row justify-between px-2 pt-1">
-                    <View className="p-2 rounded-2xl bg-[#001A27] w-[48%]">
+                    <View className="p-2 rounded-2xl bg-base w-[48%]" >
                         <Ionicons name="time" size={28} color="white"/>
                         <View className={"flex-row justify-between"}>
                             <Text className={"text-white"}>Played time</Text>
@@ -131,66 +136,65 @@ const Home = ({navigation} : any) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-                {/*  Booked Court  */}
             </Animated.View>
 
+            {/*  Booked Court  */}
             <View className={'flex-1'}>
-            <FlatList
-                className="bg-white pt-28 flex-1 pb-6"
-                data={bookMarks}
-                numColumns={2}
-                initialNumToRender={pageSize}
-                onEndReached={onEndReached}
-                onEndReachedThreshold={0.1}
-                keyExtractor={(item) => item.id}
-                onScroll={(e) => {
-                    // e is an event that contains various data
-                    // save scroll y position
-                    scrollY.setValue(e.nativeEvent.contentOffset.y);
-                }}
-                renderItem={({item}) => (
-                        <CourtCardVertical
-                            courtId={item.courtGroup.id}
-                            courtImage={(item.courtGroup.medias !== undefined && item.courtGroup.medias[0] !== undefined)
-                                ? item.courtGroup.medias[0].mediaUrl
-                                : "https://www.thespruce.com/thmb/1J6"}
-                            rating={4.5}
-                            courtName={item.courtGroup.name}
-                            time={'08:00 - 16:00'}
-                        />
-                )}
+                <FlatList
+                    className="bg-white pt-28 flex-1 pb-6"
+                    data={bookMarks}
+                    numColumns={2}
+                    initialNumToRender={pageSize}
+                    onEndReached={onEndReached}
+                    onEndReachedThreshold={0.1}
+                    keyExtractor={(item) => item.id}
+                    onScroll={(e) => {
+                        // e is an event that contains various data
+                        // save scroll y position
+                        scrollY.setValue(e.nativeEvent.contentOffset.y);
+                    }}
+                    renderItem={({item}) => (
+                            <CourtCardVertical
+                                courtId={item.courtGroup.id}
+                                courtImage={(item.courtGroup.medias !== undefined && item.courtGroup.medias[0] !== undefined)
+                                    ? item.courtGroup.medias[0].mediaUrl
+                                    : "https://www.thespruce.com/thmb/1J6"}
+                                rating={4.5}
+                                courtName={item.courtGroup.name}
+                                time={'08:00 - 16:00'}
+                            />
+                    )}
 
-                ListHeaderComponent={() => {
-                    return (
-                        <>
+                    ListHeaderComponent={() => {
+                        return (
                             <View className="flex-row justify-center pt-5">
                                 <Text className="text-xl">Bookmarked courts</Text>
                             </View>
-                        </>
-                    );
-                }}
+                        );
+                    }}
 
-                ListFooterComponent={() => {
-                    return (
-                        <>
-                            <View className="flex-row justify-center pt-5">
-                                {!isEnd && bookMarks.length !== 0 && (
-                                    <Text className="text-gray-500 text-center">Loading...</Text>
-                                )}
-                                {isEnd && bookMarks.length !== 0 && (
-                                    <Text className="text-gray-500 text-center">No more court</Text>
-                                )}
-                            </View>
-                            <View className="flex-row justify-center pt-24 pb-6">
-                            </View>
-                        </>
-                    );
-                }}
-            />
+                    ListFooterComponent={() => {
+                        return (
+                            <>
+                                <View className="flex-row justify-center pt-5">
+                                    {!isEnd && bookMarks.length !== 0 && (
+                                        <Text className="text-gray-500 text-center">Loading...</Text>
+                                    )}
+                                    {isEnd && bookMarks.length !== 0 && (
+                                        <Text className="text-gray-500 text-center">No more court</Text>
+                                    )}
+                                </View>
+                                <View className="flex-row justify-center pt-24 pb-6">
+                                </View>
+                            </>
+                        );
+                    }}
+                />
             </View>
             <StatusBar backgroundColor={'#FFFFFF'} style="dark"/>
         </SafeAreaView>
     );
 };
+
 
 export default Home;

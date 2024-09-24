@@ -103,7 +103,7 @@ const Settings = () => {
                 if (GoogleSignin.hasPreviousSignIn()) {
                     await GoogleSignin.signOut();
                 }
-                router.push('sign-in')
+                router.push('landing')
             }
         },
         {
@@ -119,7 +119,7 @@ const Settings = () => {
     return (
         <SafeAreaView className="h-full bg-white">
             <ScrollView>
-                <View className="flex-row justify-between items-center px-4 py-4">
+                <View className="flex-row justify-between items-center p-4">
                     <TouchableOpacity onPress={() => router.back()}>
                         <Ionicons name="chevron-back-outline" size={30} color="black" />
                     </TouchableOpacity>
@@ -127,7 +127,7 @@ const Settings = () => {
                     <View className="w-8 h-8"></View>
                 </View>
                 <View className="w-full min-h-[85vh] px-4 my-6 gap-y-10">
-                    <View className="px-2">
+                    <View className="px-1">
                         <Text className="font-psemibold text-2xl">Account</Text>
                         <View className={"bg-gray-200/[0.07] h-fit rounded pb-2"}>
                             {
@@ -138,7 +138,7 @@ const Settings = () => {
                         </View>
                     </View>
 
-                    <View className="px-2">
+                    <View className="px-1">
                         <Text className="font-psemibold text-2xl">Wallet</Text>
                         <View className={"bg-gray-200/[0.07] h-fit rounded pb-2"}>
                             {
@@ -149,7 +149,7 @@ const Settings = () => {
                         </View>
                     </View>
 
-                    <View className="px-2">
+                    <View className="px-1">
                         <Text className="font-psemibold text-2xl">Actions</Text>
                         <View className={"bg-gray-200/[0.07] h-fit rounded pb-2"}>
                             {

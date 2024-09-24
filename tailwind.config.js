@@ -4,12 +4,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        Base: "#08222F",
+        base: "#08222F",
         primary: "#161622",
         secondary: {
-          DEFAULT: "#FF9C01",
-          100: "#FF9001",
-          200: "#FF8E01",
+          DEFAULT: "#ADE603",
+          100: "#ADD503",
+          200: "#ADC703",
+        },
+        text: {
+            DEFAULT: "#08222F"
         },
         black: {
           DEFAULT: "#000",
@@ -37,18 +40,10 @@ module.exports = {
         pbold: ["Poppins-Bold", "sans-serif"],
         pextrabold: ["Poppins-ExtraBold", "sans-serif"],
         pblack: ["Poppins-Black", "sans-serif"],
-        mubold: ["MuseoModerno-Bold", "sans-serif"],
-        muregular: ["MuseoModerno-Regular", "sans-serif"],
-        muitalic: ["MuseoModerno-Italic", "sans-serif"],
-        mulight: ["MuseoModerno-Light", "sans-serif"],
-        mobold: ["Montserrat-Bold", "sans-serif"],
-        moregular: ["Montserrat-Regular", "sans-serif"],
-        moitalic: ["Montserrat-Italic", "sans-serif"],
-        molight: ["Montserrat-Light", "sans-serif"],
-        jobold: ["JosefinSans-Bold", "sans-serif"],
-        joregular: ["JosefinSans-Regular", "sans-serif"],
-        joitalic: ["JosefinSans-Italic", "sans-serif"],
         jolight: ["JosefinSans-Light", "sans-serif"],
+      },
+      backgroundImage: {
+        "landing": "url('assets/images/landing.png')",
       },
     },
   },

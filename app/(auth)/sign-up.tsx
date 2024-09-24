@@ -105,6 +105,7 @@ const SignUp = () => {
                         title='Sign up'
                         handlePress={submit}
                         containerStyles='mt-7'
+                        textStyles={"text-primary font-psemibold text-lg"}
                         isLoading={isSubmitting}
                     />
 

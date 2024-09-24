@@ -89,6 +89,7 @@ const ChangePassword = () => {
                         title='Change Password'
                         handlePress={submit}
                         containerStyles='mt-10'
+                        textStyles={" text-primary font-psemibold text-lg"}
                         isLoading={isLoading}
                     />
 

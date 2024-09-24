@@ -185,6 +185,7 @@ const Profile = () => {
                                 <CustomButton
                                     title={isEdit ? "Save" : "Edit"}
                                     containerStyles={"w-full mt-10"}
+                                    textStyles={"text-primary font-psemibold text-lg"}
                                     handlePress={isEdit ? handleSubmit : () => setIsEdit(true)}
                                 />
                             </View>
