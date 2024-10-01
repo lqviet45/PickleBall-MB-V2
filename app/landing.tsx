@@ -16,7 +16,7 @@ const LandingPage = () => {
     return (
         <ImageBackground source={images.landing} resizeMode={"stretch"}  className={"flex-1 h-full justify-center"}>
             <SafeAreaView className={"h-full"}>
-                <View className={"flex-col h-full justify-between border-blue-700 border-2"}>
+                <View className={"flex-col h-full justify-between"}>
                     <View className={"justify-center flex-col mt-24"}>
                         <Text className={"text-5xl italic font-bold text-center text-text"}>PICKLEBALL COURT</Text>
                         <Text className={"text-xl font-medium text-center text-text"}>Đặt sân dễ dàng, kết nối bạn bè</Text>
