@@ -12,6 +12,7 @@ const CourtLayout = () => {
                 />
                 <Stack.Screen
                     name="[...order]"
+
                     options={{headerShown: false}}
                 />
             </Stack>

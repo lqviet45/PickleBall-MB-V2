@@ -151,6 +151,9 @@ const Settings = () => {
                         </View>
                     </View>
                 </View>
+                {/*Add some space at the bottom
+                so that the bottom tabs won't hide any options*/}
+                <View className={"h-[60]"}/>
             </ScrollView>
         <StatusBar style="auto" />
         </SafeAreaView>

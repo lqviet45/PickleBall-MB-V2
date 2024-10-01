@@ -50,6 +50,7 @@ const TagsLayout = () => {
                     borderRadius: 50,
                 }
             }}
+
         >
             <Tabs.Screen
                 name='home'
@@ -107,7 +108,8 @@ const TagsLayout = () => {
                                  color={color}
                                  name="Settings"
                                  focused={focused}/>
-                    )
+                    ),
+
                 }}
             />
         </Tabs.Navigator>

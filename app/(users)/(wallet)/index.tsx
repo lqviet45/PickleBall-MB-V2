@@ -6,6 +6,7 @@ import {useGlobalContext} from "@/context/GlobalProvider";
 import {axiosInstance} from "@/lib/axios";
 import {Transaction} from "@/model/transaction";
 import {router} from "expo-router";
+import {AddDotToNumber} from "@/lib/helper";
 
 
 
@@ -15,9 +16,6 @@ const Index = () => {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [amount, setAmount] = useState<string>("");
     const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-    const addDotToAmount = (amount: number) => {
-        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    }
     const formatDateTime = (date: string) => {
         const newDate = new Date(date);
         return newDate.toLocaleString();
@@ -39,7 +37,7 @@ const Index = () => {
                 }
             });
         setWalletId(data.data.value.id);
-        setAmount(addDotToAmount(data.data.value.balance));
+        setAmount(AddDotToNumber(data.data.value.balance));
     }
 
     const fetchTransaction = async () => {
@@ -179,7 +177,7 @@ const Index = () => {
                                     </View>
                                     <View className={"flex-row items-center"}>
                                         <Text className={"text-green-400 mx-2.5"}>
-                                            {item.description == "Deposit" ? "+" : "-"} {addDotToAmount(item.amount)} VND
+                                            {item.description == "Deposit" ? "+" : "-"} {AddDotToNumber(item.amount)} VND
                                         </Text>
                                     </View>
                                 </View>

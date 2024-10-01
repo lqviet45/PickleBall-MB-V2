@@ -6,6 +6,7 @@ import {useGlobalContext} from "@/context/GlobalProvider";
 import {router, useLocalSearchParams} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {getUserToken} from "@/lib/authServices";
+import {AddDotToNumber} from "@/lib/helper";
 
 const Withdraw = () => {
     const [input, setInput] = useState<string>("");
@@ -15,9 +16,6 @@ const Withdraw = () => {
     const [isLoaded, setIsLoaded] = useState<boolean>(false);
     const handleInput = (text: string) => {
         setInput(text);
-    }
-    const addDotToAmount = (amount: number) => {
-        return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
     const handleQuickInput = (amount: number) : void => {
         setInput(amount.toString());
@@ -84,7 +82,7 @@ const Withdraw = () => {
                     {/*Index selection*/}
                     <View className={"flex-col bg-amber-50 my-1 p-3 rounded-2xl border-2 border-amber-400"}>
                         <Text className={"text-lg font-semibold"}>Ví của bạn</Text>
-                        <Text className={"text-lg font-semibold text-amber-400"}>{addDotToAmount(wallet.balance.toString())} VND</Text>
+                        <Text className={"text-lg font-semibold text-amber-400"}>{AddDotToNumber(wallet.balance.toString())} VND</Text>
                     </View>
                     {/*Money input*/}
                     <View className="border-2 border-gray-100 rounded-xl

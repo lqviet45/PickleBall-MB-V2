@@ -10,6 +10,7 @@ import * as Notifications from "expo-notifications";
 import {axiosInstance, axiosInstanceAuth} from "@/lib/axios";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import {getUserToken} from "@/lib/authServices";
+import {AddDotToNumber} from "@/lib/helper";
 
 let orderSchema = object({
     id: string().required(),
@@ -108,14 +109,14 @@ const OrderPage = () => {
             <ScrollView className="h-full">
                 <View className={'w-full justify-center pt-2'}>
                     <View className="px-2">
+                        {/*Back button*/}
                         <View className="flex-row justify-between items-center py-4">
-                            <View className="flex-row gap-5">
+                            <View className="flex-row gap-5 my-2">
                                 <TouchableOpacity onPress={() => router.back()}>
                                     <Ionicons name="chevron-back-outline" size={30} color="black"/>
                                 </TouchableOpacity>
-                                <Text className="font-pmedium text-3xl">Order</Text>
+                                <Text className="font-bold text-2xl">Đặt sân</Text>
                             </View>
-                            <View className="w-8 h-8"></View>
                         </View>
 
                         <View className="flex-row justify-start items-center w-full mb-4">
@@ -124,19 +125,8 @@ const OrderPage = () => {
                                 size={30}
                                 color={'black'}
                             />
-                            <Text className="text-lg pl-3 font-bold text-black">
+                            <Text className="text-2xl pl-3 font-bold text-black">
                                 {name}
-                            </Text>
-                        </View>
-
-                        <View className="flex-row justify-start items-center w-full mb-4">
-                            <Ionicons
-                                name={'cash'}
-                                size={30}
-                                color={'black'}
-                            />
-                            <Text className="text-lg pl-3 font-bold text-black">
-                                {price} VND/h
                             </Text>
                         </View>
 
@@ -151,7 +141,7 @@ const OrderPage = () => {
                                 <>
                                     <View className="justify-start w-full mb-4">
                                         <TouchableOpacity
-                                            className='flex-row'
+                                            className='flex-row items-center'
                                             onPress={() => showDatePicker(async (event: any, selectedDate: any) => {
                                                 const currentDate = selectedDate || order.date;
                                                 await setFieldValue('date', currentDate)
@@ -159,26 +149,34 @@ const OrderPage = () => {
                                             }, values.date)}
                                         >
                                             <Ionicons name="calendar-outline" size={30} color="black"/>
-                                            <TextInput
-                                                className="text-lg pl-3 font-bold text-black"
-                                                editable={false}
-                                                value={values.date.toLocaleDateString('vi-VN', {
-                                                    day: '2-digit',
-                                                    month: '2-digit',
-                                                    year: 'numeric'
-                                                })}
-                                            />
+                                            <View className={"flex-row"}>
+                                                <Text className="pl-3 font-plight text-lg items-center justify-center">
+                                                    Vào ngày
+                                                </Text>
+                                                <TextInput
+                                                    className="text-lg pl-3 font-plight text-black"
+                                                    editable={false}
+                                                    value={values.date.toLocaleDateString('vi-VN', {
+                                                        day: '2-digit',
+                                                        month: '2-digit',
+                                                        year: 'numeric'
+                                                    })}
+                                                />
+                                            </View>
                                         </TouchableOpacity>
                                     </View>
-
+                                    {/*Amount of people*/}
                                     <View className="flex-row justify-start items-center w-full mb-4">
                                         <Ionicons
                                             name={'people'}
                                             size={30}
                                             color={'black'}
                                         />
+                                        <Text className="text-lg pl-3 font-plight text-black">
+                                            Số lượng người chơi:
+                                        </Text>
                                         <TextInput
-                                            className="text-lg pl-3 font-bold text-black"
+                                            className="text-lg ml-4 font-plight text-black"
                                             placeholder="number players"
                                             keyboardType="numeric"
                                             onChangeText={handleChange('number')}
@@ -212,6 +210,7 @@ const OrderPage = () => {
                                     {/*    </TouchableOpacity>*/}
                                     {/*</View>*/}
 
+                                    {/*Start time*/}
                                     <View className="justify-start w-full mb-4">
                                         <TouchableOpacity
                                             className='flex-row'
@@ -240,8 +239,7 @@ const OrderPage = () => {
                                             />
                                         </TouchableOpacity>
                                     </View>
-
-
+                                    {/*End time*/}
                                     <View className="justify-start w-full mb-4">
                                         <TouchableOpacity
                                             className='flex-row'
@@ -283,19 +281,23 @@ const OrderPage = () => {
                                         </TouchableOpacity>
                                     </View>
 
+                                    {/*Handle render multiple slot to choose*/}
 
-                                    <View className="flex-row justify-between items-center mb-4 mt-10">
-                                        <Text className="text-lg font-bold text-black">
-                                            {values.price.toString()} VND
-                                        </Text>
-                                        <TouchableOpacity
-                                            onPress={() => handleSubmit()}
-                                            className="bg-amber-400 rounded-xl px-6 items-center justify-center py-3"
-                                        >
-                                            <Text className="text-black font-bold text-lg">
-                                                Order
+
+                                    <View className={""}>
+                                        <View className="flex-row justify-between items-center mb-4 mt-10">
+                                            <Text className="text-lg font-bold text-black">
+                                                {AddDotToNumber(values.price)} VND
                                             </Text>
-                                        </TouchableOpacity>
+                                            <TouchableOpacity
+                                                onPress={() => handleSubmit()}
+                                                className="bg-amber-400 rounded-xl px-6 items-center justify-center py-3"
+                                            >
+                                                <Text className="text-black font-bold text-lg">
+                                                    Order
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
                                     </View>
                                 </>
                             )}

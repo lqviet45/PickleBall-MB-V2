@@ -202,7 +202,7 @@ const Order = ({navigation} : any) => {
                             <View className="my-2">
                                 {/*<OrderItem item={item}/>*/}
                                 <View className="flex flex-row
-                                bg-blue-400 rounded-lg w-[95%] mx-auto
+                                bg-blue-400 rounded-2xl w-[95%] mx-auto
                                 justify-between
                                 px-4 py-2">
                                     <View className="w-28">
@@ -244,11 +244,11 @@ const Order = ({navigation} : any) => {
 
                 ListHeaderComponent={() => (
                     <View className="flex my-6 px-4 space-y-6">
-                        <View className="flex justify-between items-center flex-row border-amber-400 border-2">
+                        <View className="flex justify-between items-center flex-row ">
                             {/*Header*/}
                             <View>
                                 <Text className="font-bold text-xl text-text">
-                                    Your booking
+                                    Order của bạn
                                 </Text>
                                 <Text className="text-lg font-psemibold text-amber-300">
                                     {userFullName}
