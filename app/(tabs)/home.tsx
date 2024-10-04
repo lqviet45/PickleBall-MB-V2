@@ -117,14 +117,13 @@ const Home = ({navigation} : any) => {
                     <Ionicons name="notifications-outline"
                               size={30} color="black" onPress={() => router.push('notification')}/>
                 </View>
-                {/*Played time and Index*/}
+                {/*Shop and Wallet*/}
                 <View className="flex-row justify-between px-2 pt-1">
-                    <View className="p-2 rounded-2xl bg-base w-[48%]" >
-                        <Ionicons name="time" size={28} color="white"/>
-                        <View className={"flex-row justify-between"}>
-                            <Text className={"text-white"}>Played time</Text>
-                            <Text className={"text-white"}>420H</Text>
-                        </View>
+                    <View className="p-2 flex-row items-center justify-around rounded-2xl bg-base w-[48%]" >
+                        <TouchableOpacity onPress={() => router.push('(shop)/shop')}>
+                            <Ionicons name="bag-handle-outline" size={36} color="white"/>
+                            <Text className={"text-white text-xl"}>Cửa hàng</Text>
+                        </TouchableOpacity>
                     </View>
                     <View className="p-2 rounded-2xl bg-[#e6f8b3] w-[48%]">
                         <TouchableOpacity onPress={() => router.push('(users)/(wallet)/')}>

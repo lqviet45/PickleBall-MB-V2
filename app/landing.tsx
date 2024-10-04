@@ -18,8 +18,8 @@ const LandingPage = () => {
             <SafeAreaView className={"h-full"}>
                 <View className={"flex-col h-full justify-between"}>
                     <View className={"justify-center flex-col mt-24"}>
-                        <Text className={"text-5xl italic font-bold text-center text-base"}>PICKLEBALL COURT</Text>
-                        <Text className={"text-xl font-medium text-center text-base"}>Đặt sân dễ dàng, kết nối bạn bè</Text>
+                        <Text className={"text-5xl italic font-bold text-center text-black"}>PICKLEBALL COURT</Text>
+                        <Text className={"text-xl font-medium text-center text-black"}>Đặt sân dễ dàng, kết nối bạn bè</Text>
                     </View>
                     <View className={"px-4 py-9"}>
                         <CustomButton title={"Đăng ký"}

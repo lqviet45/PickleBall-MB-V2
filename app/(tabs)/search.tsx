@@ -128,9 +128,9 @@ const Search = () => {
                                     courtImage={
                                         (item.medias !== undefined && item.medias[0] !== undefined) ? item.medias[0].mediaUrl : "https://www.thespruce.com/thmb/1J6"
                                     }
-                                    rating={4.5}
+                                    rating= {4.5}
                                     courtName={item.name}
-                                    location={item.location}
+                                    price={item.price}
                                 />
                             )
                         )}

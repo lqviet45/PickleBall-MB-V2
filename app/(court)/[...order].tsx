@@ -1,4 +1,4 @@
-import {View, Text, ScrollView, TouchableOpacity, Pressable, TextInput, Alert} from "react-native";
+import {View, Text, ScrollView, TouchableOpacity, TextInput, Alert, FlatList} from "react-native";
 import {router, useLocalSearchParams} from "expo-router";
 import {SafeAreaView} from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -11,6 +11,8 @@ import {axiosInstance, axiosInstanceAuth} from "@/lib/axios";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import {getUserToken} from "@/lib/authServices";
 import {AddDotToNumber} from "@/lib/helper";
+import {Dropdown} from "react-native-element-dropdown";
+import CustomDropdown from "@/components/CustomDropdown";
 
 let orderSchema = object({
     id: string().required(),
@@ -23,6 +25,17 @@ let orderSchema = object({
 });
 
 const OrderPage = () => {
+
+    const [courtYard, setCourtYard] = useState([{
+        label: '',
+        value: ''
+    }]);
+    const [slots, setSlots] = useState([{
+        yardId: '',
+        slots: []
+    }]);
+    const [selectedYardSlot, setSelectedYardSlot] = useState([]);
+    const courtYardRef = useRef<string>('');
 
     const {id, name, price} = useLocalSearchParams<{
         id: string;
@@ -39,7 +52,6 @@ const OrderPage = () => {
         price: parseInt(price ?? '0'),
         number: 2,
         date: new Date(),
-        //time: '01:00',
         startTime: '07:00',
         endTime: '08:00'
     });
@@ -54,19 +66,8 @@ const OrderPage = () => {
             minimumDate: new Date()
         });
     }
-
     const showDatePicker = (onChangeDate: any, value: Date) => {
             showDatepickerAndroid(onChangeDate, value);
-    }
-
-    const showTimePicker = (onChangeDate: any, value: Date) => {
-        DateTimePickerAndroid.open({
-            value: value,
-            onChange: onChangeDate,
-            mode: 'time',
-            display: 'spinner',
-            is24Hour: true
-        });
     }
 
     const submitOrder = async (values: any) => {
@@ -81,12 +82,13 @@ const OrderPage = () => {
                     month: '2-digit',
                     day: '2-digit'
                 }),
-                timeRange: values.startTime + ' - ' + values.endTime,
+                //timeRange: values.startTime + ' - ' + values.endTime,
+                timeRange: '07:00 - 08:00',
             }
             const token = await getUserToken();
-            const axiosInstance = axiosInstanceAuth(token);
+            const axiosAuth = axiosInstanceAuth(token);
 
-            const res = await axiosInstance
+            const res = await axiosAuth
                 .post('/bookings', data);
 
             //await schedulePushNotification();
@@ -103,6 +105,53 @@ const OrderPage = () => {
             Alert.alert('Error', 'An error occurred while booking');
         }
     }
+
+    const handleChooseCourtYard = (item: any) => {
+        try {
+            if (courtYardRef.current !== item.value){
+                courtYardRef.current = item.value;
+                setSelectedYardSlot(
+                    slots.filter((slot: any) => slot.yardId === item.value)[0].slots
+                );
+                console.log("Selected Yard Slot: ", selectedYardSlot);
+                //Handle choose court yard
+            }
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    const fetchCourtYard = async () => {
+        const data = await axiosInstance
+            .get(`/court-groups/${id}/court-yards`,
+                {
+                    params:{
+                        CourtGroupId: id
+                    }
+                });
+        data.data.value.items.map((item: any) => {
+            setCourtYard(prevState => [
+                ...prevState,
+                {
+                    label: item.name,
+                    value: item.id
+                }
+            ]);
+            setSlots(prevState => [
+                ...prevState,
+                {
+                    yardId: item.id,
+                    slots: item.slots
+                }
+            ]);
+        });
+    }
+
+    useEffect(() => {
+        fetchCourtYard();
+        console.log("Selected Yard Slot: ", selectedYardSlot);
+
+    }, []);
 
     return (
         <SafeAreaView className="h-full">
@@ -148,7 +197,10 @@ const OrderPage = () => {
                                                     .catch((error: any) => {});
                                             }, values.date)}
                                         >
-                                            <Ionicons name="calendar-outline" size={30} color="black"/>
+                                            <Ionicons
+                                                name="calendar-outline"
+                                                size={34}
+                                                color="black"/>
                                             <View className={"flex-row"}>
                                                 <Text className="pl-3 font-plight text-lg items-center justify-center">
                                                     Vào ngày
@@ -169,7 +221,7 @@ const OrderPage = () => {
                                     <View className="flex-row justify-start items-center w-full mb-4">
                                         <Ionicons
                                             name={'people'}
-                                            size={30}
+                                            size={34}
                                             color={'black'}
                                         />
                                         <Text className="text-lg pl-3 font-plight text-black">
@@ -184,120 +236,59 @@ const OrderPage = () => {
                                         />
                                     </View>
 
-                                    {/*<View className="justify-start w-full mb-4">*/}
-                                    {/*    <TouchableOpacity*/}
-                                    {/*        className='flex-row'*/}
-                                    {/*        onPress={() => showTimePicker(async (event: any, selectedDate: any) => {*/}
-                                    {/*            const currentTime = selectedDate || order.time;*/}
-                                    {/*            const timeString = currentTime.toLocaleTimeString('vi-VN', {*/}
-                                    {/*                hour: '2-digit',*/}
-                                    {/*                minute: '2-digit',*/}
-                                    {/*            });*/}
-                                    {/*            await setFieldValue('time', timeString)*/}
-                                    {/*                .catch((error: any) => {});*/}
-                                    {/*        }, new Date(`2022-01-01T${values.time}`))}*/}
-                                    {/*    >*/}
-                                    {/*        <Ionicons*/}
-                                    {/*            name="time-outline"*/}
-                                    {/*            size={30}*/}
-                                    {/*            color="black"*/}
-                                    {/*        />*/}
-                                    {/*        <TextInput*/}
-                                    {/*            className="text-lg pl-3 font-bold text-black"*/}
-                                    {/*            editable={false}*/}
-                                    {/*            value={values.time}*/}
-                                    {/*        />*/}
-                                    {/*    </TouchableOpacity>*/}
-                                    {/*</View>*/}
-
-                                    {/*Start time*/}
-                                    <View className="justify-start w-full mb-4">
-                                        <TouchableOpacity
-                                            className='flex-row'
-                                            onPress={() => showTimePicker(async (event: any, selectedDate: any) => {
-                                                const currentTime = selectedDate || order.startTime;
-                                                const timeString = currentTime.toLocaleTimeString('vi-VN', {
-                                                    hour: '2-digit',
-                                                    minute: '2-digit',
-                                                });
-                                                await setFieldValue('startTime', timeString)
-                                                    .catch((error: any) => {});
-                                            }, new Date(`2022-01-01T${values.startTime}`))}
-                                        >
-                                            <Ionicons
-                                                name={'time-outline'}
-                                                size={30}
-                                                color={'black'}
-                                            />
-                                            <Text className="pl-6 font-bold text-lg items-center justify-center">
-                                                Start Time
-                                            </Text>
-                                            <TextInput
-                                                className="text-lg pl-3 font-bold text-black"
-                                                editable={false}
-                                                value={values.startTime}
-                                            />
-                                        </TouchableOpacity>
-                                    </View>
-                                    {/*End time*/}
-                                    <View className="justify-start w-full mb-4">
-                                        <TouchableOpacity
-                                            className='flex-row'
-                                            onPress={() => showTimePicker(async (event: any, selectedDate: any) => {
-                                                const currentTime = selectedDate || order.endTime;
-
-                                                const startTime = new Date(`2022-01-01T${values.startTime}`);
-
-                                                const playTime= Math.ceil((currentTime.getTime() - startTime.getTime()) / 3600000);
-
-                                                if (playTime < 1) {
-                                                    currentTime.setHours(startTime.getHours() + 1);
-                                                    Alert.alert('Invalid Time', 'The minimum time is 1 hour');
-                                                    return;
-                                                }
-
-                                                await setFieldValue('price', (playTime * order.price));
-
-                                                const timeString = currentTime.toLocaleTimeString('vi-VN', {
-                                                    hour: '2-digit',
-                                                    minute: '2-digit',
-                                                });
-                                                await setFieldValue('endTime', timeString);
-                                            }, new Date(`2022-01-01T${values.endTime}`))}
-                                        >
-                                            <Ionicons
-                                                name={'time-outline'}
-                                                size={30}
-                                                color={'black'}
-                                            />
-                                            <Text className="pl-6 font-bold text-lg items-center justify-center">
-                                                End Time
-                                            </Text>
-                                            <TextInput
-                                                className="text-lg pl-3 font-bold text-black"
-                                                editable={false}
-                                                value={values.endTime}
-                                            />
-                                        </TouchableOpacity>
-                                    </View>
-
                                     {/*Handle render multiple slot to choose*/}
+                                    <View className="flex-row justify-start items-center w-full mb-4">
+                                        <Ionicons
+                                            name={'film-outline'}
+                                            size={34}
+                                            color={'black'}
+                                        />
+                                        <CustomDropdown data={courtYard}
+                                                        label={'Chọn sân'}
+                                                        valueField={'value'}
+                                                        labelField={'label'}
+                                                        onChange={handleChooseCourtYard}
+                                                        value={courtYardRef.current === null ? 'Chọn sân' : courtYardRef.current}
+                                        />
+                                    </View>
 
+                                        {/*Handle render multiple slot to choose*/}
 
-                                    <View className={""}>
-                                        <View className="flex-row justify-between items-center mb-4 mt-10">
-                                            <Text className="text-lg font-bold text-black">
-                                                {AddDotToNumber(values.price)} VND
+                                        <FlatList
+
+                                            numColumns={2}
+                                            data={selectedYardSlot} renderItem={
+                                            ({item}) => (
+                                                <View className="flex-col justify-center items-center w-[46%] mx-auto border-2 border-gray-500 rounded-full mb-4">
+                                                    <Text className="text-lg pl-3 font-plight text-black">
+                                                        {item.slotName}
+                                                    </Text>
+                                                    <Text className="text-lg pl-3 font-plight text-black">
+                                                        {item.status}
+                                                    </Text>
+                                                </View>
+                                            )
+                                        }
+                                        />
+
+                                    {/*Price and booking*/}
+                                    <View className="flex-row justify-between mx-6 items-center mb-4">
+                                        <View className={"flex-col"}>
+                                            <Text className="text-black font-bold text-lg">
+                                                Giá
                                             </Text>
-                                            <TouchableOpacity
-                                                onPress={() => handleSubmit()}
-                                                className="bg-amber-400 rounded-xl px-6 items-center justify-center py-3"
-                                            >
-                                                <Text className="text-black font-bold text-lg">
-                                                    Order
-                                                </Text>
-                                            </TouchableOpacity>
+                                            <Text className="text-black font-plight  text-2xl">
+                                                {AddDotToNumber(values.price)} Đ
+                                            </Text>
                                         </View>
+                                        <TouchableOpacity
+                                            onPress={() => handleSubmit()}
+                                            className="w-44 bg-secondary rounded-xl px-6 items-center justify-center py-3"
+                                        >
+                                            <Text className="text-black font-bold text-2xl">
+                                                Đặt sân
+                                            </Text>
+                                        </TouchableOpacity>
                                     </View>
                                 </>
                             )}

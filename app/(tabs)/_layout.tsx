@@ -97,6 +97,7 @@ const TagsLayout = () => {
                 }}
             />
 
+
             <Tabs.Screen
                 name='settings'
                 component={Settings}

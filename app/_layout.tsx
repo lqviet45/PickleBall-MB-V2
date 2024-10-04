@@ -66,10 +66,11 @@ const RootLayout = () => {
                 <Stack.Screen name="index" options={{headerShown: false}} />
                 <Stack.Screen name="landing" options={{headerShown: false}} />
                 <Stack.Screen name="(auth)" options={{headerShown: false}}/>
-                <Stack.Screen name="(tabs)"  options={{headerShown: false}}/>
-                <Stack.Screen name="(users)" options={{headerShown: false}}/>
                 <Stack.Screen name="(court)" options={{headerShown: false}}/>
                 <Stack.Screen name="(order)" options={{headerShown: false}}/>
+                <Stack.Screen name="(shop)" options={{headerShown: false}}/>
+                <Stack.Screen name="(tabs)"  options={{headerShown: false}}/>
+                <Stack.Screen name="(users)" options={{headerShown: false}}/>
             </Stack>
         </GlobalProvider>
     );

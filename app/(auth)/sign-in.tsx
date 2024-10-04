@@ -67,13 +67,13 @@ const SignIn = () => {
             if (isErrorWithCode(error)) {
                 switch (error.code) {
                     case statusCodes.SIGN_IN_CANCELLED:
-                        Alert.alert('cancel login', 'You have cancelled the login flow');
+                        console.log('cancel login', 'You have cancelled the login flow');
                         break;
                     case statusCodes.IN_PROGRESS:
                         Alert.alert('in progress', 'Sign in is in progress');
                         break;
                     case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-                        Alert.alert('play services not available', 'Play services are not available');
+                        Alert.alert('Play services not available', 'Play services are not available');
                         break;
                     default:
                         Alert.alert('error', error.message);
@@ -89,7 +89,7 @@ const SignIn = () => {
     }
 
     return (
-        <SafeAreaView className="bg-Base h-full">
+        <SafeAreaView className="bg-base h-full">
             <ScrollView>
                 <View className="w-full justify-center min-h-[85vh] px-4 my-6">
                     <View className="h-fit w-full items-center justify-center flex-row">

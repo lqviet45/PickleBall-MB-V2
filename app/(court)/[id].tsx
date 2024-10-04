@@ -61,7 +61,6 @@ const CourtDetail = () => {
                     courtGroupId: id
                }
             });
-            console.log(data.data.value.isDeleted);
             setBookMark({
                 isBookedMarked: !data.data.value.isDeleted,
                 id: data.data.value.id
@@ -165,6 +164,7 @@ const CourtDetail = () => {
 
     const bookCourt = () => {
         // book court
+        console.log(court.id);
         router.push({
             pathname: `(court)/${id}/order`,
             params: {
