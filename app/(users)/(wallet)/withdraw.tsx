@@ -7,6 +7,7 @@ import {router, useLocalSearchParams} from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {getUserToken} from "@/lib/authServices";
 import {AddDotToNumber} from "@/lib/helper";
+import QuickAmountInput from "@/components/QuickAmountInput";
 
 const Withdraw = () => {
     const [input, setInput] = useState<string>("");
@@ -46,7 +47,7 @@ const Withdraw = () => {
             })
             .then(() => {
                 Alert.alert("Rút tiền thành công");
-                router.replace("wallet");
+                router.replace("home");
             })
             .catch(e => {
                 console.log("catching handleDeposit", e.response.data);
@@ -101,31 +102,9 @@ const Withdraw = () => {
                     </View>
                     {/*Quick input*/}
                     <View className={"flex-row flex-wrap justify-between "}>
-                        <TouchableOpacity
-                            className={"border-amber-400 border-2 p-2 w-[30%] mb-2"}
-                            onPress={() => handleQuickInput(100000)}>
-                            <Text className={"text-amber-400"}>100.000</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            className={"border-amber-400 border-2 p-2 w-[30%] mb-2"}
-                            onPress={() => handleQuickInput(200000)}>
-                            <Text className={"text-amber-400"}>200.000</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            className={"border-amber-400 border-2 p-2 w-[30%] mb-2"}
-                            onPress={() => handleQuickInput(300000)}>
-                            <Text className={"text-amber-400"}>300.000</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            className={"border-amber-400 border-2 p-2 w-[30%] mb-2"}
-                            onPress={() => handleQuickInput(400000)}>
-                            <Text className={"text-amber-400"}>400.000</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            className={"border-amber-400 border-2 p-2 w-[30%] mb-2"}
-                            onPress={() => handleQuickInput(500000)}>
-                            <Text className={"text-amber-400"}>500.000</Text>
-                        </TouchableOpacity>
+                        <QuickAmountInput amount={100000} onPressFunc={handleQuickInput}/>
+                        <QuickAmountInput amount={200000} onPressFunc={handleQuickInput}/>
+                        <QuickAmountInput amount={500000} onPressFunc={handleQuickInput}/>
                     </View>
                 </View>
                 <Text className={"text-xl font-bold my-1"}>Đến nguồn tiền</Text>

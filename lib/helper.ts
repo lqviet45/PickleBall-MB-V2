@@ -1,3 +1,9 @@
 export const AddDotToNumber = (number: number) => {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    try {
+        const num =
+            number !== undefined ? number.toString() : "";
+        return num.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    } catch (error) {
+        console.log("AddDotToNumber: ", error);
+    }
 }

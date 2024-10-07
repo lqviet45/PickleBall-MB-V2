@@ -36,6 +36,7 @@ const Home = ({navigation} : any) => {
         }
     }
 
+    // Fetch bookmarked court group
     const fetchCourtGroup = async (pageNumber: number) => {
         try {
             const data = await axiosInstance.get(`users/${userId}/bookmarks`, {
@@ -75,10 +76,12 @@ const Home = ({navigation} : any) => {
                 .catch(e => {console.log("home/useEffect/unsubscribe/fetchCourtGroup: ",e)});
         })
 
+        //Check if isInit is true, fetch data
         if (isInit) {
             fetchCourtGroup(currentPage.current)
                 .then(() => setIsLoaded(true))
                 .catch(e => console.log("init: ",e));
+
             setIsInit(false);
         }
         return unsubscribe;
@@ -113,25 +116,28 @@ const Home = ({navigation} : any) => {
             >
                 {/*Welcome to view*/}
                 <View className="flex-row justify-between pt-3 px-2">
-                    <Text className="text-xl">Xin chào, {userFullName}</Text>
+                    <Text className="text-xl italic">Xin chào, <Text className={"text-secondary italic font-bold text-2xl"}>{userFullName}</Text></Text>
                     <Ionicons name="notifications-outline"
-                              size={30} color="black" onPress={() => router.push('notification')}/>
+                              size={34} color="black" onPress={() => router.push('notification')}/>
                 </View>
                 {/*Shop and Wallet*/}
                 <View className="flex-row justify-between px-2 pt-1">
                     <View className="p-2 flex-row items-center justify-around rounded-2xl bg-base w-[48%]" >
-                        <TouchableOpacity onPress={() => router.push('(shop)/shop')}>
+                        <TouchableOpacity
+                            onPress={() => router.push('(shop)/shop')}
+                            className="flex-row items-center"
+                        >
                             <Ionicons name="bag-handle-outline" size={36} color="white"/>
                             <Text className={"text-white text-xl"}>Cửa hàng</Text>
                         </TouchableOpacity>
                     </View>
                     <View className="p-2 rounded-2xl bg-[#e6f8b3] w-[48%]">
-                        <TouchableOpacity onPress={() => router.push('(users)/(wallet)/')}>
-                            <Ionicons name="wallet-outline" size={28} color="black"/>
-                            <View className="flex-row justify-between">
-                                <Text>Wallet</Text>
-                                <Text className={"text-gray-500"}>Nhấn để xem ví</Text>
-                            </View>
+                        <TouchableOpacity
+                            onPress={() => router.push('(users)/(wallet)/')}
+                            className="flex-row items-center"
+                        >
+                            <Ionicons name="wallet-outline" size={36} color="black"/>
+                            <Text className={"text-black mx-auto text-xl text-center"}>Xem ví</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

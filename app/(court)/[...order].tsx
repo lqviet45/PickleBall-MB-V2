@@ -11,8 +11,9 @@ import {axiosInstance, axiosInstanceAuth} from "@/lib/axios";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import {getUserToken} from "@/lib/authServices";
 import {AddDotToNumber} from "@/lib/helper";
-import {Dropdown} from "react-native-element-dropdown";
 import CustomDropdown from "@/components/CustomDropdown";
+import {useFocusEffect} from "@react-navigation/core";
+
 
 let orderSchema = object({
     id: string().required(),
@@ -20,22 +21,23 @@ let orderSchema = object({
     price: number().required(),
     number: number().required(),
     date: date().required(),
-    startTime: string().required(),
-    endTime: string().required()
+    slotBookingTime: string().required()
 });
 
 const OrderPage = () => {
 
-    const [courtYard, setCourtYard] = useState([{
-        label: '',
-        value: ''
-    }]);
-    const [slots, setSlots] = useState([{
-        yardId: '',
-        slots: []
-    }]);
-    const [selectedYardSlot, setSelectedYardSlot] = useState([]);
+    const [courtYard, setCourtYard] = useState([{label: 'Chọn sân', value: ''}]);
+    const [forceUpdate, setForceUpdate] = useState(false);
+
+    const [selectedYardSlot, setSelectedYardSlot] = useState<{
+        slotName: string;
+        status: string;
+        selected: boolean;
+    }[]>([]);
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [numOfPeople, setNumOfPeople] = useState(0);
     const courtYardRef = useRef<string>('');
+    const selectedYardSlotRef = useRef<string[]>([]);
 
     const {id, name, price} = useLocalSearchParams<{
         id: string;
@@ -44,17 +46,6 @@ const OrderPage = () => {
     }>();
 
     const {userLogin} = useGlobalContext();
-
-    const [order, setOrder] = useState({
-        id: id,
-        name: name,
-        email: userLogin?.email,
-        price: parseInt(price ?? '0'),
-        number: 2,
-        date: new Date(),
-        startTime: '07:00',
-        endTime: '08:00'
-    });
 
     const showDatepickerAndroid = (onChangeDate: any, value: Date) => {
         DateTimePickerAndroid.open({
@@ -67,25 +58,43 @@ const OrderPage = () => {
         });
     }
     const showDatePicker = (onChangeDate: any, value: Date) => {
-            showDatepickerAndroid(onChangeDate, value);
+        showDatepickerAndroid(onChangeDate, value);
     }
 
-    const submitOrder = async (values: any) => {
+    const submitOrder = async () => {
         console.log('submit order');
         try {
+            if (numOfPeople === 0) {
+                Alert.alert('Error', 'Please enter the number of people');
+                return;
+            }
+            if (selectedDate === undefined) {
+                Alert.alert('Error', 'Please enter the date');
+                return;
+            }
+            if (courtYardRef.current === '') {
+                Alert.alert('Error', 'Please choose the court yard');
+                return;
+            }
+            if (selectedYardSlotRef.current.length === 0) {
+                Alert.alert('Error', 'Please choose the slot');
+                return;
+            }
+            let totalSlot = selectedYardSlotRef.current.map((item) => item).join(', ');
             const data = {
-                courtGroupId: values.id,
+                courtGroupId: id,
                 email: userLogin?.email,
-                numberOfPlayers: values.number,
-                bookingDate: values.date.toLocaleDateString('fr-CA', {
+                numberOfPlayers: numOfPeople,
+                bookingDate: selectedDate.toLocaleDateString('fr-CA', {
                     year: 'numeric',
                     month: '2-digit',
                     day: '2-digit'
                 }),
-                //timeRange: values.startTime + ' - ' + values.endTime,
-                timeRange: '07:00 - 08:00',
+                timeRange: totalSlot,
             }
+            console.log(data);
             const token = await getUserToken();
+
             const axiosAuth = axiosInstanceAuth(token);
 
             const res = await axiosAuth
@@ -93,7 +102,7 @@ const OrderPage = () => {
 
             //await schedulePushNotification();
 
-            router.push({
+            router.replace({
                 pathname: '/(order)/order/',
                 params: {
                     id: res.data.value.id
@@ -101,199 +110,227 @@ const OrderPage = () => {
             });
 
         } catch (e) {
-            console.log(e);
+            console.log("Order error",e);
             Alert.alert('Error', 'An error occurred while booking');
         }
     }
 
-    const handleChooseCourtYard = (item: any) => {
+    const handleChooseCourtYard = async (item: any) => {
         try {
-            if (courtYardRef.current !== item.value){
+            if (courtYardRef.current !== item.value) {
                 courtYardRef.current = item.value;
-                setSelectedYardSlot(
-                    slots.filter((slot: any) => slot.yardId === item.value)[0].slots
-                );
-                console.log("Selected Yard Slot: ", selectedYardSlot);
-                //Handle choose court yard
+
+                const slot = await axiosInstance
+                    .get(`/courtyards/${item.value}/slots`);
+                let slots: {
+                    slotName: string;
+                    status: string;
+                    selected: boolean;
+                }[] = [];
+                slot.data.value.map(
+                    (item: any) => {
+                        item.status === 'Available' ?
+                        slots.push({
+                            slotName: item.slotName,
+                            status: item.status,
+                            selected: false
+                        }) : null
+                    });
+                //selectedYardSlot.current = slots;
+                setSelectedYardSlot(slots);
+                setForceUpdate(!forceUpdate);
             }
         } catch (e) {
             console.log(e);
         }
     }
 
+    const handlePickSlot = (slot: any, index: any) => {
+        const updatedSlots = selectedYardSlot.map((item, i) =>
+            i === index ? { ...item, selected: !item.selected } : item
+        );
+        updatedSlots[index].selected ? selectedYardSlotRef.current.push(slot.slotName) : selectedYardSlotRef.current = selectedYardSlotRef.current.filter((item) => item !== slot.slotName);
+        setSelectedYardSlot(updatedSlots);
+    }
+
     const fetchCourtYard = async () => {
         const data = await axiosInstance
             .get(`/court-groups/${id}/court-yards`,
                 {
-                    params:{
+                    params: {
                         CourtGroupId: id
                     }
                 });
         data.data.value.items.map((item: any) => {
-            setCourtYard(prevState => [
-                ...prevState,
-                {
-                    label: item.name,
-                    value: item.id
-                }
-            ]);
-            setSlots(prevState => [
-                ...prevState,
-                {
-                    yardId: item.id,
-                    slots: item.slots
-                }
-            ]);
+            if (!courtYard.find((yard: any) => yard.value === item.id)?.value) {
+                setCourtYard(prevState => [
+                    ...prevState,
+                    {
+                        label: item.name,
+                        value: item.id
+                    }
+                ]);
+            }
         });
+
     }
 
     useEffect(() => {
         fetchCourtYard();
-        console.log("Selected Yard Slot: ", selectedYardSlot);
-
     }, []);
 
     return (
         <SafeAreaView className="h-full">
             <ScrollView className="h-full">
-                <View className={'w-full justify-center pt-2'}>
-                    <View className="px-2">
-                        {/*Back button*/}
-                        <View className="flex-row justify-between items-center py-4">
-                            <View className="flex-row gap-5 my-2">
-                                <TouchableOpacity onPress={() => router.back()}>
-                                    <Ionicons name="chevron-back-outline" size={30} color="black"/>
-                                </TouchableOpacity>
-                                <Text className="font-bold text-2xl">Đặt sân</Text>
-                            </View>
+                <View className={'w-full justify-center pt-2 px-2'}>
+                    {/*Back button*/}
+                    <View className="flex-row justify-between items-center py-4">
+                        <View className="flex-row gap-5 my-2">
+                            <TouchableOpacity onPress={() => router.back()}>
+                                <Ionicons name="chevron-back-outline" size={30} color="black"/>
+                            </TouchableOpacity>
+                            <Text className="font-bold text-2xl">Đặt sân</Text>
                         </View>
-
-                        <View className="flex-row justify-start items-center w-full mb-4">
-                            <Ionicons
-                                name={'location'}
-                                size={30}
-                                color={'black'}
-                            />
-                            <Text className="text-2xl pl-3 font-bold text-black">
-                                {name}
-                            </Text>
-                        </View>
-
-                        <Formik
-                            initialValues={order}
-                            onSubmit={submitOrder}
-                            //validationSchema={orderSchema}
-                            //validateOnBlur={true}
+                    </View>
+                    {/*Court name*/}
+                    <View className="flex-row justify-start items-center w-full mb-4">
+                        <Ionicons
+                            name={'location'}
+                            size={30}
+                            color={'black'}
+                        />
+                        <Text className="text-2xl pl-3 font-bold text-black">
+                            {name}
+                        </Text>
+                    </View>
+                    <View className="justify-start w-full mb-4">
+                        <TouchableOpacity
+                            className='flex-row items-center'
+                            onPress={() => showDatePicker(async (event: any, selectedDate: any) => {
+                                const currentDate = selectedDate;
+                                setSelectedDate(currentDate);
+                            }, selectedDate)}
                         >
-                            {({handleChange, handleSubmit, values
-                            , setFieldValue, errors, touched}) => (
-                                <>
-                                    <View className="justify-start w-full mb-4">
+                            <Ionicons
+                                name="calendar-outline"
+                                size={34}
+                                color="black"/>
+                            <View className={"flex-row"}>
+                                <Text className="pl-3 font-plight text-lg items-center justify-center">
+                                    Vào ngày
+                                </Text>
+                                <TextInput
+                                    className="text-lg pl-3 font-plight text-black"
+                                    editable={false}
+                                    value={selectedDate.toLocaleDateString('vi-VN', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric'
+                                    })}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                    {/*Amount of people*/}
+                    <View className="flex-row justify-start items-center w-full mb-4">
+                        <Ionicons
+                            name={'people'}
+                            size={34}
+                            color={'black'}
+                        />
+                        <Text className="text-lg pl-3 font-plight text-black">
+                            Số lượng người chơi:
+                        </Text>
+                        <TextInput
+                            className="text-lg ml-4 font-plight text-black"
+                            placeholder="number players"
+                            keyboardType="numeric"
+                            onChangeText={(text) => text !== "" ? setNumOfPeople(parseInt(text)) : setNumOfPeople(0)}
+                            value={numOfPeople.toString()}
+                        />
+                    </View>
+
+                    {/*Handle render multiple slot to choose*/}
+                    <View className="flex-row justify-start items-center w-full mb-4">
+                        <Ionicons
+                            name={'film-outline'}
+                            size={34}
+                            color={'black'}
+                        />
+                        <CustomDropdown data={courtYard}
+                                        label={'Chọn sân'}
+                                        valueField={'value'}
+                                        labelField={'label'}
+                                        onChange={handleChooseCourtYard}
+                                        value={courtYardRef.current === undefined ? 'Chọn sân' : courtYardRef.current}
+                        />
+                    </View>
+                    <View className={""}>
+                        <FlatList
+                            numColumns={3}
+                            data={selectedYardSlot}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({item, index}) => {
+                                return (
+                                    item.selected ? (
                                         <TouchableOpacity
-                                            className='flex-row items-center'
-                                            onPress={() => showDatePicker(async (event: any, selectedDate: any) => {
-                                                const currentDate = selectedDate || order.date;
-                                                await setFieldValue('date', currentDate)
-                                                    .catch((error: any) => {});
-                                            }, values.date)}
+                                            key={index}
+                                            onPress={() => handlePickSlot(item, index)}
+                                            className={"flex-col justify-between items-center border-gray-400 bg-green-500 w-[30%] mx-auto mb-2"}
                                         >
-                                            <Ionicons
-                                                name="calendar-outline"
-                                                size={34}
-                                                color="black"/>
-                                            <View className={"flex-row"}>
-                                                <Text className="pl-3 font-plight text-lg items-center justify-center">
-                                                    Vào ngày
+                                            <View
+                                                className={"justify-between items-center"}>
+                                                <Text className={"text-black font-plight text-lg"}>
+                                                    {item.slotName}
                                                 </Text>
-                                                <TextInput
-                                                    className="text-lg pl-3 font-plight text-black"
-                                                    editable={false}
-                                                    value={values.date.toLocaleDateString('vi-VN', {
-                                                        day: '2-digit',
-                                                        month: '2-digit',
-                                                        year: 'numeric'
-                                                    })}
-                                                />
+                                                <Text className={"text-gray-50 font-plight text-lg"}>
+                                                    {item.status}
+                                                </Text>
                                             </View>
                                         </TouchableOpacity>
-                                    </View>
-                                    {/*Amount of people*/}
-                                    <View className="flex-row justify-start items-center w-full mb-4">
-                                        <Ionicons
-                                            name={'people'}
-                                            size={34}
-                                            color={'black'}
-                                        />
-                                        <Text className="text-lg pl-3 font-plight text-black">
-                                            Số lượng người chơi:
-                                        </Text>
-                                        <TextInput
-                                            className="text-lg ml-4 font-plight text-black"
-                                            placeholder="number players"
-                                            keyboardType="numeric"
-                                            onChangeText={handleChange('number')}
-                                            value={values.number.toString()}
-                                        />
-                                    </View>
-
-                                    {/*Handle render multiple slot to choose*/}
-                                    <View className="flex-row justify-start items-center w-full mb-4">
-                                        <Ionicons
-                                            name={'film-outline'}
-                                            size={34}
-                                            color={'black'}
-                                        />
-                                        <CustomDropdown data={courtYard}
-                                                        label={'Chọn sân'}
-                                                        valueField={'value'}
-                                                        labelField={'label'}
-                                                        onChange={handleChooseCourtYard}
-                                                        value={courtYardRef.current === null ? 'Chọn sân' : courtYardRef.current}
-                                        />
-                                    </View>
-
-                                        {/*Handle render multiple slot to choose*/}
-
-                                        <FlatList
-
-                                            numColumns={2}
-                                            data={selectedYardSlot} renderItem={
-                                            ({item}) => (
-                                                <View className="flex-col justify-center items-center w-[46%] mx-auto border-2 border-gray-500 rounded-full mb-4">
-                                                    <Text className="text-lg pl-3 font-plight text-black">
-                                                        {item.slotName}
-                                                    </Text>
-                                                    <Text className="text-lg pl-3 font-plight text-black">
-                                                        {item.status}
-                                                    </Text>
-                                                </View>
-                                            )
-                                        }
-                                        />
-
-                                    {/*Price and booking*/}
-                                    <View className="flex-row justify-between mx-6 items-center mb-4">
-                                        <View className={"flex-col"}>
-                                            <Text className="text-black font-bold text-lg">
-                                                Giá
-                                            </Text>
-                                            <Text className="text-black font-plight  text-2xl">
-                                                {AddDotToNumber(values.price)} Đ
-                                            </Text>
-                                        </View>
+                                    ) : (
                                         <TouchableOpacity
-                                            onPress={() => handleSubmit()}
-                                            className="w-44 bg-secondary rounded-xl px-6 items-center justify-center py-3"
+                                            key={index}
+                                            onPress={() => handlePickSlot(item, index)}
+                                            className={"flex-col justify-between items-center border-gray-400 border-2 bg-gray-100 w-[30%] mx-auto mb-2"}
                                         >
-                                            <Text className="text-black font-bold text-2xl">
-                                                Đặt sân
-                                            </Text>
+                                            <View
+                                                className={"justify-between items-center"}>
+                                                <Text className={"text-black font-plight text-lg"}>
+                                                    {item.slotName}
+                                                </Text>
+                                                <Text className={"text-green-400 font-plight text-lg"}>
+                                                    {item.status}
+                                                </Text>
+                                            </View>
                                         </TouchableOpacity>
-                                    </View>
-                                </>
-                            )}
-                        </Formik>
+                                    )
+                                )
+                            }}
+                        />
                     </View>
+                    {/*Price and booking*/}
+                    <View className="flex-row justify-between mx-6 items-center mb-4">
+                        {/*Price of booking*/}
+                        <View className={"flex-col"}>
+                            <Text className="text-black font-bold text-lg">
+                                Giá
+                            </Text>
+                            <Text className="text-black font-plight  text-2xl">
+                                {price !== undefined ? AddDotToNumber(parseInt(price)) : price} Đ
+                            </Text>
+                        </View>
+                        {/*Booking button*/}
+                        <TouchableOpacity
+                            onPress={submitOrder}
+                            className="w-44 bg-secondary rounded-xl px-6 items-center justify-center py-3"
+                        >
+                            <Text className="text-black font-bold text-2xl">
+                                Đặt sân
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+
                 </View>
             </ScrollView>
         </SafeAreaView>
@@ -305,7 +342,7 @@ async function schedulePushNotification() {
         content: {
             title: "You've booked success 📬",
             body: 'Your booking is successful, please wait for confirmation from the owner!',
-            data: { data: 'goes here', url: '/(order)/order'},
+            data: {data: 'goes here', url: '/(order)/order'},
         },
         trigger: {seconds: 2},
     });

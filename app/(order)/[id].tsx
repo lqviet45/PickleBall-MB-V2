@@ -32,9 +32,9 @@ const BookingDetail = () => {
             isCompleted: true
         });
         if (data.data.status === "Ok") {
-            router.replace("/order");
+            router.replace("home");
         }
-        console.log("data.data in handlePaying", data.data);
+        console.log("(order)/[id].handlePaying: ", data.data);
     }
 
     const fetchBookingDetail = async () => {
@@ -243,14 +243,6 @@ const renderInfoCard = () => {
                                 <TouchableOpacity
                                     className={"rounded-2xl px-3 py-1.5 w-[46%] items-center bg-blue-500"}
                                     onPress={() => {
-                                        // router.push({
-                                        //     pathname: `(court)/${id}/order`,
-                                        //     params: {
-                                        //         id: booking.courtGroup.courtId,
-                                        //         name: booking.courtGroup.name,
-                                        //         price: booking.courtGroup.price
-                                        //     }
-                                        // })
                                         handlePaying()
                                     }}>
                                     <View >
@@ -265,12 +257,7 @@ const renderInfoCard = () => {
                                 className={"rounded-2xl px-3 py-1.5 w-[46%] items-center bg-green-500"}
                                 onPress={() => {
                                     router.push({
-                                        pathname: `(court)/${id}/order`,
-                                        params: {
-                                            id: booking.courtGroup.courtId,
-                                            name: booking.courtGroup.name,
-                                            price: booking.courtGroup.price
-                                        }
+                                        pathname: `/(court)/${booking.courtGroup.id}`,
                                     })
                                 }}>
                                 <View >

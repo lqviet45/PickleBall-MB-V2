@@ -37,7 +37,7 @@ const Index = () => {
                 }
             });
         setWalletId(data.data.value.id);
-        setAmount(AddDotToNumber(data.data.value.balance));
+        setAmount(data.data.value.balance);
     }
 
     const fetchTransaction = async () => {
@@ -55,20 +55,12 @@ const Index = () => {
         setIsRefreshing(true);
         // fetch user (wallet) amount
         fetchWallet()
-            .then(() => {
-                setIsRefreshing(false);
-            })
-            .catch(e => {
-                console.log("catching fetchWallet", e);
-            });
+            .then(() => setIsRefreshing(false))
+            .catch(e => console.log("catching fetchWallet", e));
         // fetch user transaction
         fetchTransaction()
-            .then(() => {
-                setIsRefreshing(false);
-            })
-            .catch(e => {
-                console.log("catching fetchTransaction", e);
-            })
+            .then(() => setIsRefreshing(false))
+            .catch(e => console.log("catching fetchTransaction", e))
     },[]);
     if (isRefreshing) {
         return(
@@ -85,12 +77,29 @@ const Index = () => {
             {/*Index Container*/}
             <View className={"w-full bg-blue-800 h-80"}>
                 {/*User information*/}
-                <View className={"mx-3 mt-16 h-16 flex-row"}>
+                <TouchableOpacity
+                    className={"mt-1 p-1"}
+                    onPress={() => router.back()}
+                >
+                    <Ionicons
+                        name={'chevron-back'}
+                        size={34}
+                        color={'white'}
+                    />
+                </TouchableOpacity>
+                <View className={"mx-3 mb-3 h-16 flex-row items-center"}>
                     <Image source={{uri: 'https://via.placeholder.com/150'}}
                            className="w-10 h-10 rounded-3xl mx-5"
                            resizeMode={'cover'}
                     />
-                    <Text className={"text-center text-white font-bold mt-1 text-xl"}>Xin chào, {userFullName}!</Text>
+                    <View className={"flex-col"}>
+                        <Text className={" text-white font-plight mt-1 text-xl"}>
+                            Xin chào,{' '}
+                        </Text>
+                        <Text className={"text-white font-bold text-2xl"}>
+                            {userFullName}
+                        </Text>
+                    </View>
                 </View>
                 {/*Index Container*/}
                 <View className={"mx-6 rounded-2xl bg-gradient-to-tr from-blue-100 to-blue-200 flex-col border-white border-2"}>
@@ -98,7 +107,7 @@ const Index = () => {
                     <View className={"flex-col p-3 h-18"}>
                         <Text className={"text-center text-[#dfdfdf] font-light mb-1"}>Main balance</Text>
                         <Text className={"text-center text-white font-pextrabold text-2xl"}>
-                            {isRefreshing ? "Loading..." : amount}
+                            {isRefreshing ? "Loading..." : AddDotToNumber(parseInt(amount))}
                             {isRefreshing ? "" : <Text className={"text-white font-pextrabold text-xl"}> VND</Text>}
                         </Text>
                     </View>
@@ -145,29 +154,27 @@ const Index = () => {
                 {/*Header*/}
                 <View className={"flex-row justify-between p-1 mb-2"}>
                     <Text className={"text-xl font-pbold text-white "}>Latest Transaction</Text>
-                    {/*<TouchableOpacity*/}
-                    {/*onPress={() => handleViewAllTransaction()}>*/}
-                    {/*    <Text className={"font-light text-white align-text-bottom"}>View all</Text>*/}
-                    {/*</TouchableOpacity>*/}
                 </View>
                 {/*History Container*/}
                 <View className={"p-2"}>
                     <FlatList
+                        className={""}
                         data={transactions}
                         keyExtractor={(item) => item.id}
-                        initialNumToRender={6}
+                        initialNumToRender={10}
                         renderItem={
                             ({item}) => (
                                 <View className={"flex-row justify-between mb-2 border-b-2 border-white pb-1"}>
                                     <View className={"flex-row"}>
                                         {item.description == "Deposit" ?
                                             (<Ionicons
-                                                name={"arrow-up-circle-outline"} color={"green"} size={36}
-                                            />
+                                                    name={"arrow-up-circle-outline"} color={"green"} size={36}
+                                                />
                                             ) :
                                             (<Ionicons
                                                 name={"arrow-down-circle-outline"} color={"red"} size={36}
-                                            />)}
+                                            />)
+                                        }
                                         <View className={"ml-2"}>
                                             <Text className={"text-white font-bold"}>{
                                                 item.courtGroupName ? item.courtGroupName : "Deposit/Withdraw"

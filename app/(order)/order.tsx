@@ -154,13 +154,13 @@ const Order = ({navigation} : any) => {
     }
 
     useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-            currentPage.current = 1;
-            isInitialMount.current = true;
-            fetchBookingOrder(currentPage.current)
-                .then(() => isInitialMount.current = false)
-                .catch(e => console.log("catching fetchBookingOrder", e.response));
-        });
+        // const unsubscribe = navigation.addListener('focus', () => {
+        //     currentPage.current = 1;
+        //     isInitialMount.current = true;
+        //     fetchBookingOrder(currentPage.current)
+        //         .then(() => isInitialMount.current = false)
+        //         .catch(e => console.log("catching fetchBookingOrder", e.response));
+        // });
         if (isInit) {
             setIsLoaded(false);
             currentPage.current = 1;
@@ -168,7 +168,7 @@ const Order = ({navigation} : any) => {
                 .then(() => setIsLoaded(true))
                 .catch(e => console.log("catching fetchBookingOrder", e.response));
         }
-        return unsubscribe;
+        //return unsubscribe;
     }, [navigation]);
 
     if (!isLoaded) {
