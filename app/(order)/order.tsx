@@ -98,6 +98,7 @@ const Order = ({navigation} : any) => {
             setIsEnd(true);
             return;
         }
+
         if (refresh.current || isInit || isFirstSearch.current || isInitialMount.current) {
             setBookingOrder(data.data.value.items);
             refresh.current = false;
@@ -186,6 +187,7 @@ const Order = ({navigation} : any) => {
         <SafeAreaView className={"h-full"}>
             <FlatList
                 data={bookingOrder}
+                className={"bg-white"}
                 keyExtractor={(item) => item.id}
                 initialNumToRender={pageSize}
                 renderItem={(

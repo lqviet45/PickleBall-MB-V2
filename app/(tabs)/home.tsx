@@ -7,6 +7,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import CourtCardVertical from "@/components/CourtCardVertical";
 import {axiosInstance} from "@/lib/axios";
 import {StatusBar} from "expo-status-bar";
+import Accordion from "@rn-primitives/accordion";
 
 const Home = ({navigation} : any) => {
     const {userFullName, userId} = useGlobalContext();
@@ -45,6 +46,7 @@ const Home = ({navigation} : any) => {
                     pageNumber: pageNumber
                 }
             });
+            console.log(userId);
 
             if (data.data.value.items.length === 0) {
                 setIsEnd(true);
@@ -131,7 +133,7 @@ const Home = ({navigation} : any) => {
                             <Text className={"text-white text-xl"}>Cửa hàng</Text>
                         </TouchableOpacity>
                     </View>
-                    <View className="p-2 rounded-2xl bg-[#e6f8b3] w-[48%]">
+                    <View className="p-2 flex-row items-center justify-around rounded-2xl bg-[#e6f8b3] w-[48%]">
                         <TouchableOpacity
                             onPress={() => router.push('(users)/(wallet)/')}
                             className="flex-row items-center"
