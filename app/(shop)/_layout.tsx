@@ -12,6 +12,18 @@ const ShopLayout = () => {
                 }}
                 >
             </Stack.Screen>
+            <Stack.Screen
+                name="[id]"
+                options={{
+                    title: 'Chi tiết sản phẩm',
+                    headerShown: false,
+                    headerStyle: {
+                        backgroundColor: 'white'
+                    }
+                }}
+            >
+
+            </Stack.Screen>
         </Stack>
     );
 };

@@ -46,7 +46,7 @@ const Home = ({navigation} : any) => {
                     pageNumber: pageNumber
                 }
             });
-            console.log(userId);
+            //console.log(userId);
 
             if (data.data.value.items.length === 0) {
                 setIsEnd(true);

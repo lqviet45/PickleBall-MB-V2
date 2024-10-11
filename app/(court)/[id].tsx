@@ -200,7 +200,6 @@ const CourtDetail = () => {
                             className="w-[380] h-[340] items-center rounded-2xl"
                             resizeMode={'cover'}
                         />
-                        {/*Bookmark*/}
                         <View className="absolute top-5 left-5">
                             <TouchableOpacity
                                 onPress={() => router.back()}
@@ -212,6 +211,8 @@ const CourtDetail = () => {
                                 />
                             </TouchableOpacity>
                         </View>
+                        {/*Bookmark*/}
+
                         <View className="absolute bottom-5 right-14">
                             <TouchableOpacity
                                 onPress={onPressBookMark}
