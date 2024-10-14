@@ -5,4 +5,5 @@ export interface Product{
     quantity: number;
     description: string;
     price: number;
+    selectedQuantity: number;
 }

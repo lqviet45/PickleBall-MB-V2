@@ -61,7 +61,7 @@ const Search = () => {
             return;
         }
         setSearchResult([...searchResult, ...data.data.value.items]);
-
+        isSearching.current = false;
     }
 
     useEffect(() => {

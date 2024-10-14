@@ -71,6 +71,7 @@ const RootLayout = () => {
                 <Stack.Screen name="(shop)" options={{headerShown: false}}/>
                 <Stack.Screen name="(tabs)"  options={{headerShown: false}}/>
                 <Stack.Screen name="(users)" options={{headerShown: false}}/>
+                <Stack.Screen name="(payment)" options={{headerShown: false}}/>
             </Stack>
         </GlobalProvider>
     );

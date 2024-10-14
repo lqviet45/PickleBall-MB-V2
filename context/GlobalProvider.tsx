@@ -1,6 +1,7 @@
 import React, {createContext, useContext, useEffect, useRef, useState} from "react";
 import auth, {FirebaseAuthTypes} from "@react-native-firebase/auth";
 import {axiosInstance} from "@/lib/axios";
+import {Product} from "@/model/product";
 
 
 type GlobalContextType = {
@@ -14,6 +15,8 @@ type GlobalContextType = {
     expoPushToken: string;
     setExpoPushToken: (value: string) => void;
     userFullName: string;
+    cart: Product[];
+    setCart: (value: Product[]) => void;
 }
 
 type ContextProps = {
@@ -27,6 +30,8 @@ const defaultValues: GlobalContextType = {
     userId: null,
     expoPushToken: '',
     userFullName: '',
+    cart: [],
+    setCart: () => {},
     setIsLoggedIn: () => {},
     setUser: () => {},
     setIsLoading: () => {},
@@ -43,11 +48,12 @@ const GlobalProvider = ({ children } : ContextProps) => {
     const [userId, setUserId] = useState<string | null>(null);
     const [userFullName, setUserFullName] = useState<string>('');
     const [expoPushToken, setExpoPushToken] = useState('');
+    const [cart, setCart] = useState<Product[]>([]);
 
     useEffect(() => {
         try {
             auth().onAuthStateChanged((user) => {
-                console.log("user run onAuthStateChanged")
+                //console.log("user run onAuthStateChanged")
                 if (user) {
                     setUser(user);
                     setIsLoggedIn(true);
@@ -92,7 +98,7 @@ const GlobalProvider = ({ children } : ContextProps) => {
     }
 
     updateDeviceToken(userId ?? '', expoPushToken)
-        .catch(e => console.log(e));
+        .catch(e => console.log("update device token failed: ",e));
     return (
         <GlobalContext.Provider
             value={{
@@ -102,6 +108,8 @@ const GlobalProvider = ({ children } : ContextProps) => {
                 userId,
                 expoPushToken,
                 userFullName,
+                cart,
+                setCart,
                 setIsLoggedIn,
                 setUser,
                 setIsLoading,

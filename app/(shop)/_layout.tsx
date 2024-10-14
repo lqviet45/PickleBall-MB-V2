@@ -1,7 +1,10 @@
 import React from 'react';
 import {Stack} from "expo-router";
+import * as Linking from "expo-linking";
+import {NavigationContainer} from "@react-navigation/native";
 
 const ShopLayout = () => {
+
     return (
         <Stack>
             <Stack.Screen
@@ -22,7 +25,17 @@ const ShopLayout = () => {
                     }
                 }}
             >
-
+            </Stack.Screen>
+            <Stack.Screen
+                name="cart"
+                options={{
+                    title: 'Chi tiết giỏ hàng',
+                    headerShown: false,
+                    headerStyle: {
+                        backgroundColor: 'white'
+                    }
+                }}
+            >
             </Stack.Screen>
         </Stack>
     );

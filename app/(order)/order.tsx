@@ -286,7 +286,7 @@ const Order = ({navigation} : any) => {
                 )}
 
                 // this function will be called when user scroll to the end of the list
-                onEndReached={onEndReached}
+                //onEndReached={onEndReached}
                 // this value is used to determine how far from the end of the list to trigger onEndReached
                 onEndReachedThreshold={0.1}
 
