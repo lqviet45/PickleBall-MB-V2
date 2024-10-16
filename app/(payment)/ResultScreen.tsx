@@ -1,16 +1,29 @@
 import { useState, useEffect } from "react";
 import { useRoute } from "@react-navigation/native";
 import { Button } from "react-native-paper";
-import { StyleSheet, ScrollView, Alert } from "react-native";
+import {StyleSheet, ScrollView, Alert} from "react-native";
 import {SafeAreaView} from "react-native-safe-area-context";
 import OrderTable from "@/components/OrderTable";
 import PaymentFieldTable from "@/components/PaymentFieldTable";
 import {axiosInstance} from "@/lib/axios";
-import {router} from "expo-router";
+import {router, useLocalSearchParams} from "expo-router";
 
 const ResultScreen = () => {
     const [order, setOrder] = useState();
     const route = useRoute();
+    const {customerId, code, cancel} = useLocalSearchParams<{
+        orderCode: string;
+        customerId: string;
+        code: string;
+        id: string;
+        cancel: string;
+        status: string;
+    }>();
+
+    console.log("customerId", customerId);
+    console.log("code", code);
+    console.log("cancel", cancel);
+
     useEffect(() => {
         (async () => {
             try {

@@ -32,8 +32,8 @@ const OrderScreen = () => {
                 courtGroupId: "4ff652d7-4015-4c6f-885e-08dc96754fb9",
                 description: "Mua hàng",
                 products: products,
-                returnUrl: "pickle-ball:///ResultScreen",
-                cancelUrl: "pickle-ball:///OrderScreen",
+                returnUrl: "pickle-ball:///(payment)/ResultScreen?customerId=" + userId,
+                cancelUrl: "pickle-ball:///(payment)/ResultScreen?customerId=" + userId,
             });
         console.log(res.data);
         Linking.canOpenURL(res.data.checkoutUrl).then(supported => {
