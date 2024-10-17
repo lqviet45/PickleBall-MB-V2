@@ -116,23 +116,23 @@ const OrderScreen = () => {
                                     </Text>
                                 </View>
                             </View>
-                            <View className={"w-full"}>
-                                <Text className={"text-lg font-bold"}>
-                                    Phương thức thanh toán
-                                </Text>
-                                <View className={"flex-row mt-1"}>
-                                    <TouchableOpacity className={"w-[50%] border-2 border-gray-50 py-3"}>
-                                        <Text className={" text-gray-700 text-xl text-center "}>
-                                            Tiền mặt
-                                        </Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity className={"w-[50%] border-2 border-gray-50 py-3"}>
-                                        <Text className={" text-gray-700 text-xl text-center "}>
-                                            Bank
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
+                            {/*<View className={"w-full"}>*/}
+                            {/*    <Text className={"text-lg font-bold"}>*/}
+                            {/*        Phương thức thanh toán*/}
+                            {/*    </Text>*/}
+                            {/*    <View className={"flex-row mt-1"}>*/}
+                            {/*        <TouchableOpacity className={"w-[50%] border-2 border-gray-50 py-3"}>*/}
+                            {/*            <Text className={" text-gray-700 text-xl text-center "}>*/}
+                            {/*                Tiền mặt*/}
+                            {/*            </Text>*/}
+                            {/*        </TouchableOpacity>*/}
+                            {/*        <TouchableOpacity className={"w-[50%] border-2 border-gray-50 py-3"}>*/}
+                            {/*            <Text className={" text-gray-700 text-xl text-center "}>*/}
+                            {/*                Bank*/}
+                            {/*            </Text>*/}
+                            {/*        </TouchableOpacity>*/}
+                            {/*    </View>*/}
+                            {/*</View>*/}
                         </>
                     ) : (
                         <View className={"h-60 w-full"}>

@@ -26,17 +26,7 @@ const ShopLayout = () => {
                 }}
             >
             </Stack.Screen>
-            <Stack.Screen
-                name="cart"
-                options={{
-                    title: 'Chi tiết giỏ hàng',
-                    headerShown: false,
-                    headerStyle: {
-                        backgroundColor: 'white'
-                    }
-                }}
-            >
-            </Stack.Screen>
+
         </Stack>
     );
 };

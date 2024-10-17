@@ -7,6 +7,7 @@ import {axiosInstance, axiosInstanceAuth} from "@/lib/axios";
 import {switchCase} from "@babel/types";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import {getUserToken} from "@/lib/authServices";
+import * as Linking from "expo-linking";
 
 const BookingDetail = () => {
     const {id} = useLocalSearchParams<{id: string}>();
@@ -25,16 +26,45 @@ const BookingDetail = () => {
 
     const handlePaying = async () => {
         const token = await getUserToken();
-        const axiosInstance = axiosInstanceAuth(token);
-        const data = await axiosInstance.put(`/bookings/${id}/complete`, {
-            userId: userId,
-            courtGroupId: booking.courtGroup.id,
-            isCompleted: true
-        });
-        if (data.data.status === "Ok") {
-            router.replace("home");
-        }
-        console.log("(order)/[id].handlePaying: ", data.data);
+        const axiosAuth = axiosInstanceAuth(token);
+
+        // const data = await axiosAuth.put(`/bookings/${id}/complete`, {
+        //     userId: userId,
+        //     courtGroupId: booking.courtGroup.id,
+        //     isCompleted: true
+        // });
+        console.log("userId ", userId)
+        console.log("bookingId ", id)
+        console.log("name ", booking.courtYard.name)
+        console.log("description ", booking.timeRange)
+        console.log("amount ", booking.amount)
+        //Get payingUrl
+        const axiosResponse = await axiosInstance.post(
+            "/orders",
+            {
+                userId: userId,
+                bookingId: id,
+                name: booking.courtYard.name,
+                description: booking.timeRange,
+                price: booking.amount,
+                returnUrl: "pickle-ball:///(payment)/ResultScreen?customerId=" + userId,
+                cancelUrl: "pickle-ball:///(payment)/ResultScreen?customerId=" + userId
+            }
+        )
+            .then((axiosResponse) => {
+                console.log("axiosResponse.data: ",axiosResponse.data);
+                Linking.canOpenURL(axiosResponse.data.checkoutUrl).then(supported => {
+                    if (supported) {
+                        Linking.openURL(axiosResponse.data.checkoutUrl);
+                    } else {
+                        console.log("Don't know how to open URI: " + axiosResponse.data.checkoutUrl);
+                    }
+                })
+            })
+            .catch(e => {
+            console.log("err: ", e )
+        })
+        //console.log("(order)/[id].handlePaying: ", data.data);
     }
 
     const fetchBookingDetail = async () => {

@@ -112,7 +112,7 @@ const Shop = () => {
         fetchProducts();
     }, [pageNumber]);
     return (
-        <SafeAreaView className={"bg-white h-full p-2"}>
+        <SafeAreaView className={"bg-secondary h-full p-2"}>
             {/*Search bar*/}
             <View className={"flex-row border-b-2 border-gray-50 bg-secondary px-2 pt-2 pb-4"}>
                 <View className={" px-3 h-10 bg-white w-[80%]"}>
