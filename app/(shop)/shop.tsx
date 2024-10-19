@@ -94,7 +94,7 @@ const Shop = () => {
     const HandleBuyNow = (item: Product) => {
         item.selectedQuantity = 1;
         setCart([item]);
-        router.push("cart");
+        router.push("(payment)/OrderScreen");
     }
 
     const fetchProducts = async () => {
@@ -171,6 +171,13 @@ const Shop = () => {
                     />
                         )}
                 keyExtractor={(item) => item.id}
+                ListEmptyComponent={() => (
+                    <View className={"flex-row justify-center items-center h-40"}>
+                        <Text className={"text-center font-bold text-xl text-gray-500"}>
+                            Không có sản phẩm nào...
+                        </Text>
+                    </View>
+                )}
                 ListFooterComponent={() => RenderPaging(totalPages)}
             />
             {/*Hollow view*/}

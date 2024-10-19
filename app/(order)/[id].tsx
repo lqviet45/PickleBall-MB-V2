@@ -8,6 +8,7 @@ import {switchCase} from "@babel/types";
 import {useGlobalContext} from "@/context/GlobalProvider";
 import {getUserToken} from "@/lib/authServices";
 import * as Linking from "expo-linking";
+import {AddDotToNumber} from "@/lib/helper";
 
 const BookingDetail = () => {
     const {id} = useLocalSearchParams<{id: string}>();
@@ -26,44 +27,26 @@ const BookingDetail = () => {
 
     const handlePaying = async () => {
         const token = await getUserToken();
-        const axiosAuth = axiosInstanceAuth(token);
-
-        // const data = await axiosAuth.put(`/bookings/${id}/complete`, {
-        //     userId: userId,
-        //     courtGroupId: booking.courtGroup.id,
-        //     isCompleted: true
-        // });
         console.log("userId ", userId)
         console.log("bookingId ", id)
         console.log("name ", booking.courtYard.name)
         console.log("description ", booking.timeRange)
         console.log("amount ", booking.amount)
         //Get payingUrl
-        const axiosResponse = await axiosInstance.post(
-            "/orders",
-            {
-                userId: userId,
-                bookingId: id,
-                name: booking.courtYard.name,
-                description: booking.timeRange,
-                price: booking.amount,
-                returnUrl: "pickle-ball:///(payment)/ResultScreen?customerId=" + userId,
-                cancelUrl: "pickle-ball:///(payment)/ResultScreen?customerId=" + userId
-            }
-        )
-            .then((axiosResponse) => {
-                console.log("axiosResponse.data: ",axiosResponse.data);
-                Linking.canOpenURL(axiosResponse.data.checkoutUrl).then(supported => {
-                    if (supported) {
-                        Linking.openURL(axiosResponse.data.checkoutUrl);
-                    } else {
-                        console.log("Don't know how to open URI: " + axiosResponse.data.checkoutUrl);
-                    }
-                })
-            })
-            .catch(e => {
-            console.log("err: ", e )
-        })
+        const confirmData = {
+            userId: userId,
+            bookingId: id,
+            name: booking.courtYard.name,
+            description: booking.timeRange,
+            price: booking.amount,
+            returnUrl: "pickle-ball:///(payment)/ResultScreen?isBooking=yes&customerId=" + userId,
+            cancelUrl: `pickle-ball:///(payment)/ResultScreen?isBooking=yes&customerId=` + userId
+        }
+        //router.push("/ConfirmOrder");
+        router.push({
+            pathname: "(payment)/ConfirmOrder",
+            params: confirmData
+        });
         //console.log("(order)/[id].handlePaying: ", data.data);
     }
 
@@ -107,7 +90,7 @@ const BookingDetail = () => {
 
         }
     }
-const renderInfoCard = () => {
+    const renderInfoCard = () => {
         switch(booking.bookingStatus){
             case "Pending":
                 return(
@@ -191,7 +174,6 @@ const renderInfoCard = () => {
     return (
         <SafeAreaView className={"px-3"}>
                 <View className={"rounded-2xl bg-white row-col"}>
-                    {/*Render Info Card*/}
                     {renderInfoCard()}
 
                     <View className={"row-col p-4"}>
@@ -251,7 +233,7 @@ const renderInfoCard = () => {
                             Giá
                         </Text>
                         <Text className={"text-lg font-bold"}>
-                            {booking?.amount} VND
+                            {AddDotToNumber(booking?.amount)} VND
                         </Text>
                     </View>
                 </View>
@@ -272,9 +254,7 @@ const renderInfoCard = () => {
                         {booking.bookingStatus === "Confirmed" ? (
                                 <TouchableOpacity
                                     className={"rounded-2xl px-3 py-1.5 w-[46%] items-center bg-blue-500"}
-                                    onPress={() => {
-                                        handlePaying()
-                                    }}>
+                                    onPress={handlePaying}>
                                     <View >
                                         <Text className={"text-xl text-white"}>
                                             Thanh toán

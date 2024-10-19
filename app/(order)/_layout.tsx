@@ -1,8 +1,9 @@
 import React from 'react';
 import {Stack} from "expo-router";
+import * as Linking from "expo-linking";
+import {NavigationContainer} from "@react-navigation/native";
 
 const OrderLayout = () => {
-
 
     return (
         <Stack>
@@ -22,7 +23,6 @@ const OrderLayout = () => {
                         backgroundColor: 'white'
                     }
                 }}
-
             />
         </Stack>
     );

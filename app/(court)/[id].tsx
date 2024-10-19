@@ -280,6 +280,7 @@ const CourtDetail = () => {
                     </View>
                 </View>
             </ScrollView>
+            {/*Price and order button*/}
             <View className="flex-row justify-between mx-6 items-center mb-4">
                 <View className={"flex-col"}>
                     <Text className="text-black font-bold text-lg">

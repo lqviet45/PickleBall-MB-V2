@@ -7,7 +7,7 @@ import {Stack} from "expo-router";
 
 const PaymentLayout = () => {
     const prefix = Linking.createURL("/");
-    console.log("prefix", prefix);
+    console.log("PaymentLayout");
 
     const linking = {
         prefixes: [
@@ -16,18 +16,16 @@ const PaymentLayout = () => {
         ],
         config: {
             screens: {
-                OrderScreen: '(shop)/shop',
                 ResultScreen: '(payment)/ResultScreen',
+                ConfirmOrder: '(payment)/ConfirmOrder',
+                OrderScreen: '(payment)/OrderScreen',
                 NotFound: '*',
             },
         }
     }
 
     return (
-        <NavigationContainer
-            linking={linking}
-            independent={true}
-        >
+
             <Stack
                 screenOptions={{
                     headerShown: false
@@ -39,8 +37,11 @@ const PaymentLayout = () => {
                 <Stack.Screen name="ResultScreen" options={{
                     headerShown: false
                 }} />
+                <Stack.Screen name="ConfirmOrder" options={{
+                    headerShown: false
+                }} />
             </Stack>
-        </NavigationContainer>
+
     );
 };
 

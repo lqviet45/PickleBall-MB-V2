@@ -65,7 +65,6 @@ const Home = ({navigation} : any) => {
                 setIsEnd(true);
                 return;
             }
-            Alert.alert('Error fetchCourtGroup', error!.toString());
         }
     }
 
@@ -87,7 +86,7 @@ const Home = ({navigation} : any) => {
             setIsInit(false);
         }
         return unsubscribe;
-    }, [navigation]);
+    }, [navigation, userId]);
 
     return (
         <SafeAreaView className={"bg-white h-full"}>
