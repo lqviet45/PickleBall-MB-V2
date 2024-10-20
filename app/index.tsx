@@ -1,13 +1,12 @@
 import {SafeAreaView} from "react-native-safe-area-context";
-import {ScrollView, View, Image, Text, Platform} from "react-native";
+import {ScrollView, View, Image, Text} from "react-native";
 import images from "../constants/images";
 import {router} from "expo-router";
 import {StatusBar} from "expo-status-bar";
 import {useGlobalContext} from "@/context/GlobalProvider";
-import {useEffect, useRef, useState} from "react";
+import {useEffect} from "react";
 import * as Notifications from "expo-notifications";
 import {registerForPushNotificationsAsync} from "@/lib/notification";
-import {axiosInstance} from "@/lib/axios";
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
@@ -40,7 +39,7 @@ const App = () => {
     }, [isLoading]);
 
     return (
-        <SafeAreaView className={`bg-Base h-full`}>
+        <SafeAreaView className={`bg-base h-full`}>
             <ScrollView contentContainerStyle={{height: '100%'}}>
                 <View className="w-full items-center justify-center min-h-[85vh] px-4">
                     <Image
