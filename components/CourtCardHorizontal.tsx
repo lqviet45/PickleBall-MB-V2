@@ -1,7 +1,6 @@
 import React from "react";
 import {Image, Text, TouchableOpacity, View} from "react-native";
 import {router} from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import {AddDotToNumber} from "@/lib/helper";
 
 interface CourtCardHorizontalProps {
@@ -44,14 +43,14 @@ const CourtCardHorizonal = ({ courtId, courtImage, imageCustomStyle, rating, cou
                             {/*</TouchableOpacity>*/}
                         </View>
                         {/*Content*/}
-                        <View className={"p-1.5 flex-col justify-between mx-2 mt-1"}>
+                        <View className={"p-1.5 flex-col justify-between mx-2 mt-1 mb-3"}>
                             <Text className={"text-base"}>This is the description of the court.</Text>
                         </View>
                         <View className={"absolute bottom-1 p-1.5 flex-col justify-between mx-2 mt-1 w-full"}>
                             {/*Rating*/}
-                            <View>
-                                {rating != null ? <Text className={"text-base text-white self-start bg-yellow-500 px-2 rounded-2xl"}><Ionicons name="star" size={14} color="yellow"/> {rating} </Text> : <View></View>}
-                            </View>
+                            {/*<View>*/}
+                            {/*    {rating != null ? <Text className={"text-base text-white self-start bg-yellow-500 px-2 rounded-2xl"}><Ionicons name="star" size={14} color="yellow"/> {rating} </Text> : <View></View>}*/}
+                            {/*</View>*/}
                             {/*Price*/}
                             <Text className={"text-black font-light text-2xl"}>
                                 {AddDotToNumber(price)} Đ/hour

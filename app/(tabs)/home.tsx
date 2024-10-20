@@ -7,7 +7,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import CourtCardVertical from "@/components/CourtCardVertical";
 import {axiosInstance} from "@/lib/axios";
 import {StatusBar} from "expo-status-bar";
-import Accordion from "@rn-primitives/accordion";
+
 
 const Home = ({navigation} : any) => {
     const {userFullName, userId} = useGlobalContext();
@@ -61,7 +61,7 @@ const Home = ({navigation} : any) => {
             setBookMarks([...bookMarks, ...data.data.value.items]);
         } catch (error) {
             // @ts-ignore
-            if(error.response.status === 404) {
+            if(error.status === 404) {
                 setIsEnd(true);
                 return;
             }
@@ -167,14 +167,14 @@ const Home = ({navigation} : any) => {
                                     : "https://www.thespruce.com/thmb/1J6"}
                                 rating={4.5}
                                 courtName={item.courtGroup.name}
-                                time={'08:00 - 16:00'}
+                                time={'08:00 - 18:00'}
                             />
                     )}
 
                     ListHeaderComponent={() => {
                         return (
                             <View className="flex-row justify-center pt-5">
-                                <Text className="text-xl">Bookmarked courts</Text>
+                                <Text className="text-xl">Bookmark courts</Text>
                             </View>
                         );
                     }}

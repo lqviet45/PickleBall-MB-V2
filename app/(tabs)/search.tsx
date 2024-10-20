@@ -147,6 +147,9 @@ const Search = () => {
                         }
                     />
                 </View>
+            <View className={"h-5 bg-white"}>
+
+            </View>
         </SafeAreaView>
     );
 };
